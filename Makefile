@@ -79,7 +79,7 @@ endif
 
 LIBS = -L$(libdir) \
 	-lsmartmet-spine \
-	-lsmartmet_macgyver
+	-lsmartmet-macgyver
 
 # rpm variables
 
