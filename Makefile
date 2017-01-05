@@ -119,8 +119,7 @@ release: all
 profile: all
 
 configtest:
-	@echo Validating cnf/admin.conf.sample
-	@cfgvalidate -v cnf/admin.conf.sample
+	@if [ -x "$$(command -v cfgvalidate)" ]; then cfgvalidate -v cnf/admin.conf.sample; fi
 
 $(LIBFILE): $(OBJS)
 	$(CXX) $(CFLAGS) -shared -rdynamic -o $(LIBFILE) $(OBJS) $(LIBS)
