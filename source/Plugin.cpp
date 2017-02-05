@@ -248,7 +248,7 @@ bool Plugin::requestGeonames(SmartMet::Spine::Reactor &theReactor,
 
     string dataType = SmartMet::Spine::optional_string(theRequest.getParameter("type"), "meta");
 
-    boost::scoped_ptr<TableFormatter> tableFormatter(TableFormatterFactory::create(tableFormat));
+    std::unique_ptr<TableFormatter> tableFormatter(TableFormatterFactory::create(tableFormat));
 
     auto engine = theReactor.getSingleton("Geonames", NULL);
     if (!engine)
@@ -341,7 +341,7 @@ bool Plugin::requestQEngineStatus(SmartMet::Spine::Reactor &theReactor,
     std::pair<boost::shared_ptr<Table>, TableFormatter::Names> statusResult =
         qengine->getEngineContents(timeFormat, projectionFormat);
 
-    boost::scoped_ptr<TableFormatter> tableFormatter(TableFormatterFactory::create(tableFormat));
+    std::unique_ptr<TableFormatter> tableFormatter(TableFormatterFactory::create(tableFormat));
 
     tableFormatter->format(
         out, *statusResult.first, statusResult.second, theRequest, TableFormatterOptions());
@@ -518,7 +518,7 @@ bool Plugin::getLogging(SmartMet::Spine::Reactor &theReactor,
     ostringstream out;
     Table reqTable;
     string format = SmartMet::Spine::optional_string(theRequest.getParameter("format"), "json");
-    boost::scoped_ptr<TableFormatter> formatter(TableFormatterFactory::create(format));
+    std::unique_ptr<TableFormatter> formatter(TableFormatterFactory::create(format));
 
     bool isCurrentlyLogging = theReactor.getLogging();
 
@@ -564,7 +564,7 @@ bool Plugin::requestLastRequests(SmartMet::Spine::Reactor &theReactor,
     ostringstream out;
     Table reqTable;
     string format = SmartMet::Spine::optional_string(theRequest.getParameter("format"), "json");
-    boost::scoped_ptr<TableFormatter> formatter(TableFormatterFactory::create(format));
+    std::unique_ptr<TableFormatter> formatter(TableFormatterFactory::create(format));
 
     auto givenMinutes = theRequest.getParameter("minutes");
     unsigned int minutes;
@@ -668,7 +668,7 @@ bool Plugin::requestCacheSizes(SmartMet::Spine::Reactor &theReactor,
     ostringstream out;
     Table reqTable;
     string format = SmartMet::Spine::optional_string(theRequest.getParameter("format"), "json");
-    boost::scoped_ptr<TableFormatter> formatter(TableFormatterFactory::create(format));
+    std::unique_ptr<TableFormatter> formatter(TableFormatterFactory::create(format));
 
     auto q_cache = qengine->getCacheSizes();
     auto c_cache = cengine->getCacheSizes();
@@ -716,7 +716,7 @@ bool Plugin::requestServiceStats(SmartMet::Spine::Reactor &theReactor,
 
     string format = SmartMet::Spine::optional_string(theRequest.getParameter("format"), "json");
 
-    boost::scoped_ptr<TableFormatter> formatter(TableFormatterFactory::create(format));
+    std::unique_ptr<TableFormatter> formatter(TableFormatterFactory::create(format));
 
     // Use system locale for numbers formatting
     locale system_locale("");
