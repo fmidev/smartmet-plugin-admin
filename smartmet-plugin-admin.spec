@@ -11,18 +11,18 @@ Source0: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: boost-devel
 BuildRequires: libconfig-devel
-BuildRequires: smartmet-library-macgyver-devel >= 16.12.20
-BuildRequires: smartmet-library-spine-devel >= 17.1.4
-BuildRequires: smartmet-engine-geonames-devel >= 17.1.4
+BuildRequires: smartmet-library-macgyver-devel >= 17.1.18
+BuildRequires: smartmet-library-spine-devel >= 17.2.3
+BuildRequires: smartmet-engine-geonames-devel >= 17.2.3
 BuildRequires: smartmet-engine-sputnik-devel >= 17.1.4
-BuildRequires: smartmet-engine-querydata-devel >= 17.1.4
-Requires: smartmet-library-macgyver >= 16.12.20
+BuildRequires: smartmet-engine-querydata-devel >= 17.2.3
+Requires: smartmet-library-macgyver >= 17.1.18
 Requires: libconfig
-Requires: smartmet-server >= 17.1.4
-Requires: smartmet-library-spine >= 17.1.4
-Requires: smartmet-engine-geonames >= 17.1.4
+Requires: smartmet-server >= 17.1.25
+Requires: smartmet-library-spine >= 17.2.3
+Requires: smartmet-engine-geonames >= 17.2.3
 Requires: smartmet-engine-sputnik >= 17.1.4
-Requires: smartmet-engine-querydata >= 17.1.4
+Requires: smartmet-engine-querydata >= 17.2.3
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
