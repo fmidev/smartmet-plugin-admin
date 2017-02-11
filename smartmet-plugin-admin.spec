@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 17.1.4
+Version: 17.2.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Sat Feb 11 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.2.11-1.fmi
+- Repackaged due to newbase API change
+
 * Wed Jan  4 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.1.4-1.fmi
 - Changed to use renamed SmartMet base libraries
 
