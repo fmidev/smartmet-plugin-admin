@@ -7,29 +7,29 @@
 #include "Plugin.h"
 
 #include <spine/Convenience.h>
+#include <spine/SmartMet.h>
+#include <spine/Table.h>
 #include <spine/TableFormatterFactory.h>
 #include <spine/TableFormatterOptions.h>
-#include <spine/Table.h>
-#include <spine/SmartMet.h>
 
-#include <engines/sputnik/Engine.h>
+#include <engines/contour/Engine.h>
 #include <engines/geonames/Engine.h>
 #include <engines/querydata/Engine.h>
-#include <engines/contour/Engine.h>
+#include <engines/sputnik/Engine.h>
 
-#include <macgyver/TimeFormatter.h>
 #include <macgyver/Base64.h>
+#include <macgyver/TimeFormatter.h>
 
+#include <boost/algorithm/string.hpp>
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
-#include <boost/algorithm/string.hpp>
 #include <boost/locale.hpp>
 
-#include <iostream>
 #include <iomanip>
+#include <iostream>
+#include <locale>
 #include <sstream>
 #include <stdexcept>
-#include <locale>
 
 using namespace std;
 using namespace boost::posix_time;
@@ -909,11 +909,7 @@ void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
 
       SmartMet::Spine::Exception exception(BCP, "Request processing exception!", NULL);
       exception.addParameter("URI", theRequest.getURI());
-
-      if (!exception.stackTraceDisabled())
-        std::cerr << exception.getStackTrace();
-      else if (!exception.loggingDisabled())
-        std::cerr << "Error: " << exception.what() << std::endl;
+      exception.printError();
 
       theResponse.setStatus(HTTP::Status::bad_request);
 
