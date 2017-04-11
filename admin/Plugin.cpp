@@ -861,6 +861,9 @@ void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
 
     try
     {
+      // We return JSON, hence we should enable CORS
+      theResponse.setHeader("Access-Control-Allow-Origin", "*");
+
       const int expires_seconds = 1;
       ptime t_now = second_clock::universal_time();
 
