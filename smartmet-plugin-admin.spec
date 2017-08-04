@@ -13,6 +13,7 @@ BuildRequires: boost-devel
 BuildRequires: libconfig-devel
 BuildRequires: smartmet-library-macgyver-devel >= 17.3.14
 BuildRequires: smartmet-library-spine-devel >= 17.3.15
+BuildRequires: smartmet-engine-contour-devel
 BuildRequires: smartmet-engine-geonames-devel >= 17.3.15
 BuildRequires: smartmet-engine-sputnik-devel >= 17.3.15
 BuildRequires: smartmet-engine-querydata-devel >= 17.3.15
