@@ -9,6 +9,7 @@ Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-admin
 Source0: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig-devel
 BuildRequires: smartmet-library-macgyver-devel >= 17.3.14
