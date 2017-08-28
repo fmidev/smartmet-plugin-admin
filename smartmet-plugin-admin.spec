@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 17.4.10
+Version: 17.8.28
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -13,19 +13,19 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig-devel
-BuildRequires: smartmet-library-macgyver-devel >= 17.3.14
-BuildRequires: smartmet-library-spine-devel >= 17.3.15
+BuildRequires: smartmet-library-macgyver-devel >= 17.8.28
+BuildRequires: smartmet-library-spine-devel >= 17.8.28
 BuildRequires: smartmet-engine-contour-devel
-BuildRequires: smartmet-engine-geonames-devel >= 17.3.15
-BuildRequires: smartmet-engine-sputnik-devel >= 17.3.15
-BuildRequires: smartmet-engine-querydata-devel >= 17.3.15
-Requires: smartmet-library-macgyver >= 17.3.14
+BuildRequires: smartmet-engine-geonames-devel >= 17.8.28
+BuildRequires: smartmet-engine-sputnik-devel >= 17.8.28
+BuildRequires: smartmet-engine-querydata-devel >= 17.8.28
+Requires: smartmet-library-macgyver >= 17.8.28
 Requires: libconfig
-Requires: smartmet-server >= 17.3.15
-Requires: smartmet-library-spine >= 17.3.15
-Requires: smartmet-engine-geonames >= 17.3.15
-Requires: smartmet-engine-sputnik >= 17.3.15
-Requires: smartmet-engine-querydata >= 17.3.15
+Requires: smartmet-server >= 17.8.28
+Requires: smartmet-library-spine >= 17.8.28
+Requires: smartmet-engine-geonames >= 17.8.28
+Requires: smartmet-engine-sputnik >= 17.8.28
+Requires: smartmet-engine-querydata >= 17.8.28
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Mon Aug 28 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.28-1.fmi
+- Upgrade to boost 1.65
+
 * Tue Apr 11 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.4.10-1.fmi
 - Enable CORS by allowing Access-Control-Allow-Origin for all hosts
 
