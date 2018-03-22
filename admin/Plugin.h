@@ -5,11 +5,11 @@
 // ======================================================================
 
 #pragma once
-#include <spine/SmartMetPlugin.h>
-#include <spine/Reactor.h>
-#include <spine/HTTP.h>
-#include <libconfig.h++>
 #include <boost/utility.hpp>
+#include <spine/HTTP.h>
+#include <spine/Reactor.h>
+#include <spine/SmartMetPlugin.h>
+#include <libconfig.h++>
 #include <map>
 #include <string>
 #include <utility>
@@ -47,6 +47,10 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                SmartMet::Spine::HTTP::Response& theResponse);
 
   bool requestClusterInfo(SmartMet::Spine::Reactor& theReactor,
+                          const SmartMet::Spine::HTTP::Request& theRequest,
+                          SmartMet::Spine::HTTP::Response& theResponse);
+
+  bool requestServiceInfo(SmartMet::Spine::Reactor& theReactor,
                           const SmartMet::Spine::HTTP::Request& theRequest,
                           SmartMet::Spine::HTTP::Response& theResponse);
 

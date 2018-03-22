@@ -41,7 +41,7 @@ bool isNotOld(const boost::posix_time::ptime &target, const LoggedRequest &compa
 {
   return compare.getRequestTime() > target;
 }
-}
+}  // namespace
 
 namespace SmartMet
 {
@@ -76,7 +76,7 @@ string average_and_format(double total_microsecs, unsigned long requests)
     throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
-}
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -99,6 +99,8 @@ bool Plugin::request(SmartMet::Spine::Reactor &theReactor,
     }
     if (what == "clusterinfo")
       return requestClusterInfo(theReactor, theRequest, theResponse);
+    if (what == "serviceinfo")
+      return requestServiceInfo(theReactor, theRequest, theResponse);
     if (what == "reload")
       return requestReload(theReactor, theRequest, theResponse);
     if (what == "geonames")
@@ -158,6 +160,45 @@ bool Plugin::requestClusterInfo(SmartMet::Spine::Reactor &theReactor,
 
     auto *sputnik = reinterpret_cast<SmartMet::Engine::Sputnik::Engine *>(engine);
     sputnik->status(out);
+
+    // Make MIME header
+    std::string mime("text/html; charset=UTF-8");
+    theResponse.setHeader("Content-Type", mime.c_str());
+
+    // Set content
+    string ret = "<html><head><title>SmartMet Admin</title></head><body>";
+    ret += out.str();
+    ret += "</body></html>";
+    theResponse.setContent(ret);
+
+    return true;
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Perform a serviceinfo query
+ */
+// ----------------------------------------------------------------------
+
+bool Plugin::requestServiceInfo(SmartMet::Spine::Reactor &theReactor,
+                                const HTTP::Request & /* theRequest */,
+                                HTTP::Response &theResponse)
+{
+  try
+  {
+    auto handlers = theReactor.getURIMap();
+
+    ostringstream out;
+    out << "<h3>Services currently provided by this server</h3>" << std::endl;
+    out << "<ol>" << std::endl;
+    for (const auto &handler : handlers)
+      out << "<li>" << handler.first << "</li>" << std::endl;
+    out << "</ol>" << std::endl;
 
     // Make MIME header
     std::string mime("text/html; charset=UTF-8");
@@ -891,16 +932,16 @@ void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
       theResponse.setHeader("Expires", expiration.c_str());
       theResponse.setHeader("Last-Modified", modification.c_str());
 
-/* This will need some thought
-       if(response.first.size() == 0)
-       {
-       std::cerr << "Warning: Empty input for request "
-       << theRequest.getOriginalQueryString()
-       << " from "
-       << theRequest.getClientIP()
-       << std::endl;
-       }
-*/
+      /* This will need some thought
+             if(response.first.size() == 0)
+             {
+             std::cerr << "Warning: Empty input for request "
+             << theRequest.getOriginalQueryString()
+             << " from "
+             << theRequest.getClientIP()
+             << std::endl;
+             }
+      */
 
 #ifdef MYDEBUG
       std::cout << "Output:" << std::endl << response << std::endl;
@@ -970,9 +1011,7 @@ Plugin::Plugin(SmartMet::Spine::Reactor *theReactor, const char *theConfig)
  * \brief Initializator, in this case trivial
  */
 // ----------------------------------------------------------------------
-void Plugin::init()
-{
-}
+void Plugin::init() {}
 // ----------------------------------------------------------------------
 /*!
  * \brief Return true if a service requiring authentication is requested
@@ -1082,9 +1121,7 @@ bool Plugin::authenticateRequest(const HTTP::Request &theRequest, HTTP::Response
  */
 // ----------------------------------------------------------------------
 
-Plugin::~Plugin()
-{
-}
+Plugin::~Plugin() {}
 // ----------------------------------------------------------------------
 /*!
  * \brief Return the plugin name
