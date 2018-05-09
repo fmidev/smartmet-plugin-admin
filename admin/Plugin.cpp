@@ -119,6 +119,8 @@ bool Plugin::request(SmartMet::Spine::Reactor &theReactor,
       return requestLastRequests(theReactor, theRequest, theResponse);
     if (what == "cachesizes")
       return requestCacheSizes(theReactor, theRequest, theResponse);
+    if (what == "activerequests")
+      return requestActiveRequests(theReactor, theRequest, theResponse);
 
     // Unknown request,build response
     // Make MIME header
@@ -658,6 +660,71 @@ bool Plugin::requestLastRequests(SmartMet::Spine::Reactor &theReactor,
     }
 
     vector<string> headers = {"Time", "Duration", "RequestString"};
+    formatter->format(out, reqTable, headers, theRequest, TableFormatterOptions());
+
+    // Set MIME
+    std::string mime = formatter->mimetype() + "; charset=UTF-8";
+    theResponse.setHeader("Content-Type", mime);
+
+    // Set content
+    string ret = out.str();
+    theResponse.setContent(ret);
+
+    return true;
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Get server active requests
+ */
+// ----------------------------------------------------------------------
+
+bool Plugin::requestActiveRequests(SmartMet::Spine::Reactor &theReactor,
+                                   const HTTP::Request &theRequest,
+                                   HTTP::Response &theResponse)
+{
+  try
+  {
+    ostringstream out;
+    Table reqTable;
+    string format = SmartMet::Spine::optional_string(theRequest.getParameter("format"), "json");
+    std::unique_ptr<TableFormatter> formatter(TableFormatterFactory::create(format));
+
+    // Obtain logging information
+    auto requests = theReactor.getActiveRequests();
+
+    auto now = boost::posix_time::microsec_clock::universal_time();
+
+    std::stringstream timeFormatter;
+    boost::posix_time::time_facet *facet = new time_facet("%H:%M:%S.%f");
+    timeFormatter.imbue(std::locale(timeFormatter.getloc(), facet));
+
+    std::size_t row = 0;
+    for (const auto &id_request : requests)
+    {
+      const auto id = id_request.first;
+      const auto &request = id_request.second;
+
+      timeFormatter << request.time;
+      std::string stime = timeFormatter.str();
+      timeFormatter.str("");
+
+      auto duration = now - request.time;
+
+      std::size_t column = 0;
+      reqTable.set(column++, row, Fmi::to_string(id));
+      reqTable.set(column++, row, stime);
+      reqTable.set(column++, row, Fmi::to_string(duration.total_milliseconds() / 1000.0));
+      reqTable.set(column++, row, request.uri);
+      ++row;
+    }
+
+    vector<string> headers = {"Id", "Time", "Duration", "RequestString"};
     formatter->format(out, reqTable, headers, theRequest, TableFormatterOptions());
 
     // Set MIME

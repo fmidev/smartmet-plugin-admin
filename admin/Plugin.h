@@ -78,6 +78,10 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                            const SmartMet::Spine::HTTP::Request& theRequest,
                            SmartMet::Spine::HTTP::Response& theResponse);
 
+  bool requestActiveRequests(SmartMet::Spine::Reactor& theReactor,
+                             const SmartMet::Spine::HTTP::Request& theRequest,
+                             SmartMet::Spine::HTTP::Response& theResponse);
+
   bool requestCacheSizes(SmartMet::Spine::Reactor& theReactor,
                          const SmartMet::Spine::HTTP::Request& theRequest,
                          SmartMet::Spine::HTTP::Response& theResponse);
