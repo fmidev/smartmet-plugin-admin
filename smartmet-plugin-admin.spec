@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 18.4.9
+Version: 18.5.27
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -14,19 +14,19 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig-devel
-BuildRequires: smartmet-library-macgyver-devel >= 18.4.7
-BuildRequires: smartmet-library-spine-devel >= 18.5.9
+BuildRequires: smartmet-library-macgyver-devel >= 18.5.23
+BuildRequires: smartmet-library-spine-devel >= 18.5.27
 BuildRequires: smartmet-engine-contour-devel
 BuildRequires: smartmet-engine-geonames-devel >= 18.4.7
 BuildRequires: smartmet-engine-sputnik-devel >= 18.4.7
-BuildRequires: smartmet-engine-querydata-devel >= 18.5.8
-Requires: smartmet-library-macgyver >= 18.4.7
+BuildRequires: smartmet-engine-querydata-devel >= 18.5.23
+Requires: smartmet-library-macgyver >= 18.5.23
 Requires: libconfig
-Requires: smartmet-server >= 18.4.9
-Requires: smartmet-library-spine >= 18.5.9
+Requires: smartmet-server >= 18.5.15
+Requires: smartmet-library-spine >= 18.5.27
 Requires: smartmet-engine-geonames >= 18.4.7
 Requires: smartmet-engine-sputnik >= 18.4.7
-Requires: smartmet-engine-querydata >= 18.5.8
+Requires: smartmet-engine-querydata >= 18.5.23
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
@@ -54,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Sun May 27 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.5.27-1.fmi
+- Changed to use the latest spine API for logged requests
+
 * Wed May  9 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.4.9-1.fmi
 - Added reporting of active requests with what=activerequests
 

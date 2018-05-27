@@ -39,7 +39,7 @@ namespace
 {
 bool isNotOld(const boost::posix_time::ptime &target, const LoggedRequest &compare)
 {
-  return compare.getRequestTime() > target;
+  return compare.getRequestEndTime() > target;
 }
 }  // namespace
 
@@ -641,13 +641,15 @@ bool Plugin::requestLastRequests(SmartMet::Spine::Reactor &theReactor,
       for (auto reqIt = firstConsidered; reqIt != it->second.end(); ++reqIt)
       {
         std::size_t column = 0;
-        timeFormatter << reqIt->getRequestTime();
-        std::string time = timeFormatter.str();
+
+        timeFormatter << reqIt->getRequestEndTime();
+        std::string endtime = timeFormatter.str();
         timeFormatter.str("");  // zero out the stream
+
         std::string msec_duration = average_and_format(
             reqIt->getAccessDuration().total_microseconds(), 1);  // just format the single duration
 
-        reqTable.set(column, row, time);
+        reqTable.set(column, row, endtime);
         ++column;
 
         reqTable.set(column, row, msec_duration);
@@ -854,7 +856,7 @@ bool Plugin::requestServiceStats(SmartMet::Spine::Reactor &theReactor,
       for (auto listIter = requestPair->second.rbegin(); listIter != requestPair->second.rend();
            ++listIter)
       {
-        auto sinceDuration = currentTime - listIter->getRequestTime();
+        auto sinceDuration = currentTime - listIter->getRequestEndTime();
         auto accessDuration = listIter->getAccessDuration();
 
         total_microsecs += accessDuration.total_microseconds();
