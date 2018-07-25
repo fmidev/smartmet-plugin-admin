@@ -73,7 +73,7 @@ string average_and_format(double total_microsecs, unsigned long requests)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 }  // namespace
@@ -133,7 +133,7 @@ bool Plugin::request(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -151,7 +151,7 @@ bool Plugin::requestClusterInfo(SmartMet::Spine::Reactor &theReactor,
   {
     ostringstream out;
 
-    auto engine = theReactor.getSingleton("Sputnik", NULL);
+    auto engine = theReactor.getSingleton("Sputnik", nullptr);
     if (!engine)
     {
       out << "Sputnik engine is not available" << endl;
@@ -177,7 +177,7 @@ bool Plugin::requestClusterInfo(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -216,7 +216,7 @@ bool Plugin::requestServiceInfo(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 // ----------------------------------------------------------------------
@@ -233,7 +233,7 @@ bool Plugin::requestReload(SmartMet::Spine::Reactor &theReactor,
   {
     ostringstream out;
 
-    auto engine = theReactor.getSingleton("Geonames", NULL);
+    auto engine = theReactor.getSingleton("Geonames", nullptr);
     if (!engine)
     {
       out << "Geonames engine is not available" << endl;
@@ -243,7 +243,7 @@ bool Plugin::requestReload(SmartMet::Spine::Reactor &theReactor,
     }
 
     auto *geoengine = reinterpret_cast<SmartMet::Engine::Geonames::Engine *>(engine);
-    time_t starttime = time(NULL);
+    time_t starttime = time(nullptr);
     if (!geoengine->reload())
     {
       out << "GeoEngine reload failed: " << geoengine->errorMessage() << endl;
@@ -251,7 +251,7 @@ bool Plugin::requestReload(SmartMet::Spine::Reactor &theReactor,
       return false;
     }
 
-    time_t endtime = time(NULL);
+    time_t endtime = time(nullptr);
     long secs = endtime - starttime;
     out << "GeoEngine reloaded in " << secs << " seconds" << endl;
 
@@ -269,7 +269,7 @@ bool Plugin::requestReload(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -293,7 +293,7 @@ bool Plugin::requestGeonames(SmartMet::Spine::Reactor &theReactor,
 
     std::unique_ptr<TableFormatter> tableFormatter(TableFormatterFactory::create(tableFormat));
 
-    auto engine = theReactor.getSingleton("Geonames", NULL);
+    auto engine = theReactor.getSingleton("Geonames", nullptr);
     if (!engine)
     {
       out << "Geonames engine is not available" << endl;
@@ -333,7 +333,7 @@ bool Plugin::requestGeonames(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -352,7 +352,7 @@ bool Plugin::requestQEngineStatus(SmartMet::Spine::Reactor &theReactor,
     ostringstream out;
 
     // Get the Qengine
-    auto engine = theReactor.getSingleton("Querydata", NULL);
+    auto engine = theReactor.getSingleton("Querydata", nullptr);
     if (!engine)
     {
       out << "Querydata engine not available" << endl;
@@ -420,7 +420,7 @@ bool Plugin::requestQEngineStatus(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -450,7 +450,7 @@ bool Plugin::requestBackendInfo(SmartMet::Spine::Reactor &theReactor,
       return false;
     }
 
-    auto engine = theReactor.getSingleton("Sputnik", NULL);
+    auto engine = theReactor.getSingleton("Sputnik", nullptr);
     if (!engine)
     {
       out << "Sputnik engine is not available" << endl;
@@ -498,7 +498,7 @@ bool Plugin::requestBackendInfo(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -542,7 +542,7 @@ bool Plugin::setLogging(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -588,7 +588,7 @@ bool Plugin::getLogging(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -676,7 +676,7 @@ bool Plugin::requestLastRequests(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -741,7 +741,7 @@ bool Plugin::requestActiveRequests(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -757,7 +757,7 @@ bool Plugin::requestCacheSizes(SmartMet::Spine::Reactor &theReactor,
 {
   try
   {
-    auto engine = theReactor.getSingleton("Contour", NULL);
+    auto engine = theReactor.getSingleton("Contour", nullptr);
     if (!engine)
     {
       theResponse.setContent("Contour engine is not available");
@@ -766,7 +766,7 @@ bool Plugin::requestCacheSizes(SmartMet::Spine::Reactor &theReactor,
 
     auto *cengine = static_cast<SmartMet::Engine::Contour::Engine *>(engine);
 
-    engine = theReactor.getSingleton("Querydata", NULL);
+    engine = theReactor.getSingleton("Querydata", nullptr);
     if (!engine)
     {
       theResponse.setContent("Querydata engine is not available");
@@ -799,7 +799,7 @@ bool Plugin::requestCacheSizes(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -944,7 +944,7 @@ bool Plugin::requestServiceStats(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1020,7 +1020,7 @@ void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
     {
       // Catching all exceptions
 
-      SmartMet::Spine::Exception exception(BCP, "Request processing exception!", NULL);
+      SmartMet::Spine::Exception exception(BCP, "Request processing exception!", nullptr);
       exception.addParameter("URI", theRequest.getURI());
       exception.printError();
 
@@ -1036,7 +1036,7 @@ void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1071,7 +1071,7 @@ Plugin::Plugin(SmartMet::Spine::Reactor *theReactor, const char *theConfig)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1100,7 +1100,7 @@ bool isAuthenticationRequired(const HTTP::Request &theRequest)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1180,7 +1180,7 @@ bool Plugin::authenticateRequest(const HTTP::Request &theRequest, HTTP::Response
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
