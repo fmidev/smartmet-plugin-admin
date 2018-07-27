@@ -5,26 +5,21 @@
 // ======================================================================
 
 #include "Plugin.h"
-
+#include <boost/algorithm/string.hpp>
+#include <boost/bind.hpp>
+#include <boost/foreach.hpp>
+#include <boost/locale.hpp>
+#include <engines/contour/Engine.h>
+#include <engines/geonames/Engine.h>
+#include <engines/querydata/Engine.h>
+#include <engines/sputnik/Engine.h>
+#include <macgyver/Base64.h>
+#include <macgyver/StringConversion.h>
 #include <spine/Convenience.h>
 #include <spine/SmartMet.h>
 #include <spine/Table.h>
 #include <spine/TableFormatterFactory.h>
 #include <spine/TableFormatterOptions.h>
-
-#include <engines/contour/Engine.h>
-#include <engines/geonames/Engine.h>
-#include <engines/querydata/Engine.h>
-#include <engines/sputnik/Engine.h>
-
-#include <macgyver/Base64.h>
-#include <macgyver/TimeFormatter.h>
-
-#include <boost/algorithm/string.hpp>
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
-#include <boost/locale.hpp>
-
 #include <iomanip>
 #include <iostream>
 #include <locale>
@@ -627,10 +622,6 @@ bool Plugin::requestLastRequests(SmartMet::Spine::Reactor &theReactor,
     boost::posix_time::ptime firstValidTime =
         boost::posix_time::second_clock::local_time() - boost::posix_time::minutes(minutes);
 
-    std::stringstream timeFormatter;
-    boost::posix_time::time_facet *facet = new time_facet("%H:%M:%S.%f");
-    timeFormatter.imbue(std::locale(timeFormatter.getloc(), facet));
-
     std::size_t row = 0;
     for (auto it = std::get<1>(currentRequests).begin(); it != std::get<1>(currentRequests).end();
          ++it)
@@ -642,9 +633,7 @@ bool Plugin::requestLastRequests(SmartMet::Spine::Reactor &theReactor,
       {
         std::size_t column = 0;
 
-        timeFormatter << reqIt->getRequestEndTime();
-        std::string endtime = timeFormatter.str();
-        timeFormatter.str("");  // zero out the stream
+        std::string endtime = Fmi::to_iso_extended_string(reqIt->getRequestEndTime().time_of_day());
 
         std::string msec_duration = average_and_format(
             reqIt->getAccessDuration().total_microseconds(), 1);  // just format the single duration
@@ -702,25 +691,17 @@ bool Plugin::requestActiveRequests(SmartMet::Spine::Reactor &theReactor,
 
     auto now = boost::posix_time::microsec_clock::universal_time();
 
-    std::stringstream timeFormatter;
-    boost::posix_time::time_facet *facet = new time_facet("%H:%M:%S.%f");
-    timeFormatter.imbue(std::locale(timeFormatter.getloc(), facet));
-
     std::size_t row = 0;
     for (const auto &id_request : requests)
     {
       const auto id = id_request.first;
       const auto &request = id_request.second;
 
-      timeFormatter << request.time;
-      std::string stime = timeFormatter.str();
-      timeFormatter.str("");
-
       auto duration = now - request.time;
 
       std::size_t column = 0;
       reqTable.set(column++, row, Fmi::to_string(id));
-      reqTable.set(column++, row, stime);
+      reqTable.set(column++, row, Fmi::to_iso_extended_string(request.time.time_of_day()));
       reqTable.set(column++, row, Fmi::to_string(duration.total_milliseconds() / 1000.0));
       reqTable.set(column++, row, request.uri);
       ++row;
