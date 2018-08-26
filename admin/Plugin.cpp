@@ -1167,7 +1167,8 @@ bool Plugin::authenticateRequest(const HTTP::Request &theRequest, HTTP::Response
  */
 // ----------------------------------------------------------------------
 
-Plugin::~Plugin() {}
+Plugin::~Plugin() = default;
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Return the plugin name
