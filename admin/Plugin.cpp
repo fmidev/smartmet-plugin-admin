@@ -26,13 +26,9 @@
 #include <sstream>
 #include <stdexcept>
 
-using namespace std;
-using namespace boost::posix_time;
-using namespace SmartMet::Spine;
-
 namespace
 {
-bool isNotOld(const boost::posix_time::ptime &target, const LoggedRequest &compare)
+bool isNotOld(const boost::posix_time::ptime &target, const SmartMet::Spine::LoggedRequest &compare)
 {
   return compare.getRequestEndTime() > target;
 }
@@ -46,29 +42,22 @@ namespace Admin
 {
 namespace
 {
-string average_and_format(double total_microsecs, unsigned long requests)
+std::string average_and_format(double total_microsecs, unsigned long requests)
 {
   try
   {
     // Average global request time
     double average_time = total_microsecs / (1000 * requests);
-    string result;
     if (std::isnan(average_time))
-    {
-      result = "Not available";
-    }
-    else
-    {
-      stringstream ss;
-      ss << setprecision(4) << average_time;
-      result = ss.str();
-    }
+      return "Not available";
 
-    return result;
+    std::stringstream ss;
+    ss << std::setprecision(4) << average_time;
+    return ss.str();
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 }  // namespace
@@ -78,17 +67,17 @@ string average_and_format(double total_microsecs, unsigned long requests)
  * \brief Perform an Admin query
  */
 // ----------------------------------------------------------------------
-bool Plugin::request(SmartMet::Spine::Reactor &theReactor,
-                     const HTTP::Request &theRequest,
-                     HTTP::Response &theResponse)
+bool Plugin::request(Spine::Reactor &theReactor,
+                     const Spine::HTTP::Request &theRequest,
+                     Spine::HTTP::Response &theResponse)
 {
   try
   {
-    string what = SmartMet::Spine::optional_string(theRequest.getParameter("what"), "");
+    std::string what = Spine::optional_string(theRequest.getParameter("what"), "");
 
     if (what.empty())
     {
-      string ret("No request specified");
+      std::string ret("No request specified");
       theResponse.setContent(ret);
       return false;
     }
@@ -122,13 +111,13 @@ bool Plugin::request(SmartMet::Spine::Reactor &theReactor,
     std::string mime("text/html; charset=UTF-8");
     theResponse.setHeader("Content-Type", mime.c_str());
 
-    string ret("Unknown admin request: '" + what + "'");
+    std::string ret("Unknown admin request: '" + what + "'");
     theResponse.setContent(ret);
     return false;
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -138,24 +127,24 @@ bool Plugin::request(SmartMet::Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestClusterInfo(SmartMet::Spine::Reactor &theReactor,
-                                const HTTP::Request & /* theRequest */,
-                                HTTP::Response &theResponse)
+bool Plugin::requestClusterInfo(Spine::Reactor &theReactor,
+                                const Spine::HTTP::Request & /* theRequest */,
+                                Spine::HTTP::Response &theResponse)
 {
   try
   {
-    ostringstream out;
+    std::ostringstream out;
 
     auto engine = theReactor.getSingleton("Sputnik", nullptr);
     if (!engine)
     {
-      out << "Sputnik engine is not available" << endl;
-      string response = out.str();
+      out << "Sputnik engine is not available" << std::endl;
+      std::string response = out.str();
       theResponse.setContent(response);
       return false;
     }
 
-    auto *sputnik = reinterpret_cast<SmartMet::Engine::Sputnik::Engine *>(engine);
+    auto *sputnik = reinterpret_cast<Engine::Sputnik::Engine *>(engine);
     sputnik->status(out);
 
     // Make MIME header
@@ -163,7 +152,7 @@ bool Plugin::requestClusterInfo(SmartMet::Spine::Reactor &theReactor,
     theResponse.setHeader("Content-Type", mime.c_str());
 
     // Set content
-    string ret = "<html><head><title>SmartMet Admin</title></head><body>";
+    std::string ret = "<html><head><title>SmartMet Admin</title></head><body>";
     ret += out.str();
     ret += "</body></html>";
     theResponse.setContent(ret);
@@ -172,7 +161,7 @@ bool Plugin::requestClusterInfo(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -182,15 +171,15 @@ bool Plugin::requestClusterInfo(SmartMet::Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestServiceInfo(SmartMet::Spine::Reactor &theReactor,
-                                const HTTP::Request & /* theRequest */,
-                                HTTP::Response &theResponse)
+bool Plugin::requestServiceInfo(Spine::Reactor &theReactor,
+                                const Spine::HTTP::Request & /* theRequest */,
+                                Spine::HTTP::Response &theResponse)
 {
   try
   {
     auto handlers = theReactor.getURIMap();
 
-    ostringstream out;
+    std::ostringstream out;
     out << "<h3>Services currently provided by this server</h3>" << std::endl;
     out << "<ol>" << std::endl;
     for (const auto &handler : handlers)
@@ -202,7 +191,7 @@ bool Plugin::requestServiceInfo(SmartMet::Spine::Reactor &theReactor,
     theResponse.setHeader("Content-Type", mime.c_str());
 
     // Set content
-    string ret = "<html><head><title>SmartMet Admin</title></head><body>";
+    std::string ret = "<html><head><title>SmartMet Admin</title></head><body>";
     ret += out.str();
     ret += "</body></html>";
     theResponse.setContent(ret);
@@ -211,7 +200,7 @@ bool Plugin::requestServiceInfo(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 // ----------------------------------------------------------------------
@@ -220,42 +209,42 @@ bool Plugin::requestServiceInfo(SmartMet::Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestReload(SmartMet::Spine::Reactor &theReactor,
-                           const HTTP::Request & /* theRequest */,
-                           HTTP::Response &theResponse)
+bool Plugin::requestReload(Spine::Reactor &theReactor,
+                           const Spine::HTTP::Request & /* theRequest */,
+                           Spine::HTTP::Response &theResponse)
 {
   try
   {
-    ostringstream out;
+    std::ostringstream out;
 
     auto engine = theReactor.getSingleton("Geonames", nullptr);
     if (!engine)
     {
-      out << "Geonames engine is not available" << endl;
-      string response = out.str();
+      out << "Geonames engine is not available" << std::endl;
+      std::string response = out.str();
       theResponse.setContent(response);
       return false;
     }
 
-    auto *geoengine = reinterpret_cast<SmartMet::Engine::Geonames::Engine *>(engine);
+    auto *geoengine = reinterpret_cast<Engine::Geonames::Engine *>(engine);
     time_t starttime = time(nullptr);
     if (!geoengine->reload())
     {
-      out << "GeoEngine reload failed: " << geoengine->errorMessage() << endl;
+      out << "GeoEngine reload failed: " << geoengine->errorMessage() << std::endl;
       theResponse.setContent(out.str());
       return false;
     }
 
     time_t endtime = time(nullptr);
     long secs = endtime - starttime;
-    out << "GeoEngine reloaded in " << secs << " seconds" << endl;
+    out << "GeoEngine reloaded in " << secs << " seconds" << std::endl;
 
     // Make MIME header
     std::string mime("text/html; charset=UTF-8");
     theResponse.setHeader("Content-Type", mime);
 
     // Set content
-    string ret = "<html><head><title>SmartMet Admin</title></head><body>";
+    std::string ret = "<html><head><title>SmartMet Admin</title></head><body>";
     ret += out.str();
     ret += "</body></html>";
     theResponse.setContent(ret);
@@ -264,7 +253,7 @@ bool Plugin::requestReload(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -274,32 +263,32 @@ bool Plugin::requestReload(SmartMet::Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestGeonames(SmartMet::Spine::Reactor &theReactor,
-                             const HTTP::Request &theRequest,
-                             HTTP::Response &theResponse)
+bool Plugin::requestGeonames(Spine::Reactor &theReactor,
+                             const Spine::HTTP::Request &theRequest,
+                             Spine::HTTP::Response &theResponse)
 {
   try
   {
-    ostringstream out;
-    string tableFormat =
-        SmartMet::Spine::optional_string(theRequest.getParameter("format"), "html");
+    std::ostringstream out;
+    std::string tableFormat = Spine::optional_string(theRequest.getParameter("format"), "html");
 
-    string dataType = SmartMet::Spine::optional_string(theRequest.getParameter("type"), "meta");
+    std::string dataType = Spine::optional_string(theRequest.getParameter("type"), "meta");
 
-    std::unique_ptr<TableFormatter> tableFormatter(TableFormatterFactory::create(tableFormat));
+    std::unique_ptr<Spine::TableFormatter> tableFormatter(
+        Spine::TableFormatterFactory::create(tableFormat));
 
     auto engine = theReactor.getSingleton("Geonames", nullptr);
     if (!engine)
     {
-      out << "Geonames engine is not available" << endl;
-      string response = out.str();
+      out << "Geonames engine is not available" << std::endl;
+      std::string response = out.str();
       theResponse.setContent(response);
       return false;
     }
 
-    auto *geoengine = reinterpret_cast<SmartMet::Engine::Geonames::Engine *>(engine);
+    auto *geoengine = reinterpret_cast<Engine::Geonames::Engine *>(engine);
 
-    SmartMet::Engine::Geonames::StatusReturnType status;
+    Engine::Geonames::StatusReturnType status;
 
     if (dataType == "meta")
     {
@@ -311,14 +300,15 @@ bool Plugin::requestGeonames(SmartMet::Spine::Reactor &theReactor,
     }
     else
     {
-      throw SmartMet::Spine::Exception(BCP, "Invalid value for request parameter \"type\".");
+      throw Spine::Exception(BCP, "Invalid value for request parameter \"type\".");
     }
 
     // Make MIME header
     std::string mime(tableFormatter->mimetype() + "; charset=UTF-8");
     theResponse.setHeader("Content-Type", mime);
 
-    tableFormatter->format(out, *status.first, status.second, theRequest, TableFormatterOptions());
+    tableFormatter->format(
+        out, *status.first, status.second, theRequest, Spine::TableFormatterOptions());
 
     // Set content
     std::string ret = out.str();
@@ -328,7 +318,7 @@ bool Plugin::requestGeonames(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -338,51 +328,50 @@ bool Plugin::requestGeonames(SmartMet::Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestQEngineStatus(SmartMet::Spine::Reactor &theReactor,
-                                  const HTTP::Request &theRequest,
-                                  HTTP::Response &theResponse)
+bool Plugin::requestQEngineStatus(Spine::Reactor &theReactor,
+                                  const Spine::HTTP::Request &theRequest,
+                                  Spine::HTTP::Response &theResponse)
 {
   try
   {
-    ostringstream out;
+    std::ostringstream out;
 
     // Get the Qengine
     auto engine = theReactor.getSingleton("Querydata", nullptr);
     if (!engine)
     {
-      out << "Querydata engine not available" << endl;
-      string response = out.str();
+      out << "Querydata engine not available" << std::endl;
+      std::string response = out.str();
       theResponse.setContent(response);
       return false;
     }
 
-    auto *qengine = reinterpret_cast<SmartMet::Engine::Querydata::Engine *>(engine);
+    auto *qengine = reinterpret_cast<Engine::Querydata::Engine *>(engine);
 
     // Parse formatting options
-    string tableFormat =
-        SmartMet::Spine::optional_string(theRequest.getParameter("format"), "debug");
-    string projectionFormat =
-        SmartMet::Spine::optional_string(theRequest.getParameter("projformat"), "newbase");
+    std::string tableFormat = Spine::optional_string(theRequest.getParameter("format"), "debug");
+    std::string projectionFormat =
+        Spine::optional_string(theRequest.getParameter("projformat"), "newbase");
 
     if (tableFormat == "wxml")
     {
       // Wxml not available
-      out << "Wxml formatting not supported" << endl;
-      string response = out.str();
+      out << "Wxml formatting not supported" << std::endl;
+      std::string response = out.str();
       theResponse.setContent(response);
       return false;
     }
 
-    string timeFormat =
-        SmartMet::Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
+    std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
 
-    std::pair<boost::shared_ptr<Table>, TableFormatter::Names> statusResult =
+    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> statusResult =
         qengine->getEngineContents(timeFormat, projectionFormat);
 
-    std::unique_ptr<TableFormatter> tableFormatter(TableFormatterFactory::create(tableFormat));
+    std::unique_ptr<Spine::TableFormatter> tableFormatter(
+        Spine::TableFormatterFactory::create(tableFormat));
 
     tableFormatter->format(
-        out, *statusResult.first, statusResult.second, theRequest, TableFormatterOptions());
+        out, *statusResult.first, statusResult.second, theRequest, Spine::TableFormatterOptions());
 
     std::string ret;
     if (tableFormat == "html")
@@ -415,7 +404,7 @@ bool Plugin::requestQEngineStatus(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -425,22 +414,22 @@ bool Plugin::requestQEngineStatus(SmartMet::Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestBackendInfo(SmartMet::Spine::Reactor &theReactor,
-                                const HTTP::Request &theRequest,
-                                HTTP::Response &theResponse)
+bool Plugin::requestBackendInfo(Spine::Reactor &theReactor,
+                                const Spine::HTTP::Request &theRequest,
+                                Spine::HTTP::Response &theResponse)
 {
   try
   {
-    ostringstream out;
+    std::ostringstream out;
 
-    string service = SmartMet::Spine::optional_string(theRequest.getParameter("service"), "");
-    string format = SmartMet::Spine::optional_string(theRequest.getParameter("format"), "debug");
+    std::string service = Spine::optional_string(theRequest.getParameter("service"), "");
+    std::string format = Spine::optional_string(theRequest.getParameter("format"), "debug");
 
     if (format == "wxml")
     {
       // Wxml not available
-      out << "Wxml formatting not supported" << endl;
-      string response = out.str();
+      out << "Wxml formatting not supported" << std::endl;
+      std::string response = out.str();
       theResponse.setContent(response);
       return false;
     }
@@ -448,23 +437,24 @@ bool Plugin::requestBackendInfo(SmartMet::Spine::Reactor &theReactor,
     auto engine = theReactor.getSingleton("Sputnik", nullptr);
     if (!engine)
     {
-      out << "Sputnik engine is not available" << endl;
-      string response = out.str();
+      out << "Sputnik engine is not available" << std::endl;
+      std::string response = out.str();
       theResponse.setContent(response);
       return false;
     }
 
-    auto *sputnik = reinterpret_cast<SmartMet::Engine::Sputnik::Engine *>(engine);
+    auto *sputnik = reinterpret_cast<Engine::Sputnik::Engine *>(engine);
 
-    boost::shared_ptr<Table> table = sputnik->backends(service);
+    boost::shared_ptr<Spine::Table> table = sputnik->backends(service);
 
-    boost::shared_ptr<TableFormatter> formatter(TableFormatterFactory::create(format));
-    TableFormatter::Names names;
+    boost::shared_ptr<Spine::TableFormatter> formatter(
+        Spine::TableFormatterFactory::create(format));
+    Spine::TableFormatter::Names names;
     names.push_back("Backend");
     names.push_back("IP");
     names.push_back("Port");
 
-    formatter->format(out, *table, names, theRequest, TableFormatterOptions());
+    formatter->format(out, *table, names, theRequest, Spine::TableFormatterOptions());
 
     sputnik->status(out);
 
@@ -474,7 +464,7 @@ bool Plugin::requestBackendInfo(SmartMet::Spine::Reactor &theReactor,
     theResponse.setHeader("Content-Type", mime);
 
     // Set content
-    string ret;
+    std::string ret;
     if (format == "html")
     {
       // Add html tags only when using human readable format
@@ -493,7 +483,7 @@ bool Plugin::requestBackendInfo(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -503,9 +493,9 @@ bool Plugin::requestBackendInfo(SmartMet::Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::setLogging(SmartMet::Spine::Reactor &theReactor,
-                        const HTTP::Request &theRequest,
-                        HTTP::Response & /* theResponse */)
+bool Plugin::setLogging(Spine::Reactor &theReactor,
+                        const Spine::HTTP::Request &theRequest,
+                        Spine::HTTP::Response & /* theResponse */)
 {
   try
   {
@@ -513,7 +503,7 @@ bool Plugin::setLogging(SmartMet::Spine::Reactor &theReactor,
     auto loggingFlag = theRequest.getParameter("status");
     if (loggingFlag)
     {
-      string flag = *loggingFlag;
+      std::string flag = *loggingFlag;
       // Logging status change requested
       if (flag == "enable")
       {
@@ -527,17 +517,17 @@ bool Plugin::setLogging(SmartMet::Spine::Reactor &theReactor,
       }
       else
       {
-        throw SmartMet::Spine::Exception(BCP, "Invalid logging parameter value: " + flag);
+        throw Spine::Exception(BCP, "Invalid logging parameter value: " + flag);
       }
     }
     else
     {
-      throw SmartMet::Spine::Exception(BCP, "Logging parameter value not set.");
+      throw Spine::Exception(BCP, "Logging parameter value not set.");
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -547,43 +537,39 @@ bool Plugin::setLogging(SmartMet::Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::getLogging(SmartMet::Spine::Reactor &theReactor,
-                        const HTTP::Request &theRequest,
-                        HTTP::Response &theResponse)
+bool Plugin::getLogging(Spine::Reactor &theReactor,
+                        const Spine::HTTP::Request &theRequest,
+                        Spine::HTTP::Response &theResponse)
 {
   try
   {
-    ostringstream out;
-    Table reqTable;
-    string format = SmartMet::Spine::optional_string(theRequest.getParameter("format"), "json");
-    std::unique_ptr<TableFormatter> formatter(TableFormatterFactory::create(format));
+    std::ostringstream out;
+    Spine::Table reqTable;
+    std::string format = Spine::optional_string(theRequest.getParameter("format"), "json");
+    std::unique_ptr<Spine::TableFormatter> formatter(Spine::TableFormatterFactory::create(format));
 
     bool isCurrentlyLogging = theReactor.getLogging();
 
     if (isCurrentlyLogging)
-    {
       reqTable.set(0, 0, "Enabled");
-    }
     else
-    {
       reqTable.set(0, 0, "Disabled");
-    }
 
-    vector<string> headers = {"LoggingStatus"};
-    formatter->format(out, reqTable, headers, theRequest, TableFormatterOptions());
+    std::vector<std::string> headers = {"LoggingStatus"};
+    formatter->format(out, reqTable, headers, theRequest, Spine::TableFormatterOptions());
 
     std::string mime = formatter->mimetype() + "; charset=UTF-8";
     theResponse.setHeader("Content-Type", mime);
 
     // Set content
-    string ret = out.str();
+    std::string ret = out.str();
     theResponse.setContent(ret);
 
     return true;
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -593,16 +579,16 @@ bool Plugin::getLogging(SmartMet::Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestLastRequests(SmartMet::Spine::Reactor &theReactor,
-                                 const HTTP::Request &theRequest,
-                                 HTTP::Response &theResponse)
+bool Plugin::requestLastRequests(Spine::Reactor &theReactor,
+                                 const Spine::HTTP::Request &theRequest,
+                                 Spine::HTTP::Response &theResponse)
 {
   try
   {
-    ostringstream out;
-    Table reqTable;
-    string format = SmartMet::Spine::optional_string(theRequest.getParameter("format"), "json");
-    std::unique_ptr<TableFormatter> formatter(TableFormatterFactory::create(format));
+    std::ostringstream out;
+    Spine::Table reqTable;
+    std::string format = Spine::optional_string(theRequest.getParameter("format"), "json");
+    std::unique_ptr<Spine::TableFormatter> formatter(Spine::TableFormatterFactory::create(format));
 
     auto givenMinutes = theRequest.getParameter("minutes");
     unsigned int minutes;
@@ -650,22 +636,22 @@ bool Plugin::requestLastRequests(SmartMet::Spine::Reactor &theReactor,
       }
     }
 
-    vector<string> headers = {"Time", "Duration", "RequestString"};
-    formatter->format(out, reqTable, headers, theRequest, TableFormatterOptions());
+    std::vector<std::string> headers = {"Time", "Duration", "RequestString"};
+    formatter->format(out, reqTable, headers, theRequest, Spine::TableFormatterOptions());
 
     // Set MIME
     std::string mime = formatter->mimetype() + "; charset=UTF-8";
     theResponse.setHeader("Content-Type", mime);
 
     // Set content
-    string ret = out.str();
+    std::string ret = out.str();
     theResponse.setContent(ret);
 
     return true;
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -675,16 +661,16 @@ bool Plugin::requestLastRequests(SmartMet::Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestActiveRequests(SmartMet::Spine::Reactor &theReactor,
-                                   const HTTP::Request &theRequest,
-                                   HTTP::Response &theResponse)
+bool Plugin::requestActiveRequests(Spine::Reactor &theReactor,
+                                   const Spine::HTTP::Request &theRequest,
+                                   Spine::HTTP::Response &theResponse)
 {
   try
   {
-    ostringstream out;
-    Table reqTable;
-    string format = SmartMet::Spine::optional_string(theRequest.getParameter("format"), "json");
-    std::unique_ptr<TableFormatter> formatter(TableFormatterFactory::create(format));
+    std::ostringstream out;
+    Spine::Table reqTable;
+    std::string format = Spine::optional_string(theRequest.getParameter("format"), "json");
+    std::unique_ptr<Spine::TableFormatter> formatter(Spine::TableFormatterFactory::create(format));
 
     // Obtain logging information
     auto requests = theReactor.getActiveRequests();
@@ -707,22 +693,22 @@ bool Plugin::requestActiveRequests(SmartMet::Spine::Reactor &theReactor,
       ++row;
     }
 
-    vector<string> headers = {"Id", "Time", "Duration", "RequestString"};
-    formatter->format(out, reqTable, headers, theRequest, TableFormatterOptions());
+    std::vector<std::string> headers = {"Id", "Time", "Duration", "RequestString"};
+    formatter->format(out, reqTable, headers, theRequest, Spine::TableFormatterOptions());
 
     // Set MIME
     std::string mime = formatter->mimetype() + "; charset=UTF-8";
     theResponse.setHeader("Content-Type", mime);
 
     // Set content
-    string ret = out.str();
+    std::string ret = out.str();
     theResponse.setContent(ret);
 
     return true;
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -732,9 +718,9 @@ bool Plugin::requestActiveRequests(SmartMet::Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestCacheSizes(SmartMet::Spine::Reactor &theReactor,
-                               const HTTP::Request &theRequest,
-                               HTTP::Response &theResponse)
+bool Plugin::requestCacheSizes(Spine::Reactor &theReactor,
+                               const Spine::HTTP::Request &theRequest,
+                               Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -745,7 +731,7 @@ bool Plugin::requestCacheSizes(SmartMet::Spine::Reactor &theReactor,
       return false;
     }
 
-    auto *cengine = static_cast<SmartMet::Engine::Contour::Engine *>(engine);
+    auto *cengine = static_cast<Engine::Contour::Engine *>(engine);
 
     engine = theReactor.getSingleton("Querydata", nullptr);
     if (!engine)
@@ -754,12 +740,12 @@ bool Plugin::requestCacheSizes(SmartMet::Spine::Reactor &theReactor,
       return false;
     }
 
-    auto *qengine = static_cast<SmartMet::Engine::Querydata::Engine *>(engine);
+    auto *qengine = static_cast<Engine::Querydata::Engine *>(engine);
 
-    ostringstream out;
-    Table reqTable;
-    string format = SmartMet::Spine::optional_string(theRequest.getParameter("format"), "json");
-    std::unique_ptr<TableFormatter> formatter(TableFormatterFactory::create(format));
+    std::ostringstream out;
+    Spine::Table reqTable;
+    std::string format = Spine::optional_string(theRequest.getParameter("format"), "json");
+    std::unique_ptr<Spine::TableFormatter> formatter(Spine::TableFormatterFactory::create(format));
 
     auto q_cache = qengine->getCacheSizes();
     auto c_cache = cengine->getCacheSizes();
@@ -780,7 +766,7 @@ bool Plugin::requestCacheSizes(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -790,27 +776,27 @@ bool Plugin::requestCacheSizes(SmartMet::Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestServiceStats(SmartMet::Spine::Reactor &theReactor,
-                                 const HTTP::Request &theRequest,
-                                 HTTP::Response &theResponse)
+bool Plugin::requestServiceStats(Spine::Reactor &theReactor,
+                                 const Spine::HTTP::Request &theRequest,
+                                 Spine::HTTP::Response &theResponse)
 {
   try
   {
-    static auto &Headers =
-        *new vector<string>{"Handler", "LastMinute", "LastHour", "Last24Hours", "AverageDuration"};
+    static auto &Headers = *new std::vector<std::string>{
+        "Handler", "LastMinute", "LastHour", "Last24Hours", "AverageDuration"};
 
-    ostringstream out;
+    std::ostringstream out;
 
-    stringstream formatstream;
+    std::stringstream formatstream;
 
-    Table statsTable;
+    Spine::Table statsTable;
 
-    string format = SmartMet::Spine::optional_string(theRequest.getParameter("format"), "json");
+    std::string format = Spine::optional_string(theRequest.getParameter("format"), "json");
 
-    std::unique_ptr<TableFormatter> formatter(TableFormatterFactory::create(format));
+    std::unique_ptr<Spine::TableFormatter> formatter(Spine::TableFormatterFactory::create(format));
 
     // Use system locale for numbers formatting
-    locale system_locale("");
+    std::locale system_locale("");
     formatstream.imbue(system_locale);
 
     auto currentRequests =
@@ -881,7 +867,7 @@ bool Plugin::requestServiceStats(SmartMet::Spine::Reactor &theReactor,
       ++column;
       formatstream.str("");
 
-      string msecs = average_and_format(total_microsecs, inDay);
+      std::string msecs = average_and_format(total_microsecs, inDay);
       statsTable.set(column, row, msecs);
 
       ++row;
@@ -908,24 +894,24 @@ bool Plugin::requestServiceStats(SmartMet::Spine::Reactor &theReactor,
     ++column;
     formatstream.str("");
 
-    string msecs = average_and_format(global_microsecs, total_day);
+    std::string msecs = average_and_format(global_microsecs, total_day);
     statsTable.set(column, row, msecs);
 
-    formatter->format(out, statsTable, Headers, theRequest, TableFormatterOptions());
+    formatter->format(out, statsTable, Headers, theRequest, Spine::TableFormatterOptions());
 
     // Set MIME
     std::string mime = formatter->mimetype() + "; charset=UTF-8";
     theResponse.setHeader("Content-Type", mime);
 
     // Set content
-    string ret = out.str();
+    std::string ret = out.str();
     theResponse.setContent(ret);
 
     return true;
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -935,9 +921,9 @@ bool Plugin::requestServiceStats(SmartMet::Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
-                            const HTTP::Request &theRequest,
-                            HTTP::Response &theResponse)
+void Plugin::requestHandler(Spine::Reactor &theReactor,
+                            const Spine::HTTP::Request &theRequest,
+                            Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -945,10 +931,7 @@ void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
     bool hasValidAuthentication = authenticateRequest(theRequest, theResponse);
 
     if (!hasValidAuthentication)
-    {
-      // Auhentication failure
-      return;
-    }
+      return;  // Auhentication failure
 
     try
     {
@@ -956,22 +939,18 @@ void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
       theResponse.setHeader("Access-Control-Allow-Origin", "*");
 
       const int expires_seconds = 1;
-      ptime t_now = second_clock::universal_time();
+      boost::posix_time::ptime t_now = boost::posix_time::second_clock::universal_time();
 
       bool response = request(theReactor, theRequest, theResponse);
 
       if (response)
-      {
-        theResponse.setStatus(HTTP::Status::ok);
-      }
+        theResponse.setStatus(Spine::HTTP::Status::ok);
       else
-      {
-        theResponse.setStatus(HTTP::Status::not_implemented);
-      }
+        theResponse.setStatus(Spine::HTTP::Status::not_implemented);
 
       // Adding response headers
 
-      ptime t_expires = t_now + seconds(expires_seconds);
+      boost::posix_time::ptime t_expires = t_now + boost::posix_time::seconds(expires_seconds);
       boost::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
       std::string cachecontrol = "public, max-age=" + std::to_string(expires_seconds);
       std::string expiration = tformat->format(t_expires);
@@ -1000,11 +979,11 @@ void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
     {
       // Catching all exceptions
 
-      SmartMet::Spine::Exception exception(BCP, "Request processing exception!", nullptr);
+      Spine::Exception exception(BCP, "Request processing exception!", nullptr);
       exception.addParameter("URI", theRequest.getURI());
       exception.printError();
 
-      theResponse.setStatus(HTTP::Status::bad_request);
+      theResponse.setStatus(Spine::HTTP::Status::bad_request);
 
       // Adding the first exception information into the response header
 
@@ -1016,7 +995,7 @@ void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1026,32 +1005,32 @@ void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-Plugin::Plugin(SmartMet::Spine::Reactor *theReactor, const char *theConfig)
+Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig)
     : SmartMetPlugin(), itsModuleName("Admin")
 {
   try
   {
     if (theReactor->getRequiredAPIVersion() != SMARTMET_API_VERSION)
-      throw SmartMet::Spine::Exception(BCP, "Admin plugin and Server API version mismatch");
+      throw Spine::Exception(BCP, "Admin plugin and Server API version mismatch");
 
     // Register the handler
     if (!theReactor->addContentHandler(
             this, "/admin", boost::bind(&Plugin::callRequestHandler, this, _1, _2, _3)))
-      throw SmartMet::Spine::Exception(BCP, "Failed to register admin content handler");
+      throw Spine::Exception(BCP, "Failed to register admin content handler");
 
     itsConfig.readFile(theConfig);
 
     // Password must be specified
     if (!itsConfig.exists("password"))
-      throw SmartMet::Spine::Exception(BCP, "Password not specified in the config file");
+      throw Spine::Exception(BCP, "Password not specified in the config file");
 
     // User must be specified
     if (!itsConfig.exists("user"))
-      throw SmartMet::Spine::Exception(BCP, "User not specified in the config file");
+      throw Spine::Exception(BCP, "User not specified in the config file");
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1067,17 +1046,17 @@ void Plugin::init() {}
  */
 // ----------------------------------------------------------------------
 
-bool isAuthenticationRequired(const HTTP::Request &theRequest)
+bool isAuthenticationRequired(const Spine::HTTP::Request &theRequest)
 {
   try
   {
-    string what = SmartMet::Spine::optional_string(theRequest.getParameter("what"), "");
+    std::string what = Spine::optional_string(theRequest.getParameter("what"), "");
 
     return (what == "reload");
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1097,7 +1076,8 @@ void Plugin::shutdown()
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::authenticateRequest(const HTTP::Request &theRequest, HTTP::Response &theResponse)
+bool Plugin::authenticateRequest(const Spine::HTTP::Request &theRequest,
+                                 Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -1109,55 +1089,46 @@ bool Plugin::authenticateRequest(const HTTP::Request &theRequest, HTTP::Response
       if (!isAuthenticationRequired(theRequest))
         return true;
 
-      theResponse.setStatus(HTTP::Status::unauthorized);
+      theResponse.setStatus(Spine::HTTP::Status::unauthorized);
       theResponse.setHeader("WWW-Authenticate", "Basic realm=\"SmartMet Admin\"");
       theResponse.setHeader("Content-Type", "text/html; charset=UTF-8");
 
-      string content = "<html><body><h1>401 Unauthorized </h1></body></html>";
+      std::string content = "<html><body><h1>401 Unauthorized </h1></body></html>";
       theResponse.setContent(content);
 
       return false;
     }
 
-    else
-    {
-      // Parse user and password
+    // Parse user and password
 
-      vector<string> splitHeader;
-      string truePassword, trueUser, trueDigest, givenDigest;
+    std::vector<std::string> splitHeader;
+    std::string truePassword, trueUser, trueDigest, givenDigest;
 
-      boost::algorithm::split(
-          splitHeader, *credentials, boost::is_any_of(" "), boost::token_compress_on);
+    boost::algorithm::split(
+        splitHeader, *credentials, boost::is_any_of(" "), boost::token_compress_on);
 
-      givenDigest = splitHeader[1];  // Second field in the header: ( Basic aHR0cHdhdGNoOmY= )
+    givenDigest = splitHeader[1];  // Second field in the header: ( Basic aHR0cHdhdGNoOmY= )
 
-      itsConfig.lookupValue("user", trueUser);          // user exists in config at this point
-      itsConfig.lookupValue("password", truePassword);  // password exists in config at this point
-      trueDigest = Fmi::Base64::encode(trueUser + ":" + truePassword);
+    itsConfig.lookupValue("user", trueUser);          // user exists in config at this point
+    itsConfig.lookupValue("password", truePassword);  // password exists in config at this point
+    trueDigest = Fmi::Base64::encode(trueUser + ":" + truePassword);
 
-      // Passwords match
-      if (trueDigest == givenDigest)
-      {
-        // Main handler can proceed
-        return true;
-      }
+    // Passwords match
+    if (trueDigest == givenDigest)
+      return true;  // // Main handler can proceed
 
-      // Wrong password, ask it again
-      else
-      {
-        theResponse.setStatus(HTTP::Status::unauthorized);
-        theResponse.setHeader("WWW-Authenticate", "Basic realm=\"SmartMet Admin\"");
-        theResponse.setHeader("Content-Type", "text/html; charset=UTF-8");
+    // Wrong password, ask it again
+    theResponse.setStatus(Spine::HTTP::Status::unauthorized);
+    theResponse.setHeader("WWW-Authenticate", "Basic realm=\"SmartMet Admin\"");
+    theResponse.setHeader("Content-Type", "text/html; charset=UTF-8");
 
-        string content = "<html><body><h1>401 Unauthorized </h1></body></html>";
-        theResponse.setContent(content);
-        return false;
-      }
-    }
+    std::string content = "<html><body><h1>401 Unauthorized </h1></body></html>";
+    theResponse.setContent(content);
+    return false;
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1197,7 +1168,7 @@ int Plugin::getRequiredAPIVersion() const
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::queryIsFast(const SmartMet::Spine::HTTP::Request & /* theRequest */) const
+bool Plugin::queryIsFast(const Spine::HTTP::Request & /* theRequest */) const
 {
   return true;
 }
@@ -1219,7 +1190,7 @@ extern "C" SmartMetPlugin *create(SmartMet::Spine::Reactor *them, const char *co
 extern "C" void destroy(SmartMetPlugin *us)
 {
   // This will call 'Plugin::~Plugin()' since the destructor is virtual
-  delete us;
+  delete us;  // NOLINT(cppcoreguidelines-owning-memory)
 }
 
 // ======================================================================
