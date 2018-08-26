@@ -1074,10 +1074,7 @@ bool isAuthenticationRequired(const HTTP::Request &theRequest)
   {
     string what = SmartMet::Spine::optional_string(theRequest.getParameter("what"), "");
 
-    if (what == "reload")
-      return true;
-
-    return false;
+    return (what == "reload");
   }
   catch (...)
   {
