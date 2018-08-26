@@ -956,9 +956,9 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       std::string expiration = tformat->format(t_expires);
       std::string modification = tformat->format(t_now);
 
-      theResponse.setHeader("Cache-Control", cachecontrol.c_str());
-      theResponse.setHeader("Expires", expiration.c_str());
-      theResponse.setHeader("Last-Modified", modification.c_str());
+      theResponse.setHeader("Cache-Control", cachecontrol);
+      theResponse.setHeader("Expires", expiration);
+      theResponse.setHeader("Last-Modified", modification);
 
       /* This will need some thought
              if(response.first.size() == 0)
@@ -990,7 +990,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       std::string firstMessage = exception.what();
       boost::algorithm::replace_all(firstMessage, "\n", " ");
       firstMessage = firstMessage.substr(0, 300);
-      theResponse.setHeader("X-Admin-Error", firstMessage.c_str());
+      theResponse.setHeader("X-Admin-Error", firstMessage);
     }
   }
   catch (...)
