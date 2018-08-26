@@ -973,8 +973,7 @@ void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
 
       ptime t_expires = t_now + seconds(expires_seconds);
       boost::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
-      std::string cachecontrol =
-          "public, max-age=" + boost::lexical_cast<std::string>(expires_seconds);
+      std::string cachecontrol = "public, max-age=" + std::to_string(expires_seconds);
       std::string expiration = tformat->format(t_expires);
       std::string modification = tformat->format(t_now);
 
