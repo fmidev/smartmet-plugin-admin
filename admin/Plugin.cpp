@@ -1005,8 +1005,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig)
-    : SmartMetPlugin(), itsModuleName("Admin")
+Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig) : itsModuleName("Admin")
 {
   try
   {
