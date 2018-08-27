@@ -608,7 +608,8 @@ bool Plugin::requestLastRequests(Spine::Reactor &theReactor,
       auto firstConsidered = std::find_if(
           it->second.begin(), it->second.end(), boost::bind(::isNotOld, firstValidTime, _1));
 
-      for (auto reqIt = firstConsidered; reqIt != it->second.end(); ++reqIt)
+      for (auto reqIt = firstConsidered; reqIt != it->second.end();
+           ++reqIt)  // NOLINT(modernize-loop-convert)
       {
         std::size_t column = 0;
 
@@ -814,7 +815,7 @@ bool Plugin::requestServiceStats(Spine::Reactor &theReactor,
       long total_microsecs = 0;
       // We go from newest to oldest
       for (auto listIter = requestPair->second.rbegin(); listIter != requestPair->second.rend();
-           ++listIter)
+           ++listIter)  // NOLINT(modernize-loop-convert)
       {
         auto sinceDuration = currentTime - listIter->getRequestEndTime();
         auto accessDuration = listIter->getAccessDuration();
