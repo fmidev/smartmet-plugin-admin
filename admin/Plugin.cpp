@@ -136,7 +136,7 @@ bool Plugin::requestClusterInfo(Spine::Reactor &theReactor,
     std::ostringstream out;
 
     auto engine = theReactor.getSingleton("Sputnik", nullptr);
-    if (!engine)
+    if (engine == nullptr)
     {
       out << "Sputnik engine is not available" << std::endl;
       std::string response = out.str();
@@ -218,7 +218,7 @@ bool Plugin::requestReload(Spine::Reactor &theReactor,
     std::ostringstream out;
 
     auto engine = theReactor.getSingleton("Geonames", nullptr);
-    if (!engine)
+    if (engine == nullptr)
     {
       out << "Geonames engine is not available" << std::endl;
       std::string response = out.str();
@@ -278,7 +278,7 @@ bool Plugin::requestGeonames(Spine::Reactor &theReactor,
         Spine::TableFormatterFactory::create(tableFormat));
 
     auto engine = theReactor.getSingleton("Geonames", nullptr);
-    if (!engine)
+    if (engine == nullptr)
     {
       out << "Geonames engine is not available" << std::endl;
       std::string response = out.str();
@@ -338,7 +338,7 @@ bool Plugin::requestQEngineStatus(Spine::Reactor &theReactor,
 
     // Get the Qengine
     auto engine = theReactor.getSingleton("Querydata", nullptr);
-    if (!engine)
+    if (engine == nullptr)
     {
       out << "Querydata engine not available" << std::endl;
       std::string response = out.str();
@@ -725,7 +725,7 @@ bool Plugin::requestCacheSizes(Spine::Reactor &theReactor,
   try
   {
     auto engine = theReactor.getSingleton("Contour", nullptr);
-    if (!engine)
+    if (engine == nullptr)
     {
       theResponse.setContent("Contour engine is not available");
       return false;
@@ -734,7 +734,7 @@ bool Plugin::requestCacheSizes(Spine::Reactor &theReactor,
     auto *cengine = static_cast<Engine::Contour::Engine *>(engine);
 
     engine = theReactor.getSingleton("Querydata", nullptr);
-    if (!engine)
+    if (engine == nullptr)
     {
       theResponse.setContent("Querydata engine is not available");
       return false;
