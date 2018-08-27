@@ -501,29 +501,22 @@ bool Plugin::setLogging(Spine::Reactor &theReactor,
   {
     // First parse if logging status change is requested
     auto loggingFlag = theRequest.getParameter("status");
-    if (loggingFlag)
-    {
-      std::string flag = *loggingFlag;
-      // Logging status change requested
-      if (flag == "enable")
-      {
-        theReactor.setLogging(true);
-        return true;
-      }
-      else if (flag == "disable")
-      {
-        theReactor.setLogging(false);
-        return true;
-      }
-      else
-      {
-        throw Spine::Exception(BCP, "Invalid logging parameter value: " + flag);
-      }
-    }
-    else
-    {
+    if (!loggingFlag)
       throw Spine::Exception(BCP, "Logging parameter value not set.");
+
+    std::string flag = *loggingFlag;
+    // Logging status change requested
+    if (flag == "enable")
+    {
+      theReactor.setLogging(true);
+      return true;
     }
+    if (flag == "disable")
+    {
+      theReactor.setLogging(false);
+      return true;
+    }
+    throw Spine::Exception(BCP, "Invalid logging parameter value: " + flag);
   }
   catch (...)
   {
