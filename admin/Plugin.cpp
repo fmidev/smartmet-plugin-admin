@@ -109,7 +109,7 @@ bool Plugin::request(Spine::Reactor &theReactor,
     // Unknown request,build response
     // Make MIME header
     std::string mime("text/html; charset=UTF-8");
-    theResponse.setHeader("Content-Type", mime.c_str());
+    theResponse.setHeader("Content-Type", mime);
 
     std::string ret("Unknown admin request: '" + what + "'");
     theResponse.setContent(ret);
@@ -149,7 +149,7 @@ bool Plugin::requestClusterInfo(Spine::Reactor &theReactor,
 
     // Make MIME header
     std::string mime("text/html; charset=UTF-8");
-    theResponse.setHeader("Content-Type", mime.c_str());
+    theResponse.setHeader("Content-Type", mime);
 
     // Set content
     std::string ret = "<html><head><title>SmartMet Admin</title></head><body>";
@@ -188,7 +188,7 @@ bool Plugin::requestServiceInfo(Spine::Reactor &theReactor,
 
     // Make MIME header
     std::string mime("text/html; charset=UTF-8");
-    theResponse.setHeader("Content-Type", mime.c_str());
+    theResponse.setHeader("Content-Type", mime);
 
     // Set content
     std::string ret = "<html><head><title>SmartMet Admin</title></head><body>";
@@ -397,7 +397,7 @@ bool Plugin::requestQEngineStatus(Spine::Reactor &theReactor,
     // Make MIME header and content
     std::string mime = tableFormatter->mimetype() + "; charset=UTF-8";
 
-    theResponse.setHeader("Content-Type", mime.c_str());
+    theResponse.setHeader("Content-Type", mime);
     theResponse.setContent(ret);
 
     return true;
