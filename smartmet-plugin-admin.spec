@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 18.8.27
+Version: 18.8.30
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -15,16 +15,16 @@ BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig-devel
 BuildRequires: smartmet-library-macgyver-devel >= 18.8.20
-BuildRequires: smartmet-library-spine-devel >= 18.8.20
+BuildRequires: smartmet-library-spine-devel >= 18.8.30
 BuildRequires: smartmet-engine-contour-devel
-BuildRequires: smartmet-engine-geonames-devel >= 18.8.26
+BuildRequires: smartmet-engine-geonames-devel >= 18.8.30
 BuildRequires: smartmet-engine-sputnik-devel >= 18.8.26
 BuildRequires: smartmet-engine-querydata-devel >= 18.8.20
 Requires: smartmet-library-macgyver >= 18.8.20
 Requires: libconfig
 Requires: smartmet-server >= 18.8.22
-Requires: smartmet-library-spine >= 18.8.20
-Requires: smartmet-engine-geonames >= 18.8.26
+Requires: smartmet-library-spine >= 18.8.30
+Requires: smartmet-engine-geonames >= 18.8.30
 Requires: smartmet-engine-sputnik >= 18.8.26
 Requires: smartmet-engine-querydata >= 18.8.20
 Provides: %{SPECNAME}
@@ -54,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Thu Aug 30 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.8.30-1.fmi
+- Silenced CodeChecker warnings
+
 * Mon Aug 27 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.8.27-1.fmi
 - Silenced CodeChecker warnings
 
