@@ -602,13 +602,12 @@ bool Plugin::requestLastRequests(Spine::Reactor &theReactor,
         boost::posix_time::second_clock::local_time() - boost::posix_time::minutes(minutes);
 
     std::size_t row = 0;
-    for (auto it = std::get<1>(currentRequests).begin(); it != std::get<1>(currentRequests).end();
-         ++it)
+    for (const auto &req : std::get<1>(currentRequests))
     {
       auto firstConsidered = std::find_if(
-          it->second.begin(), it->second.end(), boost::bind(::isNotOld, firstValidTime, _1));
+          req.second.begin(), req.second.end(), boost::bind(::isNotOld, firstValidTime, _1));
 
-      for (auto reqIt = firstConsidered; reqIt != it->second.end();
+      for (auto reqIt = firstConsidered; reqIt != req.second.end();
            ++reqIt)  // NOLINT(modernize-loop-convert)
       {
         std::size_t column = 0;
@@ -804,9 +803,7 @@ bool Plugin::requestServiceStats(Spine::Reactor &theReactor,
     unsigned long total_day = 0;
     long global_microsecs = 0;
 
-    for (auto requestPair = std::get<1>(currentRequests).begin();
-         requestPair != std::get<1>(currentRequests).end();
-         ++requestPair)
+    for (const auto &reqpair : std::get<1>(currentRequests))
     {
       // Lets calculate how many hits we have in minute,hour and day and since start
       unsigned long inMinute = 0;
@@ -814,7 +811,7 @@ bool Plugin::requestServiceStats(Spine::Reactor &theReactor,
       unsigned long inDay = 0;
       long total_microsecs = 0;
       // We go from newest to oldest
-      for (auto listIter = requestPair->second.rbegin(); listIter != requestPair->second.rend();
+      for (auto listIter = reqpair.second.rbegin(); listIter != reqpair.second.rend();
            ++listIter)  // NOLINT(modernize-loop-convert)
       {
         auto sinceDuration = currentTime - listIter->getRequestEndTime();
@@ -843,7 +840,7 @@ bool Plugin::requestServiceStats(Spine::Reactor &theReactor,
 
       std::size_t column = 0;
 
-      statsTable.set(column, row, requestPair->first);
+      statsTable.set(column, row, reqpair.first);
       ++column;
 
       formatstream << inMinute;
