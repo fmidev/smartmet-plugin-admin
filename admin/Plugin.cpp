@@ -435,7 +435,7 @@ bool Plugin::requestBackendInfo(Spine::Reactor &theReactor,
     }
 
     auto engine = theReactor.getSingleton("Sputnik", nullptr);
-    if (!engine)
+    if (engine == nullptr)
     {
       out << "Sputnik engine is not available" << std::endl;
       std::string response = out.str();
