@@ -15,6 +15,7 @@
 #include <engines/sputnik/Engine.h>
 #include <macgyver/Base64.h>
 #include <macgyver/StringConversion.h>
+#include <macgyver/TimeParser.h>
 #include <spine/Convenience.h>
 #include <spine/SmartMet.h>
 #include <spine/Table.h>
@@ -105,6 +106,10 @@ bool Plugin::request(Spine::Reactor &theReactor,
       return requestCacheSizes(theReactor, theRequest, theResponse);
     if (what == "activerequests")
       return requestActiveRequests(theReactor, theRequest, theResponse);
+    if (what == "pause")
+      return setPause(theReactor, theRequest, theResponse);
+    if (what == "continue")
+      return setContinue(theReactor, theRequest, theResponse);
 
     // Unknown request,build response
     // Make MIME header
@@ -908,6 +913,100 @@ bool Plugin::requestServiceStats(Spine::Reactor &theReactor,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Request a pause
+ */
+// ----------------------------------------------------------------------
+
+bool Plugin::setPause(Spine::Reactor &theReactor,
+                      const Spine::HTTP::Request &theRequest,
+                      Spine::HTTP::Response &theResponse)
+{
+  try
+  {
+    theResponse.setHeader("Content-Type", "text/plain");
+
+    auto *engine = theReactor.getSingleton("Sputnik", nullptr);
+    if (!engine)
+    {
+      theResponse.setContent("No Sputnik process to pause");
+      return true;
+    }
+
+    auto *sputnik = reinterpret_cast<Engine::Sputnik::Engine *>(engine);
+
+    // Optional deadline or duration:
+
+    auto time_opt = theRequest.getParameter("time");
+
+    if (time_opt)
+    {
+      auto deadline = Fmi::TimeParser::parse(*time_opt);
+      sputnik->setPauseUntil(deadline);
+      theResponse.setContent("Paused Sputnik until " + Fmi::to_iso_string(deadline));
+    }
+    else
+    {
+      sputnik->setPause();
+      theResponse.setContent("Paused Sputnik until a continue request arrives");
+    }
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Request a continue
+ */
+// ----------------------------------------------------------------------
+
+bool Plugin::setContinue(Spine::Reactor &theReactor,
+                         const Spine::HTTP::Request &theRequest,
+                         Spine::HTTP::Response &theResponse)
+{
+  try
+  {
+    theResponse.setHeader("Content-Type", "text/plain");
+
+    auto *engine = theReactor.getSingleton("Sputnik", nullptr);
+    if (!engine)
+    {
+      theResponse.setContent("No Sputnik process to continue");
+      return true;
+    }
+
+    auto *sputnik = reinterpret_cast<Engine::Sputnik::Engine *>(engine);
+
+    // Optional deadline or duration:
+
+    auto time_opt = theRequest.getParameter("time");
+
+    if (time_opt)
+    {
+      auto deadline = Fmi::TimeParser::parse(*time_opt);
+      sputnik->setPauseUntil(deadline);
+      theResponse.setContent("Paused Sputnik until " + Fmi::to_iso_string(deadline));
+    }
+    else
+    {
+      sputnik->setContinue();
+      theResponse.setContent("Sputnik continue request made");
+    }
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Main content handler
  */
 // ----------------------------------------------------------------------
@@ -1042,7 +1141,14 @@ bool isAuthenticationRequired(const Spine::HTTP::Request &theRequest)
   {
     std::string what = Spine::optional_string(theRequest.getParameter("what"), "");
 
-    return (what == "reload");
+    if (what == "reload")
+      return true;
+    if (what == "pause")
+      return true;
+    if (what == "continue")
+      return true;
+
+    return false;
   }
   catch (...)
   {

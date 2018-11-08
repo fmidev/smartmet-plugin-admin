@@ -86,6 +86,15 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                          const SmartMet::Spine::HTTP::Request& theRequest,
                          SmartMet::Spine::HTTP::Response& theResponse);
 
+  bool setPause(SmartMet::Spine::Reactor& theReactor,
+                const SmartMet::Spine::HTTP::Request& theRequest,
+                SmartMet::Spine::HTTP::Response& theResponse);
+
+  bool setContinue(SmartMet::Spine::Reactor& theReactor,
+                   const SmartMet::Spine::HTTP::Request& theRequest,
+                   SmartMet::Spine::HTTP::Response& theResponse);
+
+  
   bool setLogging(SmartMet::Spine::Reactor& theReactor,
                   const SmartMet::Spine::HTTP::Request& theRequest,
                   SmartMet::Spine::HTTP::Response& theResponse);
