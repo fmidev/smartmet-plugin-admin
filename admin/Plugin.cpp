@@ -937,10 +937,18 @@ bool Plugin::setPause(Spine::Reactor &theReactor,
     // Optional deadline or duration:
 
     auto time_opt = theRequest.getParameter("time");
+    auto duration_opt = theRequest.getParameter("duration");
 
     if (time_opt)
     {
       auto deadline = Fmi::TimeParser::parse(*time_opt);
+      sputnik->setPauseUntil(deadline);
+      theResponse.setContent("Paused Sputnik until " + Fmi::to_iso_string(deadline));
+    }
+    else if (duration_opt)
+    {
+      auto duration = Fmi::TimeParser::parse_duration(*duration_opt);
+      auto deadline = boost::posix_time::second_clock::universal_time() + duration;
       sputnik->setPauseUntil(deadline);
       theResponse.setContent("Paused Sputnik until " + Fmi::to_iso_string(deadline));
     }
@@ -984,10 +992,18 @@ bool Plugin::setContinue(Spine::Reactor &theReactor,
     // Optional deadline or duration:
 
     auto time_opt = theRequest.getParameter("time");
+    auto duration_opt = theRequest.getParameter("duration");
 
     if (time_opt)
     {
       auto deadline = Fmi::TimeParser::parse(*time_opt);
+      sputnik->setPauseUntil(deadline);
+      theResponse.setContent("Paused Sputnik until " + Fmi::to_iso_string(deadline));
+    }
+    else if (duration_opt)
+    {
+      auto duration = Fmi::TimeParser::parse_duration(*duration_opt);
+      auto deadline = boost::posix_time::second_clock::universal_time() + duration;
       sputnik->setPauseUntil(deadline);
       theResponse.setContent("Paused Sputnik until " + Fmi::to_iso_string(deadline));
     }
