@@ -12,7 +12,6 @@
 #include <engines/contour/Engine.h>
 #include <engines/geonames/Engine.h>
 #include <engines/querydata/Engine.h>
-#include <engines/sputnik/Engine.h>
 #include <macgyver/Base64.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
@@ -138,19 +137,14 @@ bool Plugin::requestClusterInfo(Spine::Reactor &theReactor,
 {
   try
   {
-    std::ostringstream out;
-
-    auto engine = theReactor.getSingleton("Sputnik", nullptr);
-    if (engine == nullptr)
+    if (itsSputnik == nullptr)
     {
-      out << "Sputnik engine is not available" << std::endl;
-      std::string response = out.str();
-      theResponse.setContent(response);
+      theResponse.setContent("Sputnik engine is not available");
       return false;
     }
 
-    auto *sputnik = reinterpret_cast<Engine::Sputnik::Engine *>(engine);
-    sputnik->status(out);
+    std::ostringstream out;
+    itsSputnik->status(out);
 
     // Make MIME header
     std::string mime("text/html; charset=UTF-8");
@@ -439,8 +433,7 @@ bool Plugin::requestBackendInfo(Spine::Reactor &theReactor,
       return false;
     }
 
-    auto engine = theReactor.getSingleton("Sputnik", nullptr);
-    if (engine == nullptr)
+    if (itsSputnik == nullptr)
     {
       out << "Sputnik engine is not available" << std::endl;
       std::string response = out.str();
@@ -448,9 +441,7 @@ bool Plugin::requestBackendInfo(Spine::Reactor &theReactor,
       return false;
     }
 
-    auto *sputnik = reinterpret_cast<Engine::Sputnik::Engine *>(engine);
-
-    boost::shared_ptr<Spine::Table> table = sputnik->backends(service);
+    boost::shared_ptr<Spine::Table> table = itsSputnik->backends(service);
 
     boost::shared_ptr<Spine::TableFormatter> formatter(
         Spine::TableFormatterFactory::create(format));
@@ -461,7 +452,7 @@ bool Plugin::requestBackendInfo(Spine::Reactor &theReactor,
 
     formatter->format(out, *table, names, theRequest, Spine::TableFormatterOptions());
 
-    sputnik->status(out);
+    itsSputnik->status(out);
 
     // Make MIME header
 
@@ -925,14 +916,11 @@ bool Plugin::setPause(Spine::Reactor &theReactor,
   {
     theResponse.setHeader("Content-Type", "text/plain");
 
-    auto *engine = theReactor.getSingleton("Sputnik", nullptr);
-    if (!engine)
+    if (itsSputnik == nullptr)
     {
       theResponse.setContent("No Sputnik process to pause");
       return true;
     }
-
-    auto *sputnik = reinterpret_cast<Engine::Sputnik::Engine *>(engine);
 
     // Optional deadline or duration:
 
@@ -942,19 +930,19 @@ bool Plugin::setPause(Spine::Reactor &theReactor,
     if (time_opt)
     {
       auto deadline = Fmi::TimeParser::parse(*time_opt);
-      sputnik->setPauseUntil(deadline);
+      itsSputnik->setPauseUntil(deadline);
       theResponse.setContent("Paused Sputnik until " + Fmi::to_iso_string(deadline));
     }
     else if (duration_opt)
     {
       auto duration = Fmi::TimeParser::parse_duration(*duration_opt);
       auto deadline = boost::posix_time::second_clock::universal_time() + duration;
-      sputnik->setPauseUntil(deadline);
+      itsSputnik->setPauseUntil(deadline);
       theResponse.setContent("Paused Sputnik until " + Fmi::to_iso_string(deadline));
     }
     else
     {
-      sputnik->setPause();
+      itsSputnik->setPause();
       theResponse.setContent("Paused Sputnik until a continue request arrives");
     }
 
@@ -980,14 +968,11 @@ bool Plugin::setContinue(Spine::Reactor &theReactor,
   {
     theResponse.setHeader("Content-Type", "text/plain");
 
-    auto *engine = theReactor.getSingleton("Sputnik", nullptr);
-    if (!engine)
+    if (itsSputnik == nullptr)
     {
       theResponse.setContent("No Sputnik process to continue");
       return true;
     }
-
-    auto *sputnik = reinterpret_cast<Engine::Sputnik::Engine *>(engine);
 
     // Optional deadline or duration:
 
@@ -997,19 +982,19 @@ bool Plugin::setContinue(Spine::Reactor &theReactor,
     if (time_opt)
     {
       auto deadline = Fmi::TimeParser::parse(*time_opt);
-      sputnik->setPauseUntil(deadline);
+      itsSputnik->setPauseUntil(deadline);
       theResponse.setContent("Paused Sputnik until " + Fmi::to_iso_string(deadline));
     }
     else if (duration_opt)
     {
       auto duration = Fmi::TimeParser::parse_duration(*duration_opt);
       auto deadline = boost::posix_time::second_clock::universal_time() + duration;
-      sputnik->setPauseUntil(deadline);
+      itsSputnik->setPauseUntil(deadline);
       theResponse.setContent("Paused Sputnik until " + Fmi::to_iso_string(deadline));
     }
     else
     {
-      sputnik->setContinue();
+      itsSputnik->setContinue();
       theResponse.setContent("Sputnik continue request made");
     }
 
@@ -1118,11 +1103,6 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig) : itsModuleNam
     if (theReactor->getRequiredAPIVersion() != SMARTMET_API_VERSION)
       throw Spine::Exception(BCP, "Admin plugin and Server API version mismatch");
 
-    // Register the handler
-    if (!theReactor->addContentHandler(
-            this, "/admin", boost::bind(&Plugin::callRequestHandler, this, _1, _2, _3)))
-      throw Spine::Exception(BCP, "Failed to register admin content handler");
-
     itsConfig.readFile(theConfig);
 
     // Password must be specified
@@ -1132,6 +1112,16 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig) : itsModuleNam
     // User must be specified
     if (!itsConfig.exists("user"))
       throw Spine::Exception(BCP, "User not specified in the config file");
+
+    // Get Sputnik if available
+    auto engine = theReactor->getSingleton("Sputnik", nullptr);
+    if (engine != nullptr)
+      itsSputnik = reinterpret_cast<Engine::Sputnik::Engine *>(engine);
+
+    // Register the handler
+    if (!theReactor->addContentHandler(
+            this, "/admin", boost::bind(&Plugin::callRequestHandler, this, _1, _2, _3)))
+      throw Spine::Exception(BCP, "Failed to register admin content handler");
   }
   catch (...)
   {

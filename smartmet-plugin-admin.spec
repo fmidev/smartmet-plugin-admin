@@ -3,7 +3,7 @@
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
 Version: 18.12.13
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-admin
@@ -15,7 +15,7 @@ BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig-devel
 BuildRequires: smartmet-library-macgyver-devel >= 18.11.24
-BuildRequires: smartmet-library-spine-devel >= 18.12.4
+BuildRequires: smartmet-library-spine-devel >= 18.12.13
 BuildRequires: smartmet-engine-contour-devel
 BuildRequires: smartmet-engine-geonames-devel >= 18.12.4
 BuildRequires: smartmet-engine-sputnik-devel >= 18.12.4
@@ -23,9 +23,8 @@ BuildRequires: smartmet-engine-querydata-devel >= 18.12.4
 Requires: smartmet-library-macgyver >= 18.11.24
 Requires: libconfig
 Requires: smartmet-server >= 18.11.8
-Requires: smartmet-library-spine >= 18.12.4
+Requires: smartmet-library-spine >= 18.12.13
 Requires: smartmet-engine-geonames >= 18.12.4
-Requires: smartmet-engine-sputnik >= 18.12.4
 Requires: smartmet-engine-querydata >= 18.12.4
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
@@ -54,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Thu Dec 13 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.12.13-2.fmi
+- Removed explicit dependency on Sputnik-engine, requests will print error if not available
+
 * Thu Dec 13 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.12.13-1.fmi
 - Added duration option for continue/pause requests
 

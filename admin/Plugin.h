@@ -6,6 +6,7 @@
 
 #pragma once
 #include <boost/utility.hpp>
+#include <engines/sputnik/Engine.h>
 #include <spine/HTTP.h>
 #include <spine/Reactor.h>
 #include <spine/SmartMetPlugin.h>
@@ -94,7 +95,6 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                    const SmartMet::Spine::HTTP::Request& theRequest,
                    SmartMet::Spine::HTTP::Response& theResponse);
 
-  
   bool setLogging(SmartMet::Spine::Reactor& theReactor,
                   const SmartMet::Spine::HTTP::Request& theRequest,
                   SmartMet::Spine::HTTP::Response& theResponse);
@@ -109,6 +109,8 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
   const std::string itsModuleName;
 
   libconfig::Config itsConfig;
+
+  SmartMet::Engine::Sputnik::Engine* itsSputnik = nullptr;
 
 };  // class Plugin
 
