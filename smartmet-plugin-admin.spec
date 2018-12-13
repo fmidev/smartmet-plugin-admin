@@ -14,19 +14,19 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig-devel
-BuildRequires: smartmet-library-macgyver-devel >= 18.9.29
-BuildRequires: smartmet-library-spine-devel >= 18.11.5
+BuildRequires: smartmet-library-macgyver-devel >= 18.11.24
+BuildRequires: smartmet-library-spine-devel >= 18.12.4
 BuildRequires: smartmet-engine-contour-devel
-BuildRequires: smartmet-engine-geonames-devel >= 18.9.29
-BuildRequires: smartmet-engine-sputnik-devel >= 18.11.8
-BuildRequires: smartmet-engine-querydata-devel >= 18.10.19
-Requires: smartmet-library-macgyver >= 18.9.29
+BuildRequires: smartmet-engine-geonames-devel >= 18.12.4
+BuildRequires: smartmet-engine-sputnik-devel >= 18.12.4
+BuildRequires: smartmet-engine-querydata-devel >= 18.12.4
+Requires: smartmet-library-macgyver >= 18.11.24
 Requires: libconfig
 Requires: smartmet-server >= 18.11.8
-Requires: smartmet-library-spine >= 18.11.5
-Requires: smartmet-engine-geonames >= 18.9.29
-Requires: smartmet-engine-sputnik >= 18.11.8
-Requires: smartmet-engine-querydata >= 18.10.19
+Requires: smartmet-library-spine >= 18.12.4
+Requires: smartmet-engine-geonames >= 18.12.4
+Requires: smartmet-engine-sputnik >= 18.12.4
+Requires: smartmet-engine-querydata >= 18.12.4
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
@@ -56,6 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Dec 13 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.12.13-1.fmi
 - Added duration option for continue/pause requests
+
+* Tue Dec  4 2018 Pertti Kinnia <pertti.kinnia@fmi.fi> - 18.12.4-1.fmi
+- Repackaged since Spine::Table size changed
 
 * Thu Nov  8 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.11.8-1.fmi
 - Added what=pause, what=pause&time=XXX and what=continue requests
