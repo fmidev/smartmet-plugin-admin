@@ -11,6 +11,7 @@
 #include <boost/locale.hpp>
 #include <engines/contour/Engine.h>
 #include <engines/geonames/Engine.h>
+#include <engines/observation/Engine.h>
 #include <engines/querydata/Engine.h>
 #include <macgyver/Base64.h>
 #include <macgyver/StringConversion.h>
@@ -95,6 +96,8 @@ bool Plugin::request(Spine::Reactor &theReactor,
       return requestBackendInfo(theReactor, theRequest, theResponse);
     if (what == "servicestats")
       return requestServiceStats(theReactor, theRequest, theResponse);
+    if (what == "producers")
+      return requestProducerInfo(theReactor, theRequest, theResponse);
     if (what == "setlogging")
       return setLogging(theReactor, theRequest, theResponse);
     if (what == "getlogging")
@@ -398,6 +401,67 @@ bool Plugin::requestQEngineStatus(Spine::Reactor &theReactor,
 
     theResponse.setHeader("Content-Type", mime);
     theResponse.setContent(ret);
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Perform producer query
+ */
+// ----------------------------------------------------------------------
+
+bool Plugin::requestProducerInfo(Spine::Reactor &theReactor,
+                                 const Spine::HTTP::Request &theRequest,
+                                 Spine::HTTP::Response &theResponse)
+{
+  try
+  {
+    std::ostringstream out;
+
+    out << "<html><head>"
+           "<title>SmartMet Admin</title>"
+           "</head><body>";
+
+    out << "<h1>Querydata producers provided by this server</h1>" << std::endl;
+
+    auto engine = theReactor.getSingleton("Querydata", nullptr);
+    if (engine == nullptr)
+      out << "<p>None</p>";
+    else
+    {
+      auto *qengine = reinterpret_cast<Engine::Querydata::Engine *>(engine);
+      auto qproducers = qengine->producers();
+      out << "<ol>";
+      for (const auto &name : qproducers)
+        out << "<li>" << name << "</li>";
+      out << "</ol>";
+    }
+
+    out << "<h1>Observation producers provided by this server</h1>" << std::endl;
+
+    engine = theReactor.getSingleton("Observation", nullptr);
+    if (engine == nullptr)
+      out << "<p>None</p>";
+    else
+    {
+      auto *obsengine = reinterpret_cast<Engine::Observation::Engine *>(engine);
+      out << "<ol>";
+      auto oproducers = obsengine->getValidStationTypes();
+      for (const auto &name : oproducers)
+        out << "<li>" << name << "</li>";
+      out << "</ol>";
+    }
+
+    out << "</body></html>";
+
+    theResponse.setHeader("Content-Type", "text/html");
+    theResponse.setContent(out.str());
 
     return true;
   }

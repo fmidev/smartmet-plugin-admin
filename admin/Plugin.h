@@ -87,6 +87,10 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                          const SmartMet::Spine::HTTP::Request& theRequest,
                          SmartMet::Spine::HTTP::Response& theResponse);
 
+  bool requestProducerInfo(SmartMet::Spine::Reactor& theReactor,
+                           const SmartMet::Spine::HTTP::Request& theRequest,
+                           SmartMet::Spine::HTTP::Response& theResponse);
+
   bool setPause(SmartMet::Spine::Reactor& theReactor,
                 const SmartMet::Spine::HTTP::Request& theRequest,
                 SmartMet::Spine::HTTP::Response& theResponse);
@@ -110,7 +114,7 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
 
   libconfig::Config itsConfig;
 
-  SmartMet::Engine::Sputnik::Engine* itsSputnik = nullptr;
+  Engine::Sputnik::Engine* itsSputnik = nullptr;
 
 };  // class Plugin
 

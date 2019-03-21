@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 19.2.28
+Version: 19.3.21
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -15,15 +15,16 @@ BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig-devel
 BuildRequires: smartmet-library-macgyver-devel >= 18.11.24
-BuildRequires: smartmet-library-spine-devel >= 19.2.28
+BuildRequires: smartmet-library-spine-devel >= 19.3.14
 BuildRequires: smartmet-engine-contour-devel
 BuildRequires: smartmet-engine-geonames-devel >= 19.2.26
 BuildRequires: smartmet-engine-sputnik-devel >= 18.12.4
 BuildRequires: smartmet-engine-querydata-devel >= 19.2.8
+BuildRequires: smartmet-engine-observation-devel >= 19.3.18
 Requires: smartmet-library-macgyver >= 18.11.24
 Requires: libconfig
-Requires: smartmet-server >= 18.12.14
-Requires: smartmet-library-spine >= 19.2.28
+Requires: smartmet-server >= 19.3.19
+Requires: smartmet-library-spine >= 19.3.14
 Requires: smartmet-engine-geonames >= 19.2.26
 Requires: smartmet-engine-querydata >= 19.2.8
 Provides: %{SPECNAME}
@@ -53,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Thu Mar 21 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.3.21-1.fmi
+- Added possibility to list producers
+
 * Thu Feb 28 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.2.28-1.fmi
 - Added client IP to active requests report
 
