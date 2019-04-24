@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 19.3.21
+Version: 19.4.25
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -15,7 +15,7 @@ BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig-devel
 BuildRequires: smartmet-library-macgyver-devel >= 18.11.24
-BuildRequires: smartmet-library-spine-devel >= 19.3.14
+BuildRequires: smartmet-library-spine-devel >= 19.4.25
 BuildRequires: smartmet-engine-contour-devel
 BuildRequires: smartmet-engine-geonames-devel >= 19.2.26
 BuildRequires: smartmet-engine-sputnik-devel >= 18.12.4
@@ -24,7 +24,7 @@ BuildRequires: smartmet-engine-observation-devel >= 19.3.18
 Requires: smartmet-library-macgyver >= 18.11.24
 Requires: libconfig
 Requires: smartmet-server >= 19.3.19
-Requires: smartmet-library-spine >= 19.3.14
+Requires: smartmet-library-spine >= 19.4.25
 Requires: smartmet-engine-geonames >= 19.2.26
 Requires: smartmet-engine-querydata >= 19.2.8
 Provides: %{SPECNAME}
@@ -54,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Thu Apr 25 2019 Andris Pavenis <andris.pavenis@fmi.fi> - 19.4.25-1.fmi
+- Use SmartMet::Spine::HTTP::Authentication instead of own implementation
+
 * Thu Mar 21 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.3.21-1.fmi
 - Added possibility to list producers
 

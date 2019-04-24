@@ -8,6 +8,7 @@
 #include <boost/utility.hpp>
 #include <engines/sputnik/Engine.h>
 #include <spine/HTTP.h>
+#include <spine/HTTPAuthentication.h>
 #include <spine/Reactor.h>
 #include <spine/SmartMetPlugin.h>
 #include <libconfig.h++>
@@ -23,7 +24,10 @@ namespace Admin
 {
 class PluginImpl;
 
-class Plugin : public SmartMetPlugin, private boost::noncopyable
+class Plugin
+  : public SmartMetPlugin
+  , private SmartMet::Spine::HTTP::Authentication
+  , private boost::noncopyable
 {
  public:
   Plugin(SmartMet::Spine::Reactor* theReactor, const char* theConfig);
@@ -39,6 +43,10 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
   void requestHandler(SmartMet::Spine::Reactor& theReactor,
                       const SmartMet::Spine::HTTP::Request& theRequest,
                       SmartMet::Spine::HTTP::Response& theResponse);
+
+  bool isAuthenticationRequired(const Spine::HTTP::Request &theRequest) const override;
+
+  std::string getRealm() const override;
 
  private:
   Plugin();
@@ -106,9 +114,6 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
   bool getLogging(SmartMet::Spine::Reactor& theReactor,
                   const SmartMet::Spine::HTTP::Request& theRequest,
                   SmartMet::Spine::HTTP::Response& theResponse);
-
-  bool authenticateRequest(const SmartMet::Spine::HTTP::Request& theRequest,
-                           SmartMet::Spine::HTTP::Response& theResponse);
 
   const std::string itsModuleName;
 
