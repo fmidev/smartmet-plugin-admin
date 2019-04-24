@@ -1208,7 +1208,7 @@ void Plugin::init() {}
  */
 // ----------------------------------------------------------------------
 
-bool isAuthenticationRequired(const Spine::HTTP::Request &theRequest)
+bool Plugin::isAuthenticationRequired(const Spine::HTTP::Request &theRequest) const
 {
   try
   {
@@ -1231,6 +1231,16 @@ bool isAuthenticationRequired(const Spine::HTTP::Request &theRequest)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Returns authentication realm name
+ */
+// ----------------------------------------------------------------------
+std::string Plugin::getRealm() const
+{
+  return "SmartMet Admin";
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Shutdown the plugin
  */
 // ----------------------------------------------------------------------
@@ -1238,67 +1248,6 @@ bool isAuthenticationRequired(const Spine::HTTP::Request &theRequest)
 void Plugin::shutdown()
 {
   std::cout << "  -- Shutdown requested (admin)\n";
-}
-// ----------------------------------------------------------------------
-/*!
- * \brief Authenticates the request
- */
-// ----------------------------------------------------------------------
-
-bool Plugin::authenticateRequest(const Spine::HTTP::Request &theRequest,
-                                 Spine::HTTP::Response &theResponse)
-{
-  try
-  {
-    auto credentials = theRequest.getHeader("Authorization");
-
-    if (!credentials)
-    {
-      // Does not have authentication, lets ask for it if necessary
-      if (!isAuthenticationRequired(theRequest))
-        return true;
-
-      theResponse.setStatus(Spine::HTTP::Status::unauthorized);
-      theResponse.setHeader("WWW-Authenticate", "Basic realm=\"SmartMet Admin\"");
-      theResponse.setHeader("Content-Type", "text/html; charset=UTF-8");
-
-      std::string content = "<html><body><h1>401 Unauthorized </h1></body></html>";
-      theResponse.setContent(content);
-
-      return false;
-    }
-
-    // Parse user and password
-
-    std::vector<std::string> splitHeader;
-    std::string truePassword, trueUser, trueDigest, givenDigest;
-
-    boost::algorithm::split(
-        splitHeader, *credentials, boost::is_any_of(" "), boost::token_compress_on);
-
-    givenDigest = splitHeader[1];  // Second field in the header: ( Basic aHR0cHdhdGNoOmY= )
-
-    itsConfig.lookupValue("user", trueUser);          // user exists in config at this point
-    itsConfig.lookupValue("password", truePassword);  // password exists in config at this point
-    trueDigest = Fmi::Base64::encode(trueUser + ":" + truePassword);
-
-    // Passwords match
-    if (trueDigest == givenDigest)
-      return true;  // // Main handler can proceed
-
-    // Wrong password, ask it again
-    theResponse.setStatus(Spine::HTTP::Status::unauthorized);
-    theResponse.setHeader("WWW-Authenticate", "Basic realm=\"SmartMet Admin\"");
-    theResponse.setHeader("Content-Type", "text/html; charset=UTF-8");
-
-    std::string content = "<html><body><h1>401 Unauthorized </h1></body></html>";
-    theResponse.setContent(content);
-    return false;
-  }
-  catch (...)
-  {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
-  }
 }
 
 // ----------------------------------------------------------------------
