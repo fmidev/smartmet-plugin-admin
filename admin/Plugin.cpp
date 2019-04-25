@@ -1185,6 +1185,11 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig) : itsModuleNam
     if (engine != nullptr)
       itsSputnik = reinterpret_cast<Engine::Sputnik::Engine *>(engine);
 
+    std::string truePassword, trueUser;
+    itsConfig.lookupValue("user", trueUser);          // user exists in config at this point
+    itsConfig.lookupValue("password", truePassword);  // password exists in config at this point
+    addUser(trueUser, truePassword);
+
     // Register the handler
     if (!theReactor->addContentHandler(
             this, "/admin", boost::bind(&Plugin::callRequestHandler, this, _1, _2, _3)))
