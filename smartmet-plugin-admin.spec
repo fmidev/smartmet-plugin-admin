@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 19.4.25
+Version: 19.8.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -14,19 +14,19 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig-devel
-BuildRequires: smartmet-library-macgyver-devel >= 18.11.24
-BuildRequires: smartmet-library-spine-devel >= 19.4.25
+BuildRequires: smartmet-library-macgyver-devel >= 19.8.2
+BuildRequires: smartmet-library-spine-devel >= 19.8.14
 BuildRequires: smartmet-engine-contour-devel
-BuildRequires: smartmet-engine-geonames-devel >= 19.2.26
+BuildRequires: smartmet-engine-geonames-devel >= 19.8.9
 BuildRequires: smartmet-engine-sputnik-devel >= 18.12.4
-BuildRequires: smartmet-engine-querydata-devel >= 19.2.8
-BuildRequires: smartmet-engine-observation-devel >= 19.3.18
-Requires: smartmet-library-macgyver >= 18.11.24
+BuildRequires: smartmet-engine-querydata-devel >= 19.8.6
+BuildRequires: smartmet-engine-observation-devel >= 19.8.5
+Requires: smartmet-library-macgyver >= 19.8.2
 Requires: libconfig
-Requires: smartmet-server >= 19.3.19
-Requires: smartmet-library-spine >= 19.4.25
-Requires: smartmet-engine-geonames >= 19.2.26
-Requires: smartmet-engine-querydata >= 19.2.8
+Requires: smartmet-server >= 19.8.9
+Requires: smartmet-library-spine >= 19.8.14
+Requires: smartmet-engine-geonames >= 19.8.9
+Requires: smartmet-engine-querydata >= 19.8.6
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
@@ -54,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Wed Aug 14 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.8.14-1.fmi
+- Rewrote request log handler to use the new log objects
+
 * Thu Apr 25 2019 Andris Pavenis <andris.pavenis@fmi.fi> - 19.4.25-1.fmi
 - Use SmartMet::Spine::HTTP::Authentication instead of own implementation
 

@@ -656,9 +656,9 @@ bool Plugin::requestLastRequests(Spine::Reactor &theReactor,
 
     // Obtain logging information
     auto currentRequests =
-        theReactor.getLoggedRequests();  // This is type tuple<bool,RequestMap,posix_time>
+        theReactor.getLoggedRequests();  // This is type tuple<bool,LogRange,posix_time>
 
-    boost::posix_time::ptime firstValidTime =
+    auto firstValidTime =
         boost::posix_time::second_clock::local_time() - boost::posix_time::minutes(minutes);
 
     std::size_t row = 0;
@@ -855,7 +855,7 @@ bool Plugin::requestServiceStats(Spine::Reactor &theReactor,
     formatstream.imbue(system_locale);
 
     auto currentRequests =
-        theReactor.getLoggedRequests();  // This is type tuple<bool,RequestMap,posix_time>
+        theReactor.getLoggedRequests();  // This is type tuple<bool,LogRange,posix_time>
 
     auto currentTime = boost::posix_time::microsec_clock::local_time();
 
@@ -873,30 +873,30 @@ bool Plugin::requestServiceStats(Spine::Reactor &theReactor,
       unsigned long inDay = 0;
       long total_microsecs = 0;
       // We go from newest to oldest
-      for (auto listIter = reqpair.second.rbegin(); listIter != reqpair.second.rend();
-           ++listIter)  // NOLINT(modernize-loop-convert)
+
+      for (const auto &item : reqpair.second)
       {
-        auto sinceDuration = currentTime - listIter->getRequestEndTime();
-        auto accessDuration = listIter->getAccessDuration();
+        auto sinceDuration = currentTime - item.getRequestEndTime();
+        auto accessDuration = item.getAccessDuration();
 
         total_microsecs += accessDuration.total_microseconds();
 
         global_microsecs += accessDuration.total_microseconds();
 
-        if (sinceDuration < boost::posix_time::minutes(1))
-        {
-          ++inMinute;
-          ++total_minute;
-        }
-        if (sinceDuration < boost::posix_time::hours(1))
-        {
-          ++inHour;
-          ++total_hour;
-        }
         if (sinceDuration < boost::posix_time::hours(24))
         {
           ++inDay;
           ++total_day;
+          if (sinceDuration < boost::posix_time::hours(1))
+          {
+            ++inHour;
+            ++total_hour;
+            if (sinceDuration < boost::posix_time::minutes(1))
+            {
+              ++inMinute;
+              ++total_minute;
+            }
+          }
         }
       }
 
