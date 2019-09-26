@@ -34,7 +34,7 @@ DEFINES = -DUNIX -D_REENTRANT
 ifeq ($(CXX), clang++)
 
  FLAGS = \
-	-std=c++11 -fPIC -MD \
+	-std=c++11 -fPIC -MD -fsanitize=thread \
 	-Weverything \
 	-Wno-c++98-compat \
 	-Wno-float-equal \
@@ -67,6 +67,13 @@ else
 	-I$(includedir)/smartmet \
 	-I$(includedir)/mysql
 
+endif
+
+ifeq ($(TSAN), yes)
+  FLAGS += -fsanitize=thread
+endif
+ifeq ($(ASAN), yes)
+  FLAGS += -fsanitize=address -fsanitize=pointer-compare -fsanitize=pointer-subtract -fsanitize=undefined -fsanitize-address-use-after-scope
 endif
 
 # Compile options in detault, debug and profile modes
