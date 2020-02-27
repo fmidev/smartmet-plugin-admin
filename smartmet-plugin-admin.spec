@@ -15,18 +15,18 @@ BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig-devel
 BuildRequires: smartmet-library-macgyver-devel >= 20.2.27
-BuildRequires: smartmet-library-spine-devel >= 20.2.13
+BuildRequires: smartmet-library-spine-devel >= 20.2.26
 BuildRequires: smartmet-engine-contour-devel
-BuildRequires: smartmet-engine-geonames-devel >= 20.2.14
+BuildRequires: smartmet-engine-geonames-devel >= 19.12.5
 BuildRequires: smartmet-engine-sputnik-devel >= 19.9.26
-BuildRequires: smartmet-engine-querydata-devel >= 20.2.13
+BuildRequires: smartmet-engine-querydata-devel >= 20.1.30
 BuildRequires: smartmet-engine-observation-devel >= 20.2.20
 Requires: smartmet-library-macgyver >= 20.2.27
 Requires: libconfig
 Requires: smartmet-server >= 20.2.13
-Requires: smartmet-library-spine >= 20.2.13
-Requires: smartmet-engine-geonames >= 20.2.14
-Requires: smartmet-engine-querydata >= 20.2.13
+Requires: smartmet-library-spine >= 20.2.26
+Requires: smartmet-engine-geonames >= 19.12.5
+Requires: smartmet-engine-querydata >= 20.1.30
 Requires: smartmet-engine-sputnik >= 19.9.26
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
