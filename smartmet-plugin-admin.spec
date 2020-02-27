@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 20.2.10
+Version: 20.2.27
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -14,19 +14,19 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig-devel
-BuildRequires: smartmet-library-macgyver-devel >= 20.2.5
-BuildRequires: smartmet-library-spine-devel >= 20.2.7
+BuildRequires: smartmet-library-macgyver-devel >= 20.2.27
+BuildRequires: smartmet-library-spine-devel >= 20.2.13
 BuildRequires: smartmet-engine-contour-devel
-BuildRequires: smartmet-engine-geonames-devel >= 19.12.5
+BuildRequires: smartmet-engine-geonames-devel >= 20.2.14
 BuildRequires: smartmet-engine-sputnik-devel >= 19.9.26
-BuildRequires: smartmet-engine-querydata-devel >= 20.1.30
-BuildRequires: smartmet-engine-observation-devel >= 20.2.9
-Requires: smartmet-library-macgyver >= 20.2.5
+BuildRequires: smartmet-engine-querydata-devel >= 20.2.13
+BuildRequires: smartmet-engine-observation-devel >= 20.2.20
+Requires: smartmet-library-macgyver >= 20.2.27
 Requires: libconfig
-Requires: smartmet-server >= 20.1.15
-Requires: smartmet-library-spine >= 20.2.7
-Requires: smartmet-engine-geonames >= 19.12.5
-Requires: smartmet-engine-querydata >= 20.1.30
+Requires: smartmet-server >= 20.2.13
+Requires: smartmet-library-spine >= 20.2.13
+Requires: smartmet-engine-geonames >= 20.2.14
+Requires: smartmet-engine-querydata >= 20.2.13
 Requires: smartmet-engine-sputnik >= 19.9.26
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Thu Feb 27 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.27-1.fmi
+- The content handler is now private, and thus not visible to any frontends
+
 * Mon Feb 10 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.10-1.fmi
 - Added sputnik RPM dependency
 

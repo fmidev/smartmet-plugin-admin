@@ -1191,7 +1191,7 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig) : itsModuleNam
     addUser(trueUser, truePassword);
 
     // Register the handler
-    if (!theReactor->addContentHandler(
+    if (!theReactor->addPrivateContentHandler(
             this, "/admin", boost::bind(&Plugin::callRequestHandler, this, _1, _2, _3)))
       throw Spine::Exception(BCP, "Failed to register admin content handler");
   }
