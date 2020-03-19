@@ -350,6 +350,9 @@ bool Plugin::requestQEngineStatus(Spine::Reactor &theReactor,
 
     auto *qengine = reinterpret_cast<Engine::Querydata::Engine *>(engine);
 
+    // Optional producer filter
+    std::string producer = Spine::optional_string(theRequest.getParameter("producer"), "");
+
     // Parse formatting options
     std::string tableFormat = Spine::optional_string(theRequest.getParameter("format"), "debug");
     std::string projectionFormat =
@@ -367,7 +370,7 @@ bool Plugin::requestQEngineStatus(Spine::Reactor &theReactor,
     std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
 
     std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> statusResult =
-        qengine->getEngineContents(timeFormat, projectionFormat);
+        qengine->getEngineContents(producer, timeFormat, projectionFormat);
 
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
