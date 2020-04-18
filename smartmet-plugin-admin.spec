@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 20.3.19
+Version: 20.4.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -12,22 +12,22 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
-BuildRequires: boost-devel
+BuildRequires: boost169-devel
 BuildRequires: libconfig-devel
-BuildRequires: smartmet-library-macgyver-devel >= 20.3.5
-BuildRequires: smartmet-library-spine-devel >= 20.3.9
+BuildRequires: smartmet-library-macgyver-devel >= 20.4.18
+BuildRequires: smartmet-library-spine-devel >= 20.4.18
 BuildRequires: smartmet-engine-contour-devel
-BuildRequires: smartmet-engine-geonames-devel >= 19.12.5
-BuildRequires: smartmet-engine-sputnik-devel >= 19.9.26
-BuildRequires: smartmet-engine-querydata-devel >= 20.3.19
-BuildRequires: smartmet-engine-observation-devel >= 20.3.18
-Requires: smartmet-library-macgyver >= 20.3.5
+BuildRequires: smartmet-engine-geonames-devel >= 20.4.18
+BuildRequires: smartmet-engine-sputnik-devel >= 20.4.18
+BuildRequires: smartmet-engine-querydata-devel >= 20.4.18
+BuildRequires: smartmet-engine-observation-devel >= 20.4.18
+Requires: smartmet-library-macgyver >= 20.4.18
 Requires: libconfig
-Requires: smartmet-server >= 20.2.13
-Requires: smartmet-library-spine >= 20.3.9
-Requires: smartmet-engine-geonames >= 19.12.5
-Requires: smartmet-engine-querydata >= 20.3.19
-Requires: smartmet-engine-sputnik >= 19.9.26
+Requires: smartmet-server >= 20.4.18
+Requires: smartmet-library-spine >= 20.4.18
+Requires: smartmet-engine-geonames >= 20.4.18
+Requires: smartmet-engine-querydata >= 20.4.18
+Requires: smartmet-engine-sputnik >= 20.4.18
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Sat Apr 18 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.4.18-1.fmi
+- Upgraded to Boost 1.69
+
 * Thu Mar 19 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.3.19-1.fmi
 - Added possibility to filter repo contents based on the producer name (BRAINSTORM-1794)
 
