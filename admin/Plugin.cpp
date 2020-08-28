@@ -112,6 +112,8 @@ bool Plugin::request(Spine::Reactor &theReactor,
       return setPause(theReactor, theRequest, theResponse);
     if (what == "continue")
       return setContinue(theReactor, theRequest, theResponse);
+    if (what == "reloadstations")
+      return requestLoadStations(theReactor, theRequest, theResponse);
 
     // Unknown request,build response
     // Make MIME header
@@ -250,6 +252,37 @@ bool Plugin::requestReload(Spine::Reactor &theReactor,
     ret += out.str();
     ret += "</body></html>";
     theResponse.setContent(ret);
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Perform a reloadstations query
+ */
+// ----------------------------------------------------------------------
+
+bool Plugin::requestLoadStations(Spine::Reactor &theReactor,
+                                 const Spine::HTTP::Request & /* theRequest */,
+                                 Spine::HTTP::Response &theResponse)
+{
+  try
+  {
+    auto engine = theReactor.getSingleton("Observation", nullptr);
+    if (engine == nullptr)
+    {
+      theResponse.setContent("Observation engine is not available");
+      return false;
+    }
+
+    auto *obsengine = reinterpret_cast<Engine::Observation::Engine *>(engine);
+
+    obsengine->reloadStations();
 
     return true;
   }

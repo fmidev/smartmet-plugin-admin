@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 20.8.21
+Version: 20.8.28
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -20,7 +20,7 @@ BuildRequires: smartmet-engine-contour-devel
 BuildRequires: smartmet-engine-geonames-devel >= 20.8.21
 BuildRequires: smartmet-engine-sputnik-devel >= 20.8.21
 BuildRequires: smartmet-engine-querydata-devel >= 20.8.21
-BuildRequires: smartmet-engine-observation-devel >= 20.8.21
+BuildRequires: smartmet-engine-observation-devel >= 20.8.28
 Requires: smartmet-library-macgyver >= 20.8.21
 Requires: libconfig
 Requires: smartmet-server >= 20.8.21
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Fri Aug 28 2020 Anssi Reponen <anssi.reponen@fmi.fi> - 20.8.28-1.fmi
+- Added "reloadstations" option to reload stations from database in observation engine
+
 * Fri Aug 21 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.21-1.fmi
 - Upgrade to fmt 6.2
 
