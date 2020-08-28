@@ -24,10 +24,9 @@ namespace Admin
 {
 class PluginImpl;
 
-class Plugin
-  : public SmartMetPlugin
-  , private SmartMet::Spine::HTTP::Authentication
-  , private boost::noncopyable
+class Plugin : public SmartMetPlugin,
+               private SmartMet::Spine::HTTP::Authentication,
+               private boost::noncopyable
 {
  public:
   Plugin(SmartMet::Spine::Reactor* theReactor, const char* theConfig);
@@ -44,7 +43,7 @@ class Plugin
                       const SmartMet::Spine::HTTP::Request& theRequest,
                       SmartMet::Spine::HTTP::Response& theResponse);
 
-  bool isAuthenticationRequired(const Spine::HTTP::Request &theRequest) const override;
+  bool isAuthenticationRequired(const Spine::HTTP::Request& theRequest) const override;
 
   std::string getRealm() const override;
 
@@ -98,6 +97,10 @@ class Plugin
   bool requestProducerInfo(SmartMet::Spine::Reactor& theReactor,
                            const SmartMet::Spine::HTTP::Request& theRequest,
                            SmartMet::Spine::HTTP::Response& theResponse);
+
+  bool requestLoadStations(Spine::Reactor& theReactor,
+                           const Spine::HTTP::Request& theRequest,
+                           Spine::HTTP::Response& theResponse);
 
   bool setPause(SmartMet::Spine::Reactor& theReactor,
                 const SmartMet::Spine::HTTP::Request& theRequest,
