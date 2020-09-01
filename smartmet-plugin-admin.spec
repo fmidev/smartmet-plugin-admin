@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 20.8.28
+Version: 20.9.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -14,17 +14,17 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: libconfig-devel
-BuildRequires: smartmet-library-macgyver-devel >= 20.8.21
-BuildRequires: smartmet-library-spine-devel >= 20.8.21
+BuildRequires: smartmet-library-macgyver-devel >= 20.8.31
+BuildRequires: smartmet-library-spine-devel >= 20.8.26
 BuildRequires: smartmet-engine-contour-devel
 BuildRequires: smartmet-engine-geonames-devel >= 20.8.21
 BuildRequires: smartmet-engine-sputnik-devel >= 20.8.21
 BuildRequires: smartmet-engine-querydata-devel >= 20.8.21
-BuildRequires: smartmet-engine-observation-devel >= 20.8.28
-Requires: smartmet-library-macgyver >= 20.8.21
+BuildRequires: smartmet-engine-observation-devel >= 20.9.1
+Requires: smartmet-library-macgyver >= 20.8.31
 Requires: libconfig
-Requires: smartmet-server >= 20.8.21
-Requires: smartmet-library-spine >= 20.8.21
+Requires: smartmet-server >= 20.8.25
+Requires: smartmet-library-spine >= 20.8.26
 Requires: smartmet-engine-geonames >= 20.8.21
 Requires: smartmet-engine-querydata >= 20.8.21
 Requires: smartmet-engine-sputnik >= 20.8.21
@@ -55,7 +55,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
-* Fri Aug 28 2020 Anssi Reponen <anssi.reponen@fmi.fi> - 20.8.28-1.fmi
+* Tue Sep  1 2020 Anssi Reponen <anssi.reponen@fmi.fi> - 20.9.1-1.fmi
 - Added "reloadstations" option to reload stations from database in observation engine
 
 * Fri Aug 21 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.21-1.fmi
