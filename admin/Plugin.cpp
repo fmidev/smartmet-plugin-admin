@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "Plugin.h"
+
 #include <boost/algorithm/string.hpp>
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
@@ -17,10 +18,12 @@
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
 #include <spine/Convenience.h>
+#include <spine/FmiApiKey.h>
 #include <spine/SmartMet.h>
 #include <spine/Table.h>
 #include <spine/TableFormatterFactory.h>
 #include <spine/TableFormatterOptions.h>
+
 #include <iomanip>
 #include <iostream>
 #include <locale>
@@ -775,16 +778,21 @@ bool Plugin::requestActiveRequests(Spine::Reactor &theReactor,
 
       auto duration = now - time;
 
+      const bool check_access_token = true;
+      auto apikey = Spine::FmiApiKey::getFmiApiKey(req, check_access_token);
+
       std::size_t column = 0;
       reqTable.set(column++, row, Fmi::to_string(id));
       reqTable.set(column++, row, Fmi::to_iso_extended_string(time.time_of_day()));
       reqTable.set(column++, row, Fmi::to_string(duration.total_milliseconds() / 1000.0));
       reqTable.set(column++, row, req.getClientIP());
+      reqTable.set(column++, row, apikey ? *apikey : "-");
       reqTable.set(column++, row, req.getURI());
       ++row;
     }
 
-    std::vector<std::string> headers = {"Id", "Time", "Duration", "ClientIP", "RequestString"};
+    std::vector<std::string> headers = {
+        "Id", "Time", "Duration", "ClientIP", "Apikey", "RequestString"};
     formatter->format(out, reqTable, headers, theRequest, Spine::TableFormatterOptions());
 
     // Set MIME

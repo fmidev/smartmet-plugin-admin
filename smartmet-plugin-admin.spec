@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 20.9.1
+Version: 20.9.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Thu Sep 10 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.10-1.fmi
+- Added apikey to activerequests output
+
 * Tue Sep  1 2020 Anssi Reponen <anssi.reponen@fmi.fi> - 20.9.1-1.fmi
 - Added "reloadstations" option to reload stations from database in observation engine
 
