@@ -1214,6 +1214,11 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig) : itsModuleNam
     if (theReactor->getRequiredAPIVersion() != SMARTMET_API_VERSION)
       throw Fmi::Exception(BCP, "Admin plugin and Server API version mismatch");
 
+    // Enable sensible relative include paths
+    boost::filesystem::path p = theConfig;
+    p.remove_filename();
+    itsConfig.setIncludeDir(p.c_str());
+    
     itsConfig.readFile(theConfig);
 
     // Password must be specified
