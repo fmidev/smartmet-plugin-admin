@@ -186,22 +186,20 @@ bool Plugin::requestServiceInfo(Spine::Reactor &theReactor,
   {
     auto handlers = theReactor.getURIMap();
 
-    std::ostringstream out;
-    out << "<h3>Services currently provided by this server</h3>" << std::endl;
-    out << "<ol>" << std::endl;
+    std::string out = "<html><head><title>SmartMet Admin</title></head><body>\n"
+                      "<h3>Services currently provided by this server</h3>\n"
+                      "<ol>\n";
     for (const auto &handler : handlers)
-      out << "<li>" << handler.first << "</li>" << std::endl;
-    out << "</ol>" << std::endl;
+      out += "<li>" + handler.first + "</li>\n";
+    out += "</ol>\n";
+    out += "</body></html>";
 
     // Make MIME header
     std::string mime("text/html; charset=UTF-8");
     theResponse.setHeader("Content-Type", mime);
 
     // Set content
-    std::string ret = "<html><head><title>SmartMet Admin</title></head><body>";
-    ret += out.str();
-    ret += "</body></html>";
-    theResponse.setContent(ret);
+    theResponse.setContent(out);
 
     return true;
   }
@@ -222,14 +220,12 @@ bool Plugin::requestReload(Spine::Reactor &theReactor,
 {
   try
   {
-    std::ostringstream out;
+    std::string out = "<html><head><title>SmartMet Admin</title></head><body>";
 
     auto engine = theReactor.getSingleton("Geonames", nullptr);
     if (engine == nullptr)
     {
-      out << "Geonames engine is not available" << std::endl;
-      std::string response = out.str();
-      theResponse.setContent(response);
+      theResponse.setContent("Geonames engine is not available");
       return false;
     }
 
@@ -237,24 +233,27 @@ bool Plugin::requestReload(Spine::Reactor &theReactor,
     time_t starttime = time(nullptr);
     if (!geoengine->reload())
     {
-      out << "GeoEngine reload failed: " << geoengine->errorMessage() << std::endl;
-      theResponse.setContent(out.str());
+      out += "GeoEngine reload failed: ";
+      out += geoengine->errorMessage();
+      out += "\n";
+      theResponse.setContent(out);
       return false;
     }
 
     time_t endtime = time(nullptr);
     long secs = endtime - starttime;
-    out << "GeoEngine reloaded in " << secs << " seconds" << std::endl;
+    out += "GeoEngine reloaded in ";
+    out += Fmi::to_string(secs);
+    out += " seconds\n";
 
+    out += "</body></html>";
+    
     // Make MIME header
     std::string mime("text/html; charset=UTF-8");
     theResponse.setHeader("Content-Type", mime);
 
     // Set content
-    std::string ret = "<html><head><title>SmartMet Admin</title></head><body>";
-    ret += out.str();
-    ret += "</body></html>";
-    theResponse.setContent(ret);
+    theResponse.setContent(out);
 
     return true;
   }
@@ -307,7 +306,6 @@ bool Plugin::requestGeonames(Spine::Reactor &theReactor,
 {
   try
   {
-    std::ostringstream out;
     std::string tableFormat = Spine::optional_string(theRequest.getParameter("format"), "html");
 
     std::string dataType = Spine::optional_string(theRequest.getParameter("type"), "meta");
@@ -318,8 +316,7 @@ bool Plugin::requestGeonames(Spine::Reactor &theReactor,
     auto engine = theReactor.getSingleton("Geonames", nullptr);
     if (engine == nullptr)
     {
-      out << "Geonames engine is not available" << std::endl;
-      std::string response = out.str();
+      std::string response = "Geonames engine is not available";
       theResponse.setContent(response);
       return false;
     }
@@ -345,11 +342,10 @@ bool Plugin::requestGeonames(Spine::Reactor &theReactor,
     std::string mime(tableFormatter->mimetype() + "; charset=UTF-8");
     theResponse.setHeader("Content-Type", mime);
 
-    tableFormatter->format(
-        out, *status.first, status.second, theRequest, Spine::TableFormatterOptions());
+    auto out = tableFormatter->format(*status.first, status.second, theRequest, Spine::TableFormatterOptions());
 
     // Set content
-    std::string ret = out.str();
+    std::string ret = out;
     theResponse.setContent(ret);
 
     return true;
@@ -372,14 +368,11 @@ bool Plugin::requestQEngineStatus(Spine::Reactor &theReactor,
 {
   try
   {
-    std::ostringstream out;
-
     // Get the Qengine
     auto engine = theReactor.getSingleton("Querydata", nullptr);
     if (engine == nullptr)
     {
-      out << "Querydata engine not available" << std::endl;
-      std::string response = out.str();
+      std::string response = "Querydata engine not available";
       theResponse.setContent(response);
       return false;
     }
@@ -396,9 +389,7 @@ bool Plugin::requestQEngineStatus(Spine::Reactor &theReactor,
 
     if (tableFormat == "wxml")
     {
-      // Wxml not available
-      out << "Wxml formatting not supported" << std::endl;
-      std::string response = out.str();
+      std::string response = "Wxml formatting not supported";
       theResponse.setContent(response);
       return false;
     }
@@ -411,14 +402,14 @@ bool Plugin::requestQEngineStatus(Spine::Reactor &theReactor,
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
 
-    tableFormatter->format(
-        out, *statusResult.first, statusResult.second, theRequest, Spine::TableFormatterOptions());
+    auto out  = tableFormatter->format(*statusResult.first, statusResult.second, theRequest, Spine::TableFormatterOptions());
 
-    std::string ret;
-    if (tableFormat == "html")
+    if(tableFormat != "html")
+      theResponse.setContent(out);
+    else
     {
       // Only insert tags if using human readable mode
-      ret =
+      std::string ret =
           "<html><head>"
           "<title>SmartMet Admin</title>"
           "<style>"
@@ -427,19 +418,15 @@ bool Plugin::requestQEngineStatus(Spine::Reactor &theReactor,
           "</style>"
           "</head><body>"
           "<h1>QEngine Memory Mapped Files</h1>";
-      ret += out.str();
+      ret += out;
       ret += "</body></html>";
-    }
-    else
-    {
-      ret = out.str();
+      theResponse.setContent(ret);
     }
 
     // Make MIME header and content
     std::string mime = tableFormatter->mimetype() + "; charset=UTF-8";
 
     theResponse.setHeader("Content-Type", mime);
-    theResponse.setContent(ret);
 
     return true;
   }
@@ -461,46 +448,44 @@ bool Plugin::requestProducerInfo(Spine::Reactor &theReactor,
 {
   try
   {
-    std::ostringstream out;
-
-    out << "<html><head>"
-           "<title>SmartMet Admin</title>"
-           "</head><body>";
-
-    out << "<h1>Querydata producers provided by this server</h1>" << std::endl;
+    std::string ret = "<html><head>"
+                      "<title>SmartMet Admin</title>"
+                      "</head><body>";
+    
+    ret += "<h1>Querydata producers provided by this server</h1>\n";
 
     auto engine = theReactor.getSingleton("Querydata", nullptr);
     if (engine == nullptr)
-      out << "<p>None</p>";
+      ret += "<p>None</p>";
     else
     {
       auto *qengine = reinterpret_cast<Engine::Querydata::Engine *>(engine);
       auto qproducers = qengine->producers();
-      out << "<ol>";
+      ret += "<ol>";
       for (const auto &name : qproducers)
-        out << "<li>" << name << "</li>";
-      out << "</ol>";
+        ret += "<li>" + name + "</li>";
+      ret += "</ol>";
     }
 
-    out << "<h1>Observation producers provided by this server</h1>" << std::endl;
+    ret += "<h1>Observation producers provided by this server</h1>\n";
 
     engine = theReactor.getSingleton("Observation", nullptr);
     if (engine == nullptr)
-      out << "<p>None</p>";
+      ret += "<p>None</p>";
     else
     {
       auto *obsengine = reinterpret_cast<Engine::Observation::Engine *>(engine);
-      out << "<ol>";
+      ret += "<ol>";
       auto oproducers = obsengine->getValidStationTypes();
       for (const auto &name : oproducers)
-        out << "<li>" << name << "</li>";
-      out << "</ol>";
+        ret += "<li>" + name + "</li>";
+      ret += "</ol>";
     }
 
-    out << "</body></html>";
-
+    ret += "</body></html>";
+    
     theResponse.setHeader("Content-Type", "text/html");
-    theResponse.setContent(out.str());
+    theResponse.setContent(ret);
 
     return true;
   }
@@ -522,24 +507,19 @@ bool Plugin::requestBackendInfo(Spine::Reactor &theReactor,
 {
   try
   {
-    std::ostringstream out;
-
     std::string service = Spine::optional_string(theRequest.getParameter("service"), "");
     std::string format = Spine::optional_string(theRequest.getParameter("format"), "debug");
 
     if (format == "wxml")
     {
-      // Wxml not available
-      out << "Wxml formatting not supported" << std::endl;
-      std::string response = out.str();
+      std::string response = "Wxml formatting not supported";
       theResponse.setContent(response);
       return false;
     }
 
     if (itsSputnik == nullptr)
     {
-      out << "Sputnik engine is not available" << std::endl;
-      std::string response = out.str();
+      std::string response = "Sputnik engine is not available";
       theResponse.setContent(response);
       return false;
     }
@@ -553,9 +533,11 @@ bool Plugin::requestBackendInfo(Spine::Reactor &theReactor,
     names.push_back("IP");
     names.push_back("Port");
 
-    formatter->format(out, *table, names, theRequest, Spine::TableFormatterOptions());
+    auto out = formatter->format(*table, names, theRequest, Spine::TableFormatterOptions());
 
-    itsSputnik->status(out);
+    std::ostringstream status;
+    itsSputnik->status(status);
+    out += status.str();
 
     // Make MIME header
 
@@ -563,21 +545,17 @@ bool Plugin::requestBackendInfo(Spine::Reactor &theReactor,
     theResponse.setHeader("Content-Type", mime);
 
     // Set content
-    std::string ret;
-    if (format == "html")
-    {
-      // Add html tags only when using human readable format
-      ret = "<html><head><title>SmartMet Admin</title></head><body>";
-      ret += out.str();
-      ret += "</body></html>";
-    }
+    if (format != "html")
+      theResponse.setContent(out);
     else
     {
-      ret = out.str();
+      // Add html tags only when using human readable format
+      std::string ret = "<html><head><title>SmartMet Admin</title></head><body>";
+      ret += out;
+      ret += "</body></html>";
+      theResponse.setContent(ret);
     }
-
-    theResponse.setContent(ret);
-
+      
     return true;
   }
   catch (...)
@@ -635,7 +613,6 @@ bool Plugin::getLogging(Spine::Reactor &theReactor,
 {
   try
   {
-    std::ostringstream out;
     Spine::Table reqTable;
     std::string format = Spine::optional_string(theRequest.getParameter("format"), "json");
     std::unique_ptr<Spine::TableFormatter> formatter(Spine::TableFormatterFactory::create(format));
@@ -648,14 +625,13 @@ bool Plugin::getLogging(Spine::Reactor &theReactor,
       reqTable.set(0, 0, "Disabled");
 
     std::vector<std::string> headers = {"LoggingStatus"};
-    formatter->format(out, reqTable, headers, theRequest, Spine::TableFormatterOptions());
+    auto out = formatter->format(reqTable, headers, theRequest, Spine::TableFormatterOptions());
 
     std::string mime = formatter->mimetype() + "; charset=UTF-8";
     theResponse.setHeader("Content-Type", mime);
 
     // Set content
-    std::string ret = out.str();
-    theResponse.setContent(ret);
+    theResponse.setContent(out);
 
     return true;
   }
@@ -677,7 +653,6 @@ bool Plugin::requestLastRequests(Spine::Reactor &theReactor,
 {
   try
   {
-    std::ostringstream out;
     Spine::Table reqTable;
     std::string format = Spine::optional_string(theRequest.getParameter("format"), "json");
     std::unique_ptr<Spine::TableFormatter> formatter(Spine::TableFormatterFactory::create(format));
@@ -729,15 +704,14 @@ bool Plugin::requestLastRequests(Spine::Reactor &theReactor,
     }
 
     std::vector<std::string> headers = {"Time", "Duration", "RequestString"};
-    formatter->format(out, reqTable, headers, theRequest, Spine::TableFormatterOptions());
+    auto out = formatter->format(reqTable, headers, theRequest, Spine::TableFormatterOptions());
 
     // Set MIME
     std::string mime = formatter->mimetype() + "; charset=UTF-8";
     theResponse.setHeader("Content-Type", mime);
 
     // Set content
-    std::string ret = out.str();
-    theResponse.setContent(ret);
+    theResponse.setContent(out);
 
     return true;
   }
@@ -759,7 +733,6 @@ bool Plugin::requestActiveRequests(Spine::Reactor &theReactor,
 {
   try
   {
-    std::ostringstream out;
     Spine::Table reqTable;
     std::string format = Spine::optional_string(theRequest.getParameter("format"), "json");
     std::unique_ptr<Spine::TableFormatter> formatter(Spine::TableFormatterFactory::create(format));
@@ -793,15 +766,14 @@ bool Plugin::requestActiveRequests(Spine::Reactor &theReactor,
 
     std::vector<std::string> headers = {
         "Id", "Time", "Duration", "ClientIP", "Apikey", "RequestString"};
-    formatter->format(out, reqTable, headers, theRequest, Spine::TableFormatterOptions());
+    auto out = formatter->format(reqTable, headers, theRequest, Spine::TableFormatterOptions());
 
     // Set MIME
     std::string mime = formatter->mimetype() + "; charset=UTF-8";
     theResponse.setHeader("Content-Type", mime);
 
     // Set content
-    std::string ret = out.str();
-    theResponse.setContent(ret);
+    theResponse.setContent(out);
 
     return true;
   }
@@ -841,11 +813,6 @@ bool Plugin::requestCacheSizes(Spine::Reactor &theReactor,
 
     auto *qengine = static_cast<Engine::Querydata::Engine *>(engine);
 
-    std::ostringstream out;
-    Spine::Table reqTable;
-    std::string format = Spine::optional_string(theRequest.getParameter("format"), "json");
-    std::unique_ptr<Spine::TableFormatter> formatter(Spine::TableFormatterFactory::create(format));
-
     auto q_cache = qengine->getCacheSizes();
     auto c_cache = cengine->getCacheSizes();
 
@@ -884,19 +851,13 @@ bool Plugin::requestServiceStats(Spine::Reactor &theReactor,
     static auto &Headers = *new std::vector<std::string>{
         "Handler", "LastMinute", "LastHour", "Last24Hours", "AverageDuration"};
 
-    std::ostringstream out;
-
-    std::stringstream formatstream;
+    std::string formatstream;
 
     Spine::Table statsTable;
 
     std::string format = Spine::optional_string(theRequest.getParameter("format"), "json");
 
     std::unique_ptr<Spine::TableFormatter> formatter(Spine::TableFormatterFactory::create(format));
-
-    // Use system locale for numbers formatting
-    std::locale system_locale("");
-    formatstream.imbue(system_locale);
 
     auto currentRequests =
         theReactor.getLoggedRequests();  // This is type tuple<bool,LogRange,posix_time>
@@ -949,20 +910,14 @@ bool Plugin::requestServiceStats(Spine::Reactor &theReactor,
       statsTable.set(column, row, reqpair.first);
       ++column;
 
-      formatstream << inMinute;
-      statsTable.set(column, row, formatstream.str());
+      statsTable.set(column, row, Fmi::to_string(inMinute));
       ++column;
-      formatstream.str("");
 
-      formatstream << inHour;
-      statsTable.set(column, row, formatstream.str());
+      statsTable.set(column, row, Fmi::to_string(inHour));
       ++column;
-      formatstream.str("");
 
-      formatstream << inDay;
-      statsTable.set(column, row, formatstream.str());
+      statsTable.set(column, row, Fmi::to_string(inDay));
       ++column;
-      formatstream.str("");
 
       std::string msecs = average_and_format(total_microsecs, inDay);
       statsTable.set(column, row, msecs);
@@ -976,33 +931,26 @@ bool Plugin::requestServiceStats(Spine::Reactor &theReactor,
     statsTable.set(column, row, "Total requests");
     ++column;
 
-    formatstream << total_minute;
-    statsTable.set(column, row, formatstream.str());
+    statsTable.set(column, row, Fmi::to_string(total_minute));
     ++column;
-    formatstream.str("");
 
-    formatstream << total_hour;
-    statsTable.set(column, row, formatstream.str());
+    statsTable.set(column, row, Fmi::to_string(total_hour));
     ++column;
-    formatstream.str("");
 
-    formatstream << total_day;
-    statsTable.set(column, row, formatstream.str());
+    statsTable.set(column, row, Fmi::to_string(total_day));
     ++column;
-    formatstream.str("");
 
     std::string msecs = average_and_format(global_microsecs, total_day);
     statsTable.set(column, row, msecs);
 
-    formatter->format(out, statsTable, Headers, theRequest, Spine::TableFormatterOptions());
+    auto out = formatter->format(statsTable, Headers, theRequest, Spine::TableFormatterOptions());
 
     // Set MIME
     std::string mime = formatter->mimetype() + "; charset=UTF-8";
     theResponse.setHeader("Content-Type", mime);
 
     // Set content
-    std::string ret = out.str();
-    theResponse.setContent(ret);
+    theResponse.setContent(out);
 
     return true;
   }

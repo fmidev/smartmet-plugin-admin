@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 20.10.6
+Version: 20.10.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -14,20 +14,20 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: libconfig-devel
-BuildRequires: smartmet-library-macgyver-devel >= 20.10.5
-BuildRequires: smartmet-library-spine-devel >= 20.9.23
-BuildRequires: smartmet-engine-contour-devel >= 20.8.23
-BuildRequires: smartmet-engine-geonames-devel >= 20.9.23
-BuildRequires: smartmet-engine-sputnik-devel >= 20.8.23
-BuildRequires: smartmet-engine-querydata-devel >= 20.9.23
-BuildRequires: smartmet-engine-observation-devel >= 20.10.5
-Requires: smartmet-library-macgyver >= 20.10.5
+BuildRequires: smartmet-library-macgyver-devel >= 20.10.9
+BuildRequires: smartmet-library-spine-devel >= 20.10.14
+BuildRequires: smartmet-engine-contour-devel >= 20.10.6
+BuildRequires: smartmet-engine-geonames-devel >= 20.10.6
+BuildRequires: smartmet-engine-sputnik-devel >= 20.10.12
+BuildRequires: smartmet-engine-querydata-devel >= 20.10.6
+BuildRequires: smartmet-engine-observation-devel >= 20.10.9
+Requires: smartmet-library-macgyver >= 20.10.9
 Requires: libconfig
-Requires: smartmet-server >= 20.9.23
-Requires: smartmet-library-spine >= 20.9.23
-Requires: smartmet-engine-geonames >= 20.9.23
-Requires: smartmet-engine-querydata >= 20.9.23
-Requires: smartmet-engine-sputnik >= 20.8.23
+Requires: smartmet-server >= 20.10.12
+Requires: smartmet-library-spine >= 20.10.14
+Requires: smartmet-engine-geonames >= 20.10.6
+Requires: smartmet-engine-querydata >= 20.10.6
+Requires: smartmet-engine-sputnik >= 20.10.12
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Wed Oct 14 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.14-1.fmi
+- Use new TableFormatter API
+
 * Tue Oct  6 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.6-1.fmi
 - Enable sensible relative libconfig include paths
 
