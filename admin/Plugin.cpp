@@ -46,12 +46,12 @@ namespace Admin
 {
 namespace
 {
-std::string average_and_format(double total_microsecs, unsigned long requests)
+std::string average_and_format(long total_microsecs, unsigned long requests)
 {
   try
   {
     // Average global request time
-    double average_time = total_microsecs / (1000 * requests);
+    double average_time = total_microsecs / (1000.0 * requests);
     if (std::isnan(average_time))
       return "Not available";
 
@@ -139,7 +139,7 @@ bool Plugin::request(Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestClusterInfo(Spine::Reactor &theReactor,
+bool Plugin::requestClusterInfo(Spine::Reactor & /* theReactor */,
                                 const Spine::HTTP::Request & /* theRequest */,
                                 Spine::HTTP::Response &theResponse)
 {
@@ -186,9 +186,10 @@ bool Plugin::requestServiceInfo(Spine::Reactor &theReactor,
   {
     auto handlers = theReactor.getURIMap();
 
-    std::string out = "<html><head><title>SmartMet Admin</title></head><body>\n"
-                      "<h3>Services currently provided by this server</h3>\n"
-                      "<ol>\n";
+    std::string out =
+        "<html><head><title>SmartMet Admin</title></head><body>\n"
+        "<h3>Services currently provided by this server</h3>\n"
+        "<ol>\n";
     for (const auto &handler : handlers)
       out += "<li>" + handler.first + "</li>\n";
     out += "</ol>\n";
@@ -222,7 +223,7 @@ bool Plugin::requestReload(Spine::Reactor &theReactor,
   {
     std::string out = "<html><head><title>SmartMet Admin</title></head><body>";
 
-    auto engine = theReactor.getSingleton("Geonames", nullptr);
+    auto *engine = theReactor.getSingleton("Geonames", nullptr);
     if (engine == nullptr)
     {
       theResponse.setContent("Geonames engine is not available");
@@ -247,7 +248,7 @@ bool Plugin::requestReload(Spine::Reactor &theReactor,
     out += " seconds\n";
 
     out += "</body></html>";
-    
+
     // Make MIME header
     std::string mime("text/html; charset=UTF-8");
     theResponse.setHeader("Content-Type", mime);
@@ -275,7 +276,7 @@ bool Plugin::requestLoadStations(Spine::Reactor &theReactor,
 {
   try
   {
-    auto engine = theReactor.getSingleton("Observation", nullptr);
+    auto *engine = theReactor.getSingleton("Observation", nullptr);
     if (engine == nullptr)
     {
       theResponse.setContent("Observation engine is not available");
@@ -313,7 +314,7 @@ bool Plugin::requestGeonames(Spine::Reactor &theReactor,
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
 
-    auto engine = theReactor.getSingleton("Geonames", nullptr);
+    auto *engine = theReactor.getSingleton("Geonames", nullptr);
     if (engine == nullptr)
     {
       std::string response = "Geonames engine is not available";
@@ -342,11 +343,11 @@ bool Plugin::requestGeonames(Spine::Reactor &theReactor,
     std::string mime(tableFormatter->mimetype() + "; charset=UTF-8");
     theResponse.setHeader("Content-Type", mime);
 
-    auto out = tableFormatter->format(*status.first, status.second, theRequest, Spine::TableFormatterOptions());
+    auto out = tableFormatter->format(
+        *status.first, status.second, theRequest, Spine::TableFormatterOptions());
 
     // Set content
-    std::string ret = out;
-    theResponse.setContent(ret);
+    theResponse.setContent(out);
 
     return true;
   }
@@ -369,7 +370,7 @@ bool Plugin::requestQEngineStatus(Spine::Reactor &theReactor,
   try
   {
     // Get the Qengine
-    auto engine = theReactor.getSingleton("Querydata", nullptr);
+    auto *engine = theReactor.getSingleton("Querydata", nullptr);
     if (engine == nullptr)
     {
       std::string response = "Querydata engine not available";
@@ -402,9 +403,10 @@ bool Plugin::requestQEngineStatus(Spine::Reactor &theReactor,
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
 
-    auto out  = tableFormatter->format(*statusResult.first, statusResult.second, theRequest, Spine::TableFormatterOptions());
+    auto out = tableFormatter->format(
+        *statusResult.first, statusResult.second, theRequest, Spine::TableFormatterOptions());
 
-    if(tableFormat != "html")
+    if (tableFormat != "html")
       theResponse.setContent(out);
     else
     {
@@ -448,13 +450,14 @@ bool Plugin::requestProducerInfo(Spine::Reactor &theReactor,
 {
   try
   {
-    std::string ret = "<html><head>"
-                      "<title>SmartMet Admin</title>"
-                      "</head><body>";
-    
+    std::string ret =
+        "<html><head>"
+        "<title>SmartMet Admin</title>"
+        "</head><body>";
+
     ret += "<h1>Querydata producers provided by this server</h1>\n";
 
-    auto engine = theReactor.getSingleton("Querydata", nullptr);
+    auto *engine = theReactor.getSingleton("Querydata", nullptr);
     if (engine == nullptr)
       ret += "<p>None</p>";
     else
@@ -483,7 +486,7 @@ bool Plugin::requestProducerInfo(Spine::Reactor &theReactor,
     }
 
     ret += "</body></html>";
-    
+
     theResponse.setHeader("Content-Type", "text/html");
     theResponse.setContent(ret);
 
@@ -501,7 +504,7 @@ bool Plugin::requestProducerInfo(Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestBackendInfo(Spine::Reactor &theReactor,
+bool Plugin::requestBackendInfo(Spine::Reactor & /* theReactor */,
                                 const Spine::HTTP::Request &theRequest,
                                 Spine::HTTP::Response &theResponse)
 {
@@ -555,7 +558,7 @@ bool Plugin::requestBackendInfo(Spine::Reactor &theReactor,
       ret += "</body></html>";
       theResponse.setContent(ret);
     }
-      
+
     return true;
   }
   catch (...)
@@ -658,15 +661,9 @@ bool Plugin::requestLastRequests(Spine::Reactor &theReactor,
     std::unique_ptr<Spine::TableFormatter> formatter(Spine::TableFormatterFactory::create(format));
 
     auto givenMinutes = theRequest.getParameter("minutes");
-    unsigned int minutes;
-    if (!givenMinutes)
-    {
-      minutes = 1;
-    }
-    else
-    {
+    unsigned int minutes = 1;
+    if (givenMinutes)
       minutes = boost::lexical_cast<unsigned int>(*givenMinutes);
-    }
 
     // Obtain logging information
     auto currentRequests =
@@ -795,7 +792,7 @@ bool Plugin::requestCacheSizes(Spine::Reactor &theReactor,
 {
   try
   {
-    auto engine = theReactor.getSingleton("Contour", nullptr);
+    auto *engine = theReactor.getSingleton("Contour", nullptr);
     if (engine == nullptr)
     {
       theResponse.setContent("Contour engine is not available");
@@ -848,7 +845,7 @@ bool Plugin::requestServiceStats(Spine::Reactor &theReactor,
 {
   try
   {
-    static auto &Headers = *new std::vector<std::string>{
+    std::vector<std::string> headers{
         "Handler", "LastMinute", "LastHour", "Last24Hours", "AverageDuration"};
 
     std::string formatstream;
@@ -943,7 +940,7 @@ bool Plugin::requestServiceStats(Spine::Reactor &theReactor,
     std::string msecs = average_and_format(global_microsecs, total_day);
     statsTable.set(column, row, msecs);
 
-    auto out = formatter->format(statsTable, Headers, theRequest, Spine::TableFormatterOptions());
+    auto out = formatter->format(statsTable, headers, theRequest, Spine::TableFormatterOptions());
 
     // Set MIME
     std::string mime = formatter->mimetype() + "; charset=UTF-8";
@@ -966,7 +963,7 @@ bool Plugin::requestServiceStats(Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::setPause(Spine::Reactor &theReactor,
+bool Plugin::setPause(Spine::Reactor & /* theReactor */,
                       const Spine::HTTP::Request &theRequest,
                       Spine::HTTP::Response &theResponse)
 {
@@ -1018,7 +1015,7 @@ bool Plugin::setPause(Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::setContinue(Spine::Reactor &theReactor,
+bool Plugin::setContinue(Spine::Reactor & /* theReactor */,
                          const Spine::HTTP::Request &theRequest,
                          Spine::HTTP::Response &theResponse)
 {
@@ -1166,7 +1163,7 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig) : itsModuleNam
     boost::filesystem::path p = theConfig;
     p.remove_filename();
     itsConfig.setIncludeDir(p.c_str());
-    
+
     itsConfig.readFile(theConfig);
 
     // Password must be specified
@@ -1178,11 +1175,12 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig) : itsModuleNam
       throw Fmi::Exception(BCP, "User not specified in the config file");
 
     // Get Sputnik if available
-    auto engine = theReactor->getSingleton("Sputnik", nullptr);
+    auto *engine = theReactor->getSingleton("Sputnik", nullptr);
     if (engine != nullptr)
       itsSputnik = reinterpret_cast<Engine::Sputnik::Engine *>(engine);
 
-    std::string truePassword, trueUser;
+    std::string truePassword;
+    std::string trueUser;
     itsConfig.lookupValue("user", trueUser);          // user exists in config at this point
     itsConfig.lookupValue("password", truePassword);  // password exists in config at this point
     addUser(trueUser, truePassword);

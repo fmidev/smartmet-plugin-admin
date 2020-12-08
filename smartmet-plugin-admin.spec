@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 20.10.14
+Version: 20.12.8
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -14,20 +14,20 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: libconfig-devel
-BuildRequires: smartmet-library-macgyver-devel >= 20.10.9
-BuildRequires: smartmet-library-spine-devel >= 20.10.14
-BuildRequires: smartmet-engine-contour-devel >= 20.10.6
-BuildRequires: smartmet-engine-geonames-devel >= 20.10.6
-BuildRequires: smartmet-engine-sputnik-devel >= 20.10.12
+BuildRequires: smartmet-library-macgyver-devel >= 20.11.24
+BuildRequires: smartmet-library-spine-devel >= 20.12.4
+BuildRequires: smartmet-engine-contour-devel >= 20.11.6
+BuildRequires: smartmet-engine-geonames-devel >= 20.12.4
+BuildRequires: smartmet-engine-sputnik-devel >= 20.12.7
 BuildRequires: smartmet-engine-querydata-devel >= 20.10.6
-BuildRequires: smartmet-engine-observation-devel >= 20.10.9
-Requires: smartmet-library-macgyver >= 20.10.9
+BuildRequires: smartmet-engine-observation-devel >= 20.12.7
+Requires: smartmet-library-macgyver >= 20.11.24
 Requires: libconfig
-Requires: smartmet-server >= 20.10.12
-Requires: smartmet-library-spine >= 20.10.14
-Requires: smartmet-engine-geonames >= 20.10.6
+Requires: smartmet-server >= 20.10.28
+Requires: smartmet-library-spine >= 20.12.4
+Requires: smartmet-engine-geonames >= 20.12.4
 Requires: smartmet-engine-querydata >= 20.10.6
-Requires: smartmet-engine-sputnik >= 20.10.12
+Requires: smartmet-engine-sputnik >= 20.12.7
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Tue Dec  8 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.8-1.fmi
+- Silenced some CodeChecker warnings
+
 * Wed Oct 14 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.14-1.fmi
 - Use new TableFormatter API
 

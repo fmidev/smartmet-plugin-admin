@@ -32,16 +32,16 @@ class Plugin : public SmartMetPlugin,
   Plugin(SmartMet::Spine::Reactor* theReactor, const char* theConfig);
   virtual ~Plugin();
 
-  const std::string& getPluginName() const;
-  int getRequiredAPIVersion() const;
-  bool queryIsFast(const SmartMet::Spine::HTTP::Request& theRequest) const;
+  const std::string& getPluginName() const override;
+  int getRequiredAPIVersion() const override;
+  bool queryIsFast(const SmartMet::Spine::HTTP::Request& theRequest) const override;
 
  protected:
-  void init();
-  void shutdown();
+  void init() override;
+  void shutdown() override;
   void requestHandler(SmartMet::Spine::Reactor& theReactor,
                       const SmartMet::Spine::HTTP::Request& theRequest,
-                      SmartMet::Spine::HTTP::Response& theResponse);
+                      SmartMet::Spine::HTTP::Response& theResponse) override;
 
   bool isAuthenticationRequired(const Spine::HTTP::Request& theRequest) const override;
 
