@@ -450,45 +450,96 @@ bool Plugin::requestProducerInfo(Spine::Reactor &theReactor,
 {
   try
   {
-    std::string ret =
-        "<html><head>"
-        "<title>SmartMet Admin</title>"
-        "</head><body>";
-
-    ret += "<h1>Querydata producers provided by this server</h1>\n";
-
+    // Get the Qengine
     auto *engine = theReactor.getSingleton("Querydata", nullptr);
     if (engine == nullptr)
-      ret += "<p>None</p>";
-    else
     {
-      auto *qengine = reinterpret_cast<Engine::Querydata::Engine *>(engine);
-      auto qproducers = qengine->producers();
-      ret += "<ol>";
-      for (const auto &name : qproducers)
-        ret += "<li>" + name + "</li>";
-      ret += "</ol>";
+      std::string response = "Querydata engine not available";
+      theResponse.setContent(response);
+      return false;
     }
+    auto *qengine = reinterpret_cast<Engine::Querydata::Engine *>(engine);
 
-    ret += "<h1>Observation producers provided by this server</h1>\n";
-
+    // Get the Obsengine
     engine = theReactor.getSingleton("Observation", nullptr);
     if (engine == nullptr)
-      ret += "<p>None</p>";
-    else
     {
-      auto *obsengine = reinterpret_cast<Engine::Observation::Engine *>(engine);
-      ret += "<ol>";
-      auto oproducers = obsengine->getValidStationTypes();
-      for (const auto &name : oproducers)
-        ret += "<li>" + name + "</li>";
-      ret += "</ol>";
+      std::string response = "Observation engine not available";
+      theResponse.setContent(response);
+      return false;
+    }
+    auto *obsengine = reinterpret_cast<Engine::Observation::Engine *>(engine);
+
+    // Parse formatting options
+    std::string tableFormat = Spine::optional_string(theRequest.getParameter("format"), "debug");
+
+    if (tableFormat == "wxml")
+    {
+      std::string response = "Wxml formatting not supported";
+      theResponse.setContent(response);
+      return false;
     }
 
-    ret += "</body></html>";
+	boost::optional<std::string> producer = theRequest.getParameter("producer");
 
-    theResponse.setHeader("Content-Type", "text/html");
-    theResponse.setContent(ret);
+    std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
+
+    std::unique_ptr<Spine::TableFormatter> tableFormatter(
+        Spine::TableFormatterFactory::create(tableFormat));
+
+    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> qengineProducerInfo =
+	  qengine->getProducerInfo(timeFormat, producer);
+    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> qengineParameterInfo =
+        qengine->getParameterInfo(producer);
+    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> obsengineProducerInfo =
+        obsengine->getProducerInfo(producer);
+    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> obsengineParameterInfo =
+        obsengine->getParameterInfo(producer);
+
+    auto qengine_out_producer = tableFormatter->format(
+        *qengineProducerInfo.first, qengineProducerInfo.second, theRequest, Spine::TableFormatterOptions());
+    auto qengine_out_parameter = tableFormatter->format(
+        *qengineParameterInfo.first, qengineParameterInfo.second, theRequest, Spine::TableFormatterOptions());
+    auto observation_out_producer = tableFormatter->format(
+        *obsengineProducerInfo.first, obsengineProducerInfo.second, theRequest, Spine::TableFormatterOptions());
+    auto observation_out_parameter = tableFormatter->format(
+        *obsengineParameterInfo.first, obsengineParameterInfo.second, theRequest, Spine::TableFormatterOptions());
+
+	if(tableFormat == "html" || tableFormat == "debug")
+	  {
+		qengine_out_producer.insert(0, "<h1>Querydata producers</h1>");
+		qengine_out_parameter.insert(0, "<h1>Querydata parameters</h1>");
+		observation_out_producer.insert(0, "<h1>Observation producers</h1>");
+		observation_out_parameter.insert(0, "<h1>Observation parameters</h1>");
+	  }
+		
+    if (tableFormat != "html")
+	  {
+		theResponse.setContent(qengine_out_producer+qengine_out_parameter+observation_out_producer+observation_out_parameter);
+	  }
+    else
+    {
+      // Only insert tags if using human readable mode
+      std::string ret =
+		"<html><head>"
+		"<title>SmartMet Admin</title>"
+		"<style>";
+        ret += "table { border: 1px solid black; }"
+          "td { border: 1px solid black; text-align:right;}"
+          "</style>"
+		  "</head><body>";
+		ret += qengine_out_producer;
+		ret += qengine_out_parameter;
+		ret += observation_out_producer;
+		ret += observation_out_parameter;
+		ret += "</body></html>";
+		theResponse.setContent(ret);
+    }
+
+    // Make MIME header and content
+    std::string mime = tableFormatter->mimetype() + "; charset=UTF-8";
+
+    theResponse.setHeader("Content-Type", mime);
 
     return true;
   }
