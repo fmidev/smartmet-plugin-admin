@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 21.1.14
+Version: 21.1.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -19,8 +19,8 @@ BuildRequires: smartmet-library-spine-devel >= 21.1.14
 BuildRequires: smartmet-engine-contour-devel >= 21.1.14
 BuildRequires: smartmet-engine-geonames-devel >= 21.1.14
 BuildRequires: smartmet-engine-sputnik-devel >= 21.1.14
-BuildRequires: smartmet-engine-querydata-devel >= 21.1.14
-BuildRequires: smartmet-engine-observation-devel >= 21.1.14
+BuildRequires: smartmet-engine-querydata-devel >= 21.1.18
+BuildRequires: smartmet-engine-observation-devel >= 21.1.18
 Requires: smartmet-library-macgyver >= 21.1.14
 Requires: libconfig
 Requires: smartmet-server >= 21.1.14
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Mon Jan 18 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.1.18-1.fmi
+- Report more info about data, producers, parameters (BRAINSTORM-1981)
+
 * Thu Jan 14 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.14-1.fmi
 - Repackaged smartmet to resolve debuginfo issues
 
