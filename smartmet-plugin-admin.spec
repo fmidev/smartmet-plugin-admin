@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 21.1.18
+Version: 21.1.25
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -14,19 +14,19 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: libconfig-devel
-BuildRequires: smartmet-library-macgyver-devel >= 21.1.14
+BuildRequires: smartmet-library-macgyver-devel >= 21.1.25
 BuildRequires: smartmet-library-spine-devel >= 21.1.14
 BuildRequires: smartmet-engine-contour-devel >= 21.1.14
-BuildRequires: smartmet-engine-geonames-devel >= 21.1.14
+BuildRequires: smartmet-engine-geonames-devel >= 21.1.25
 BuildRequires: smartmet-engine-sputnik-devel >= 21.1.14
-BuildRequires: smartmet-engine-querydata-devel >= 21.1.18
-BuildRequires: smartmet-engine-observation-devel >= 21.1.18
-Requires: smartmet-library-macgyver >= 21.1.14
+BuildRequires: smartmet-engine-querydata-devel >= 21.1.25
+BuildRequires: smartmet-engine-observation-devel >= 21.1.25
+Requires: smartmet-library-macgyver >= 21.1.25
 Requires: libconfig
 Requires: smartmet-server >= 21.1.14
 Requires: smartmet-library-spine >= 21.1.14
-Requires: smartmet-engine-geonames >= 21.1.14
-Requires: smartmet-engine-querydata >= 21.1.14
+Requires: smartmet-engine-geonames >= 21.1.25
+Requires: smartmet-engine-querydata >= 21.1.25
 Requires: smartmet-engine-sputnik >= 21.1.14
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
@@ -55,7 +55,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
-* Mon Jan 18 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.1.18-1.fmi
+* Mon Jan 25 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.1.25-1.fmi
 - Report more info about data, producers, parameters (BRAINSTORM-1981)
 
 * Thu Jan 14 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.14-1.fmi
