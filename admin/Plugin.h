@@ -98,6 +98,18 @@ class Plugin : public SmartMetPlugin,
                            const SmartMet::Spine::HTTP::Request& theRequest,
                            SmartMet::Spine::HTTP::Response& theResponse);
 
+  bool requestParameterInfo(SmartMet::Spine::Reactor& theReactor,
+                            const SmartMet::Spine::HTTP::Request& theRequest,
+                            SmartMet::Spine::HTTP::Response& theResponse);
+
+  bool requestObsParameterInfo(SmartMet::Spine::Reactor& theReactor,
+                               const SmartMet::Spine::HTTP::Request& theRequest,
+                               SmartMet::Spine::HTTP::Response& theResponse);
+
+  bool requestObsProducerInfo(SmartMet::Spine::Reactor& theReactor,
+                              const SmartMet::Spine::HTTP::Request& theRequest,
+                              SmartMet::Spine::HTTP::Response& theResponse);
+
   bool requestLoadStations(Spine::Reactor& theReactor,
                            const Spine::HTTP::Request& theRequest,
                            Spine::HTTP::Response& theResponse);

@@ -101,6 +101,12 @@ bool Plugin::request(Spine::Reactor &theReactor,
       return requestServiceStats(theReactor, theRequest, theResponse);
     if (what == "producers")
       return requestProducerInfo(theReactor, theRequest, theResponse);
+    if (what == "parameters")
+      return requestParameterInfo(theReactor, theRequest, theResponse);
+    if (what == "obsparameters")
+      return requestObsParameterInfo(theReactor, theRequest, theResponse);
+    if (what == "obsproducers")
+      return requestObsProducerInfo(theReactor, theRequest, theResponse);
     if (what == "setlogging")
       return setLogging(theReactor, theRequest, theResponse);
     if (what == "getlogging")
@@ -460,8 +466,164 @@ bool Plugin::requestProducerInfo(Spine::Reactor &theReactor,
     }
     auto *qengine = reinterpret_cast<Engine::Querydata::Engine *>(engine);
 
+    // Parse formatting options
+    std::string tableFormat = Spine::optional_string(theRequest.getParameter("format"), "debug");
+
+    if (tableFormat == "wxml")
+    {
+      std::string response = "Wxml formatting not supported";
+      theResponse.setContent(response);
+      return false;
+    }
+
+    // Optional producer filter
+    auto producer = theRequest.getParameter("producer");
+
+    std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
+
+    std::unique_ptr<Spine::TableFormatter> tableFormatter(
+        Spine::TableFormatterFactory::create(tableFormat));
+
+    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> qengineProducerInfo =
+        qengine->getProducerInfo(timeFormat, producer);
+
+    auto qengine_out_producer = tableFormatter->format(*qengineProducerInfo.first,
+                                                       qengineProducerInfo.second,
+                                                       theRequest,
+                                                       Spine::TableFormatterOptions());
+
+    if (tableFormat == "html" || tableFormat == "debug")
+      qengine_out_producer.insert(0, "<h1>Querydata producers</h1>");
+
+    if (tableFormat != "html")
+      theResponse.setContent(qengine_out_producer);
+    else
+    {
+      // Only insert tags if using human readable mode
+      std::string ret =
+          "<html><head>"
+          "<title>SmartMet Admin</title>"
+          "<style>";
+      ret +=
+          "table { border: 1px solid black; }"
+          "td { border: 1px solid black; text-align:right;}"
+          "</style>"
+          "</head><body>";
+      ret += qengine_out_producer;
+      ret += "</body></html>";
+      theResponse.setContent(ret);
+    }
+
+    // Make MIME header and content
+    std::string mime = tableFormatter->mimetype() + "; charset=UTF-8";
+
+    theResponse.setHeader("Content-Type", mime);
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Perform parameter query
+ */
+// ----------------------------------------------------------------------
+
+bool Plugin::requestParameterInfo(Spine::Reactor &theReactor,
+                                  const Spine::HTTP::Request &theRequest,
+                                  Spine::HTTP::Response &theResponse)
+{
+  try
+  {
+    // Get the Qengine
+    auto *engine = theReactor.getSingleton("Querydata", nullptr);
+    if (engine == nullptr)
+    {
+      std::string response = "Querydata engine not available";
+      theResponse.setContent(response);
+      return false;
+    }
+    auto *qengine = reinterpret_cast<Engine::Querydata::Engine *>(engine);
+
+    // Parse formatting options
+    std::string tableFormat = Spine::optional_string(theRequest.getParameter("format"), "debug");
+
+    if (tableFormat == "wxml")
+    {
+      std::string response = "Wxml formatting not supported";
+      theResponse.setContent(response);
+      return false;
+    }
+
+    // Optional producer filter
+    auto producer = theRequest.getParameter("producer");
+
+    std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
+
+    std::unique_ptr<Spine::TableFormatter> tableFormatter(
+        Spine::TableFormatterFactory::create(tableFormat));
+
+    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> qengineParameterInfo =
+        qengine->getParameterInfo(producer);
+
+    auto qengine_out_parameter = tableFormatter->format(*qengineParameterInfo.first,
+                                                        qengineParameterInfo.second,
+                                                        theRequest,
+                                                        Spine::TableFormatterOptions());
+
+    if (tableFormat == "html" || tableFormat == "debug")
+      qengine_out_parameter.insert(0, "<h1>Querydata parameters</h1>");
+
+    if (tableFormat != "html")
+      theResponse.setContent(qengine_out_parameter);
+    else
+    {
+      // Only insert tags if using human readable mode
+      std::string ret =
+          "<html><head>"
+          "<title>SmartMet Admin</title>"
+          "<style>";
+      ret +=
+          "table { border: 1px solid black; }"
+          "td { border: 1px solid black; text-align:right;}"
+          "</style>"
+          "</head><body>";
+      ret += qengine_out_parameter;
+      ret += "</body></html>";
+      theResponse.setContent(ret);
+    }
+
+    // Make MIME header and content
+    std::string mime = tableFormatter->mimetype() + "; charset=UTF-8";
+
+    theResponse.setHeader("Content-Type", mime);
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Perform station group query
+ */
+// ----------------------------------------------------------------------
+
+bool Plugin::requestObsProducerInfo(Spine::Reactor &theReactor,
+                                    const Spine::HTTP::Request &theRequest,
+                                    Spine::HTTP::Response &theResponse)
+{
+  try
+  {
     // Get the Obsengine
-    engine = theReactor.getSingleton("Observation", nullptr);
+    auto *engine = theReactor.getSingleton("Observation", nullptr);
     if (engine == nullptr)
     {
       std::string response = "Observation engine not available";
@@ -480,52 +642,27 @@ bool Plugin::requestProducerInfo(Spine::Reactor &theReactor,
       return false;
     }
 
-    boost::optional<std::string> producer = theRequest.getParameter("producer");
+    // Optional producer filter
+    auto producer = theRequest.getParameter("producer");
 
     std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
 
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
 
-    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> qengineProducerInfo =
-        qengine->getProducerInfo(timeFormat, producer);
-    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> qengineParameterInfo =
-        qengine->getParameterInfo(producer);
     std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> obsengineProducerInfo =
         obsengine->getProducerInfo(producer);
-    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names>
-        obsengineParameterInfo = obsengine->getParameterInfo(producer);
 
-    auto qengine_out_producer = tableFormatter->format(*qengineProducerInfo.first,
-                                                       qengineProducerInfo.second,
-                                                       theRequest,
-                                                       Spine::TableFormatterOptions());
-    auto qengine_out_parameter = tableFormatter->format(*qengineParameterInfo.first,
-                                                        qengineParameterInfo.second,
-                                                        theRequest,
-                                                        Spine::TableFormatterOptions());
     auto observation_out_producer = tableFormatter->format(*obsengineProducerInfo.first,
                                                            obsengineProducerInfo.second,
                                                            theRequest,
                                                            Spine::TableFormatterOptions());
-    auto observation_out_parameter = tableFormatter->format(*obsengineParameterInfo.first,
-                                                            obsengineParameterInfo.second,
-                                                            theRequest,
-                                                            Spine::TableFormatterOptions());
 
     if (tableFormat == "html" || tableFormat == "debug")
-    {
-      qengine_out_producer.insert(0, "<h1>Querydata producers</h1>");
-      qengine_out_parameter.insert(0, "<h1>Querydata parameters</h1>");
       observation_out_producer.insert(0, "<h1>Observation producers</h1>");
-      observation_out_parameter.insert(0, "<h1>Observation parameters</h1>");
-    }
 
     if (tableFormat != "html")
-    {
-      theResponse.setContent(qengine_out_producer + qengine_out_parameter +
-                             observation_out_producer + observation_out_parameter);
-    }
+      theResponse.setContent(observation_out_producer);
     else
     {
       // Only insert tags if using human readable mode
@@ -538,9 +675,89 @@ bool Plugin::requestProducerInfo(Spine::Reactor &theReactor,
           "td { border: 1px solid black; text-align:right;}"
           "</style>"
           "</head><body>";
-      ret += qengine_out_producer;
-      ret += qengine_out_parameter;
       ret += observation_out_producer;
+      ret += "</body></html>";
+      theResponse.setContent(ret);
+    }
+
+    // Make MIME header and content
+    std::string mime = tableFormatter->mimetype() + "; charset=UTF-8";
+
+    theResponse.setHeader("Content-Type", mime);
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Perform observation query
+ */
+// ----------------------------------------------------------------------
+
+bool Plugin::requestObsParameterInfo(Spine::Reactor &theReactor,
+                                     const Spine::HTTP::Request &theRequest,
+                                     Spine::HTTP::Response &theResponse)
+{
+  try
+  {
+    // Get the Obsengine
+    auto *engine = theReactor.getSingleton("Observation", nullptr);
+    if (engine == nullptr)
+    {
+      std::string response = "Observation engine not available";
+      theResponse.setContent(response);
+      return false;
+    }
+    auto *obsengine = reinterpret_cast<Engine::Observation::Engine *>(engine);
+
+    // Parse formatting options
+    std::string tableFormat = Spine::optional_string(theRequest.getParameter("format"), "debug");
+
+    if (tableFormat == "wxml")
+    {
+      std::string response = "Wxml formatting not supported";
+      theResponse.setContent(response);
+      return false;
+    }
+
+    // Optional producer filter
+    auto producer = theRequest.getParameter("producer");
+
+    std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
+
+    std::unique_ptr<Spine::TableFormatter> tableFormatter(
+        Spine::TableFormatterFactory::create(tableFormat));
+
+    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names>
+        obsengineParameterInfo = obsengine->getParameterInfo(producer);
+
+    auto observation_out_parameter = tableFormatter->format(*obsengineParameterInfo.first,
+                                                            obsengineParameterInfo.second,
+                                                            theRequest,
+                                                            Spine::TableFormatterOptions());
+
+    if (tableFormat == "html" || tableFormat == "debug")
+      observation_out_parameter.insert(0, "<h1>Observation parameters</h1>");
+
+    if (tableFormat != "html")
+      theResponse.setContent(observation_out_parameter);
+    else
+    {
+      // Only insert tags if using human readable mode
+      std::string ret =
+          "<html><head>"
+          "<title>SmartMet Admin</title>"
+          "<style>";
+      ret +=
+          "table { border: 1px solid black; }"
+          "td { border: 1px solid black; text-align:right;}"
+          "</style>"
+          "</head><body>";
       ret += observation_out_parameter;
       ret += "</body></html>";
       theResponse.setContent(ret);
