@@ -6,6 +6,8 @@ REQUIRES = gdal
 
 include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
+FLAGS += -Wno-variadic-macros
+
 # Compiler options
 
 DEFINES = -DUNIX -D_REENTRANT
