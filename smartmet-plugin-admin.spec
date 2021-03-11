@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 21.2.25
+Version: 21.3.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -14,19 +14,21 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: libconfig-devel
-BuildRequires: smartmet-library-macgyver-devel >= 21.1.25
-BuildRequires: smartmet-library-spine-devel >= 21.1.14
-BuildRequires: smartmet-engine-contour-devel >= 21.1.14
-BuildRequires: smartmet-engine-geonames-devel >= 21.1.25
+BuildRequires: smartmet-library-macgyver-devel >= 21.2.25
+BuildRequires: smartmet-library-spine-devel >= 21.3.9
+BuildRequires: smartmet-engine-contour-devel >= 21.2.18
+BuildRequires: smartmet-engine-geonames-devel >= 21.2.18
 BuildRequires: smartmet-engine-sputnik-devel >= 21.1.14
-BuildRequires: smartmet-engine-querydata-devel >= 21.1.25
-BuildRequires: smartmet-engine-observation-devel >= 21.1.25
-Requires: smartmet-library-macgyver >= 21.1.25
+BuildRequires: smartmet-engine-querydata-devel >= 21.3.4
+BuildRequires: smartmet-engine-observation-devel >= 21.3.11
+BuildRequires: smartmet-engine-grid-devel >= 21.3.11
+Requires: smartmet-library-macgyver >= 21.2.25
 Requires: libconfig
 Requires: smartmet-server >= 21.1.14
-Requires: smartmet-library-spine >= 21.1.14
-Requires: smartmet-engine-geonames >= 21.1.25
-Requires: smartmet-engine-querydata >= 21.1.25
+Requires: smartmet-library-spine >= 21.3.9
+Requires: smartmet-engine-geonames >= 21.2.18
+Requires: smartmet-engine-grid >= 21.3.11
+Requires: smartmet-engine-querydata >= 21.3.4
 Requires: smartmet-engine-sputnik >= 21.1.14
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
@@ -55,6 +57,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Thu Mar 11 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.11-1.fmi
+- Added grid-engine parameter/producer queries
+
 * Thu Feb 25 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.25-1.fmi
 - Refactored producer query into four separate queries: producers, parameters, obsproducers and obsparameters
 
