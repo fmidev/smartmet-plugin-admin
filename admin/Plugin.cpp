@@ -36,6 +36,17 @@ bool isNotOld(const boost::posix_time::ptime &target, const SmartMet::Spine::Log
 {
   return compare.getRequestEndTime() > target;
 }
+void parseIntOption(std::set<int>& output, const std::string& option)
+{
+  if(option.empty())
+	return;
+  
+  std::vector<std::string> parts;
+  boost::algorithm::split(parts, option, boost::algorithm::is_any_of(","));
+  for(const auto& p : parts)
+	output.insert(Fmi::stoi(p));
+}
+
 }  // namespace
 
 namespace SmartMet
@@ -123,6 +134,8 @@ bool Plugin::request(Spine::Reactor &theReactor,
       return setContinue(theReactor, theRequest, theResponse);
     if (what == "reloadstations")
       return requestLoadStations(theReactor, theRequest, theResponse);
+    if (what == "stations")
+      return requestObsStationInfo(theReactor, theRequest, theResponse);
 
     // Unknown request,build response
     // Make MIME header
@@ -1104,6 +1117,104 @@ bool Plugin::requestCacheSizes(Spine::Reactor &theReactor,
     theResponse.setHeader("Access-Control-Allow-Origin", "*");
 
     return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+bool Plugin::requestObsStationInfo(Spine::Reactor &theReactor,
+								   const Spine::HTTP::Request &theRequest,
+								   Spine::HTTP::Response &theResponse)
+{
+  try
+  {
+   // Get the Obsengine
+    auto *engine = theReactor.getSingleton("Observation", nullptr);
+    if (engine == nullptr)
+    {
+      std::string response = "Observation engine not available";
+      theResponse.setContent(response);
+      return false;
+    }
+    auto *obsengine = reinterpret_cast<Engine::Observation::Engine *>(engine);
+
+    // Parse formatting options
+    std::string tableFormat = Spine::optional_string(theRequest.getParameter("format"), "debug");
+
+    if (tableFormat == "wxml")
+    {
+      std::string response = "Wxml formatting not supported";
+      theResponse.setContent(response);
+      return false;
+    }
+
+   std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
+
+   std::unique_ptr<Spine::TableFormatter> tableFormatter(Spine::TableFormatterFactory::create(tableFormat));
+
+   Engine::Observation::StationOptions options;
+   parseIntOption(options.fmisid, Spine::optional_string(theRequest.getParameter("fmisid"), ""));
+   parseIntOption(options.lpnn, Spine::optional_string(theRequest.getParameter("lpnn"), ""));
+   parseIntOption(options.wmo, Spine::optional_string(theRequest.getParameter("wmo"), ""));
+   parseIntOption(options.rwsid, Spine::optional_string(theRequest.getParameter("rwsid"), ""));
+   options.type = Spine::optional_string(theRequest.getParameter("type"), "");
+   options.name = Spine::optional_string(theRequest.getParameter("name"), "");
+   options.iso2 = Spine::optional_string(theRequest.getParameter("country"), "");
+   options.region = Spine::optional_string(theRequest.getParameter("region"), "");
+   options.timeformat = Spine::optional_string(theRequest.getParameter("timeformat"), "iso");
+   std::string starttime = Spine::optional_string(theRequest.getParameter("starttime"), "");
+   std::string endtime = Spine::optional_string(theRequest.getParameter("endtime"), "");
+   if(!starttime.empty())
+	 options.start_time = Fmi::TimeParser::parse(starttime);
+   else
+	 options.start_time = boost::posix_time::not_a_date_time;
+   if(!endtime.empty())
+	 options.end_time = Fmi::TimeParser::parse(endtime);
+   else
+	 options.end_time = boost::posix_time::not_a_date_time;
+
+   std::string bbox_string = Spine::optional_string(theRequest.getParameter("bbox"), "");
+   if(!bbox_string.empty())
+	 options.bbox = Spine::BoundingBox(bbox_string);
+
+   std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> obsengineStationInfo =  obsengine->getStationInfo(options);
+
+   auto stations_out = tableFormatter->format(*obsengineStationInfo.first,
+											  obsengineStationInfo.second,
+											  theRequest,
+											  Spine::TableFormatterOptions());
+   
+    if (tableFormat == "html" || tableFormat == "debug")
+      stations_out.insert(0, "<h1>Observation stations</h1>");
+
+    if (tableFormat != "html")
+      theResponse.setContent(stations_out);
+    else
+    {
+      // Only insert tags if using human readable mode
+      std::string ret =
+          "<html><head>"
+          "<title>SmartMet Admin</title>"
+          "<style>";
+      ret +=
+          "table { border: 1px solid black; }"
+          "td { border: 1px solid black; text-align:right;}"
+          "</style>"
+          "</head><body>";
+      ret += stations_out;
+      ret += "</body></html>";
+      theResponse.setContent(ret);
+    }
+
+    // Make MIME header and content
+    std::string mime = tableFormatter->mimetype() + "; charset=UTF-8";
+
+    theResponse.setHeader("Content-Type", mime);
+
+
+	return true;
   }
   catch (...)
   {

@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 21.2.25
+Version: 21.4.20
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -20,7 +20,7 @@ BuildRequires: smartmet-engine-contour-devel >= 21.1.14
 BuildRequires: smartmet-engine-geonames-devel >= 21.1.25
 BuildRequires: smartmet-engine-sputnik-devel >= 21.1.14
 BuildRequires: smartmet-engine-querydata-devel >= 21.1.25
-BuildRequires: smartmet-engine-observation-devel >= 21.1.25
+BuildRequires: smartmet-engine-observation-devel >= 21.4.20
 Requires: smartmet-library-macgyver >= 21.1.25
 Requires: libconfig
 Requires: smartmet-server >= 21.1.14
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Tue Apr 20 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.4.20-1.fmi
+- Added what=stations query (BRAINSTORM-2039)
+
 * Thu Feb 25 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.25-1.fmi
 - Refactored producer query into four separate queries: producers, parameters, obsproducers and obsparameters
 
