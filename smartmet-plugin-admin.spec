@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 21.3.11
+Version: 21.4.20
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -20,7 +20,7 @@ BuildRequires: smartmet-engine-contour-devel >= 21.2.18
 BuildRequires: smartmet-engine-geonames-devel >= 21.2.18
 BuildRequires: smartmet-engine-sputnik-devel >= 21.1.14
 BuildRequires: smartmet-engine-querydata-devel >= 21.3.4
-BuildRequires: smartmet-engine-observation-devel >= 21.3.11
+BuildRequires: smartmet-engine-observation-devel >= 21.4.20
 BuildRequires: smartmet-engine-grid-devel >= 21.3.11
 Requires: smartmet-library-macgyver >= 21.2.25
 Requires: libconfig
@@ -57,6 +57,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Tue Apr 20 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.4.20-1.fmi
+- Added what=stations query (BRAINSTORM-2039)
+
 * Thu Mar 11 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.11-1.fmi
 - Added grid-engine parameter/producer queries
 

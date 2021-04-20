@@ -122,6 +122,10 @@ class Plugin : public SmartMetPlugin,
                            const Spine::HTTP::Request& theRequest,
                            Spine::HTTP::Response& theResponse);
 
+  bool requestObsStationInfo(Spine::Reactor &theReactor,
+							 const Spine::HTTP::Request &theRequest,
+							 Spine::HTTP::Response &theResponse);
+
   bool setPause(SmartMet::Spine::Reactor& theReactor,
                 const SmartMet::Spine::HTTP::Request& theRequest,
                 SmartMet::Spine::HTTP::Response& theResponse);
