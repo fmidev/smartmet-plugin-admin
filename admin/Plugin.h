@@ -134,6 +134,10 @@ class Plugin : public SmartMetPlugin,
                   const SmartMet::Spine::HTTP::Request& theRequest,
                   SmartMet::Spine::HTTP::Response& theResponse);
 
+  bool listRequests(Spine::Reactor &theReactor,
+					const Spine::HTTP::Request &theRequest,
+					Spine::HTTP::Response &theResponse);
+
   const std::string itsModuleName;
 
   libconfig::Config itsConfig;
