@@ -14,19 +14,21 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: libconfig-devel
-BuildRequires: smartmet-library-macgyver-devel >= 21.1.25
-BuildRequires: smartmet-library-spine-devel >= 21.1.14
-BuildRequires: smartmet-engine-contour-devel >= 21.1.14
-BuildRequires: smartmet-engine-geonames-devel >= 21.1.25
+BuildRequires: smartmet-library-macgyver-devel >= 21.2.25
+BuildRequires: smartmet-library-spine-devel >= 21.3.9
+BuildRequires: smartmet-engine-contour-devel >= 21.2.18
+BuildRequires: smartmet-engine-geonames-devel >= 21.2.18
 BuildRequires: smartmet-engine-sputnik-devel >= 21.1.14
-BuildRequires: smartmet-engine-querydata-devel >= 21.1.25
+BuildRequires: smartmet-engine-querydata-devel >= 21.3.4
 BuildRequires: smartmet-engine-observation-devel >= 21.4.20
-Requires: smartmet-library-macgyver >= 21.1.25
+BuildRequires: smartmet-engine-grid-devel >= 21.3.11
+Requires: smartmet-library-macgyver >= 21.2.25
 Requires: libconfig
 Requires: smartmet-server >= 21.1.14
-Requires: smartmet-library-spine >= 21.1.14
-Requires: smartmet-engine-geonames >= 21.1.25
-Requires: smartmet-engine-querydata >= 21.1.25
+Requires: smartmet-library-spine >= 21.3.9
+Requires: smartmet-engine-geonames >= 21.2.18
+Requires: smartmet-engine-grid >= 21.3.11
+Requires: smartmet-engine-querydata >= 21.3.4
 Requires: smartmet-engine-sputnik >= 21.1.14
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
@@ -57,6 +59,9 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Apr 20 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.4.20-1.fmi
 - Added what=stations query (BRAINSTORM-2039)
+
+* Thu Mar 11 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.11-1.fmi
+- Added grid-engine parameter/producer queries
 
 * Thu Feb 25 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.25-1.fmi
 - Refactored producer query into four separate queries: producers, parameters, obsproducers and obsparameters

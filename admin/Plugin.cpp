@@ -14,6 +14,7 @@
 #include <engines/geonames/Engine.h>
 #include <engines/observation/Engine.h>
 #include <engines/querydata/Engine.h>
+#include <engines/grid/Engine.h>
 #include <macgyver/Base64.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
@@ -118,6 +119,10 @@ bool Plugin::request(Spine::Reactor &theReactor,
       return requestObsParameterInfo(theReactor, theRequest, theResponse);
     if (what == "obsproducers")
       return requestObsProducerInfo(theReactor, theRequest, theResponse);
+    if (what == "gridproducers")
+      return requestGridProducerInfo(theReactor, theRequest, theResponse);
+    if (what == "gridparameters")
+      return requestGridParameterInfo(theReactor, theRequest, theResponse);
     if (what == "setlogging")
       return setLogging(theReactor, theRequest, theResponse);
     if (what == "getlogging")
@@ -772,6 +777,151 @@ bool Plugin::requestObsParameterInfo(Spine::Reactor &theReactor,
           "</style>"
           "</head><body>";
       ret += observation_out_parameter;
+      ret += "</body></html>";
+      theResponse.setContent(ret);
+    }
+
+    // Make MIME header and content
+    std::string mime = tableFormatter->mimetype() + "; charset=UTF-8";
+
+    theResponse.setHeader("Content-Type", mime);
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+bool Plugin::requestGridProducerInfo(Spine::Reactor &theReactor,
+                                    const Spine::HTTP::Request &theRequest,
+                                    Spine::HTTP::Response &theResponse)
+{
+  try
+  {
+    // Get the Obsengine
+    auto *engine = theReactor.getSingleton("grid", nullptr);
+    if (engine == nullptr)
+    {
+      std::string response = "Grid engine not available";
+      theResponse.setContent(response);
+      return false;
+    }
+    auto *gridEngine = reinterpret_cast<Engine::Grid::Engine *>(engine);
+
+    // Parse formatting options
+    std::string tableFormat = Spine::optional_string(theRequest.getParameter("format"), "debug");
+
+    if (tableFormat == "wxml")
+    {
+      std::string response = "Wxml formatting not supported";
+      theResponse.setContent(response);
+      return false;
+    }
+
+    // Optional producer filter
+    auto producer = theRequest.getParameter("producer");
+
+    std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
+    std::unique_ptr<Spine::TableFormatter> tableFormatter(Spine::TableFormatterFactory::create(tableFormat));
+    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> producerInfo = gridEngine->getProducerInfo(producer);
+    auto grid_out_producer = tableFormatter->format(*producerInfo.first,producerInfo.second,theRequest,Spine::TableFormatterOptions());
+
+    if (tableFormat == "html" || tableFormat == "debug")
+      grid_out_producer.insert(0, "<h1>Grid producers</h1>");
+
+    if (tableFormat != "html")
+      theResponse.setContent(grid_out_producer);
+    else
+    {
+      // Only insert tags if using human readable mode
+      std::string ret =
+          "<html><head>"
+          "<title>SmartMet Admin</title>"
+          "<style>";
+      ret +=
+          "table { border: 1px solid black; }"
+          "td { border: 1px solid black; text-align:right;}"
+          "</style>"
+          "</head><body>";
+      ret += grid_out_producer;
+      ret += "</body></html>";
+      theResponse.setContent(ret);
+    }
+
+    // Make MIME header and content
+    std::string mime = tableFormatter->mimetype() + "; charset=UTF-8";
+
+    theResponse.setHeader("Content-Type", mime);
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+bool Plugin::requestGridParameterInfo(Spine::Reactor &theReactor,
+                                     const Spine::HTTP::Request &theRequest,
+                                     Spine::HTTP::Response &theResponse)
+{
+  try
+  {
+    // Get the Obsengine
+    auto *engine = theReactor.getSingleton("grid", nullptr);
+    if (engine == nullptr)
+    {
+      std::string response = "Grid engine not available";
+      theResponse.setContent(response);
+      return false;
+    }
+    auto *gridEngine = reinterpret_cast<Engine::Grid::Engine *>(engine);
+
+    // Parse formatting options
+    std::string tableFormat = Spine::optional_string(theRequest.getParameter("format"), "debug");
+
+    if (tableFormat == "wxml")
+    {
+      std::string response = "Wxml formatting not supported";
+      theResponse.setContent(response);
+      return false;
+    }
+
+    // Optional producer filter
+    auto producer = theRequest.getParameter("producer");
+
+    std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
+
+    std::unique_ptr<Spine::TableFormatter> tableFormatter(
+        Spine::TableFormatterFactory::create(tableFormat));
+
+    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names>
+        gridEngineParameterInfo = gridEngine->getParameterInfo(producer);
+
+    auto grid_out_parameter = tableFormatter->format(*gridEngineParameterInfo.first,
+        gridEngineParameterInfo.second,theRequest,Spine::TableFormatterOptions());
+
+    if (tableFormat == "html" || tableFormat == "debug")
+      grid_out_parameter.insert(0, "<h1>Grid parameters</h1>");
+
+    if (tableFormat != "html")
+      theResponse.setContent(grid_out_parameter);
+    else
+    {
+      // Only insert tags if using human readable mode
+      std::string ret =
+          "<html><head>"
+          "<title>SmartMet Admin</title>"
+          "<style>";
+      ret +=
+          "table { border: 1px solid black; }"
+          "td { border: 1px solid black; text-align:right;}"
+          "</style>"
+          "</head><body>";
+      ret += grid_out_parameter;
       ret += "</body></html>";
       theResponse.setContent(ret);
     }

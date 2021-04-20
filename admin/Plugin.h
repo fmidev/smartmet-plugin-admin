@@ -110,6 +110,14 @@ class Plugin : public SmartMetPlugin,
                               const SmartMet::Spine::HTTP::Request& theRequest,
                               SmartMet::Spine::HTTP::Response& theResponse);
 
+  bool requestGridProducerInfo(Spine::Reactor &theReactor,
+                               const Spine::HTTP::Request &theRequest,
+                               Spine::HTTP::Response &theResponse);
+
+  bool requestGridParameterInfo(SmartMet::Spine::Reactor& theReactor,
+                               const SmartMet::Spine::HTTP::Request& theRequest,
+                               SmartMet::Spine::HTTP::Response& theResponse);
+
   bool requestLoadStations(Spine::Reactor& theReactor,
                            const Spine::HTTP::Request& theRequest,
                            Spine::HTTP::Response& theResponse);
