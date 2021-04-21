@@ -3,7 +3,7 @@
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
 Version: 21.4.21
-Release: 2%{?dist}.fmi
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-admin
@@ -57,7 +57,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
-* Wed 21 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.4.21-1.fmi
+* Wed Apr 21 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.4.21-1.fmi
 - Added missing entries to 'what=list' response (BRAINSTORM-2030)
 
 * Tue Apr 20 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.4.20-2.fmi
