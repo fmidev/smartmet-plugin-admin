@@ -68,6 +68,8 @@ std::vector<std::pair<std::string, std::string>> getRequests()
       {"parameters", "Querydata parameters"},
       {"obsproducers", "Observation producers"},
       {"obsparameters", "Observation parameters"},
+      {"gridproducers", "Grid producers"},
+      {"gridparameters", "Grid parameters"},
       {"cachesizes", "Coordinate and contour cache sizes"},
       {"activerequests", "Currently active requests"},
       {"stations", "Observation station information"}};
