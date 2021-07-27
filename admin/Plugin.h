@@ -30,7 +30,8 @@ class Plugin : public SmartMetPlugin,
 {
  public:
   Plugin(SmartMet::Spine::Reactor* theReactor, const char* theConfig);
-  virtual ~Plugin();
+  Plugin() = delete;
+  ~Plugin() override;
 
   const std::string& getPluginName() const override;
   int getRequiredAPIVersion() const override;
@@ -48,8 +49,6 @@ class Plugin : public SmartMetPlugin,
   std::string getRealm() const override;
 
  private:
-  Plugin();
-
   bool request(SmartMet::Spine::Reactor& theReactor,
                const SmartMet::Spine::HTTP::Request& theRequest,
                SmartMet::Spine::HTTP::Response& theResponse);
@@ -58,73 +57,77 @@ class Plugin : public SmartMetPlugin,
                           const SmartMet::Spine::HTTP::Request& theRequest,
                           SmartMet::Spine::HTTP::Response& theResponse);
 
-  bool requestServiceInfo(SmartMet::Spine::Reactor& theReactor,
-                          const SmartMet::Spine::HTTP::Request& theRequest,
-                          SmartMet::Spine::HTTP::Response& theResponse);
-
   bool requestBackendInfo(SmartMet::Spine::Reactor& theReactor,
                           const SmartMet::Spine::HTTP::Request& theRequest,
                           SmartMet::Spine::HTTP::Response& theResponse);
 
-  bool requestReload(SmartMet::Spine::Reactor& theReactor,
-                     const SmartMet::Spine::HTTP::Request& theRequest,
-                     SmartMet::Spine::HTTP::Response& theResponse);
+  static bool requestServiceInfo(SmartMet::Spine::Reactor& theReactor,
+                                 const SmartMet::Spine::HTTP::Request& theRequest,
+                                 SmartMet::Spine::HTTP::Response& theResponse);
 
-  bool requestGeonames(SmartMet::Spine::Reactor& theReactor,
-                       const SmartMet::Spine::HTTP::Request& theRequest,
-                       SmartMet::Spine::HTTP::Response& theResponse);
-
-  bool requestQEngineStatus(SmartMet::Spine::Reactor& theReactor,
+  static bool requestReload(SmartMet::Spine::Reactor& theReactor,
                             const SmartMet::Spine::HTTP::Request& theRequest,
                             SmartMet::Spine::HTTP::Response& theResponse);
 
-  bool requestServiceStats(SmartMet::Spine::Reactor& theReactor,
-                           const SmartMet::Spine::HTTP::Request& theRequest,
-                           SmartMet::Spine::HTTP::Response& theResponse);
-
-  bool requestLastRequests(SmartMet::Spine::Reactor& theReactor,
-                           const SmartMet::Spine::HTTP::Request& theRequest,
-                           SmartMet::Spine::HTTP::Response& theResponse);
-
-  bool requestActiveRequests(SmartMet::Spine::Reactor& theReactor,
-                             const SmartMet::Spine::HTTP::Request& theRequest,
-                             SmartMet::Spine::HTTP::Response& theResponse);
-
-  bool requestCacheSizes(SmartMet::Spine::Reactor& theReactor,
-                         const SmartMet::Spine::HTTP::Request& theRequest,
-                         SmartMet::Spine::HTTP::Response& theResponse);
-
-  bool requestProducerInfo(SmartMet::Spine::Reactor& theReactor,
-                           const SmartMet::Spine::HTTP::Request& theRequest,
-                           SmartMet::Spine::HTTP::Response& theResponse);
-
-  bool requestParameterInfo(SmartMet::Spine::Reactor& theReactor,
-                            const SmartMet::Spine::HTTP::Request& theRequest,
-                            SmartMet::Spine::HTTP::Response& theResponse);
-
-  bool requestObsParameterInfo(SmartMet::Spine::Reactor& theReactor,
-                               const SmartMet::Spine::HTTP::Request& theRequest,
-                               SmartMet::Spine::HTTP::Response& theResponse);
-
-  bool requestObsProducerInfo(SmartMet::Spine::Reactor& theReactor,
+  static bool requestGeonames(SmartMet::Spine::Reactor& theReactor,
                               const SmartMet::Spine::HTTP::Request& theRequest,
                               SmartMet::Spine::HTTP::Response& theResponse);
 
-  bool requestGridProducerInfo(Spine::Reactor& theReactor,
-                               const Spine::HTTP::Request& theRequest,
-                               Spine::HTTP::Response& theResponse);
+  static bool requestQEngineStatus(SmartMet::Spine::Reactor& theReactor,
+                                   const SmartMet::Spine::HTTP::Request& theRequest,
+                                   SmartMet::Spine::HTTP::Response& theResponse);
 
-  bool requestGridParameterInfo(SmartMet::Spine::Reactor& theReactor,
+  static bool requestServiceStats(SmartMet::Spine::Reactor& theReactor,
+                                  const SmartMet::Spine::HTTP::Request& theRequest,
+                                  SmartMet::Spine::HTTP::Response& theResponse);
+
+  static bool requestLastRequests(SmartMet::Spine::Reactor& theReactor,
+                                  const SmartMet::Spine::HTTP::Request& theRequest,
+                                  SmartMet::Spine::HTTP::Response& theResponse);
+
+  static bool requestActiveRequests(SmartMet::Spine::Reactor& theReactor,
+                                    const SmartMet::Spine::HTTP::Request& theRequest,
+                                    SmartMet::Spine::HTTP::Response& theResponse);
+
+  static bool requestCacheSizes(SmartMet::Spine::Reactor& theReactor,
                                 const SmartMet::Spine::HTTP::Request& theRequest,
                                 SmartMet::Spine::HTTP::Response& theResponse);
 
-  bool requestLoadStations(Spine::Reactor& theReactor,
+  static bool requestProducerInfo(SmartMet::Spine::Reactor& theReactor,
+                                  const SmartMet::Spine::HTTP::Request& theRequest,
+                                  SmartMet::Spine::HTTP::Response& theResponse);
+
+  static bool requestParameterInfo(SmartMet::Spine::Reactor& theReactor,
+                                   const SmartMet::Spine::HTTP::Request& theRequest,
+                                   SmartMet::Spine::HTTP::Response& theResponse);
+
+  static bool requestObsParameterInfo(SmartMet::Spine::Reactor& theReactor,
+                                      const SmartMet::Spine::HTTP::Request& theRequest,
+                                      SmartMet::Spine::HTTP::Response& theResponse);
+
+  static bool requestObsProducerInfo(SmartMet::Spine::Reactor& theReactor,
+                                     const SmartMet::Spine::HTTP::Request& theRequest,
+                                     SmartMet::Spine::HTTP::Response& theResponse);
+
+  static bool requestGridProducerInfo(Spine::Reactor& theReactor,
+                                      const Spine::HTTP::Request& theRequest,
+                                      Spine::HTTP::Response& theResponse);
+
+  static bool requestGridParameterInfo(SmartMet::Spine::Reactor& theReactor,
+                                       const SmartMet::Spine::HTTP::Request& theRequest,
+                                       SmartMet::Spine::HTTP::Response& theResponse);
+
+  static bool requestLoadStations(Spine::Reactor& theReactor,
+                                  const Spine::HTTP::Request& theRequest,
+                                  Spine::HTTP::Response& theResponse);
+
+  static bool requestObsStationInfo(Spine::Reactor& theReactor,
+                                    const Spine::HTTP::Request& theRequest,
+                                    Spine::HTTP::Response& theResponse);
+
+  static bool listRequests(Spine::Reactor& theReactor,
                            const Spine::HTTP::Request& theRequest,
                            Spine::HTTP::Response& theResponse);
-
-  bool requestObsStationInfo(Spine::Reactor& theReactor,
-                             const Spine::HTTP::Request& theRequest,
-                             Spine::HTTP::Response& theResponse);
 
   bool setPause(SmartMet::Spine::Reactor& theReactor,
                 const SmartMet::Spine::HTTP::Request& theRequest,
@@ -141,10 +144,6 @@ class Plugin : public SmartMetPlugin,
   bool getLogging(SmartMet::Spine::Reactor& theReactor,
                   const SmartMet::Spine::HTTP::Request& theRequest,
                   SmartMet::Spine::HTTP::Response& theResponse);
-
-  bool listRequests(Spine::Reactor& theReactor,
-                    const Spine::HTTP::Request& theRequest,
-                    Spine::HTTP::Response& theResponse);
 
   const std::string itsModuleName;
 
