@@ -1263,7 +1263,7 @@ bool Plugin::requestActiveRequests(Spine::Reactor &theReactor,
 // ----------------------------------------------------------------------
 
 bool Plugin::requestCacheSizes(Spine::Reactor &theReactor,
-                               const Spine::HTTP::Request &theRequest,
+                               const Spine::HTTP::Request & /* theRequest */,
                                Spine::HTTP::Response &theResponse)
 {
   try
@@ -1414,7 +1414,7 @@ bool Plugin::requestObsStationInfo(Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::listRequests(Spine::Reactor &theReactor,
+bool Plugin::listRequests(Spine::Reactor & /* theReactor */,
                           const Spine::HTTP::Request &theRequest,
                           Spine::HTTP::Response &theResponse)
 {
