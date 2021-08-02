@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 21.7.28
+Version: 21.8.2
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -14,22 +14,22 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: libconfig-devel
-BuildRequires: smartmet-library-macgyver-devel >= 21.7.27
+BuildRequires: smartmet-library-macgyver-devel >= 21.7.28
 BuildRequires: smartmet-library-spine-devel >= 21.7.28
-BuildRequires: smartmet-engine-contour-devel >= 21.5.20
-BuildRequires: smartmet-engine-geonames-devel >= 21.7.8
-BuildRequires: smartmet-engine-sputnik-devel >= 21.4.19
-BuildRequires: smartmet-engine-querydata-devel >= 21.6.3
-BuildRequires: smartmet-engine-observation-devel >= 21.7.28
-BuildRequires: smartmet-engine-grid-devel >= 21.7.8
-Requires: smartmet-library-macgyver >= 21.7.27
+BuildRequires: smartmet-engine-contour-devel >= 21.7.28
+BuildRequires: smartmet-engine-geonames-devel >= 21.8.2
+BuildRequires: smartmet-engine-sputnik-devel >= 21.7.28
+BuildRequires: smartmet-engine-querydata-devel >= 21.8.2
+BuildRequires: smartmet-engine-observation-devel >= 21.8.2
+BuildRequires: smartmet-engine-grid-devel >= 21.8.2
+Requires: smartmet-library-macgyver >= 21.7.28
 Requires: libconfig
 Requires: smartmet-server >= 21.6.3
 Requires: smartmet-library-spine >= 21.7.28
-Requires: smartmet-engine-geonames >= 21.7.8
-Requires: smartmet-engine-grid >= 21.7.8
-Requires: smartmet-engine-querydata >= 21.6.3
-Requires: smartmet-engine-sputnik >= 21.4.19
+Requires: smartmet-engine-geonames >= 21.8.2
+Requires: smartmet-engine-grid >= 21.8.2
+Requires: smartmet-engine-querydata >= 21.8.2
+Requires: smartmet-engine-sputnik >= 21.7.28
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
@@ -57,6 +57,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Mon Aug  2 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.8.2-1.fmi
+- Repackaged since GeoEngine ABI changed by switching to boost::atomic_shared_ptr
+
 * Wed Jul 28 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.7.28-1.fmi
 - Silenced compiler warnings
 
