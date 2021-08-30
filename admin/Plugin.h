@@ -129,6 +129,10 @@ class Plugin : public SmartMetPlugin,
                            const Spine::HTTP::Request& theRequest,
                            Spine::HTTP::Response& theResponse);
 
+  static bool requestCacheStats(Spine::Reactor& theReactor,
+                           const Spine::HTTP::Request& theRequest,
+                           Spine::HTTP::Response& theResponse);
+
   bool setPause(Spine::Reactor& theReactor,
                 const Spine::HTTP::Request& theRequest,
                 Spine::HTTP::Response& theResponse);
