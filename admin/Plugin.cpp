@@ -18,6 +18,8 @@
 #include <macgyver/Base64.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
+#include <macgyver/TimeFormatter.h>
+#include <macgyver/CacheStats.h>
 #include <spine/Convenience.h>
 #include <spine/FmiApiKey.h>
 #include <spine/SmartMet.h>
@@ -72,7 +74,8 @@ std::vector<std::pair<std::string, std::string>> getRequests()
       {"gridparameters", "Grid parameters"},
       {"cachesizes", "Coordinate and contour cache sizes"},
       {"activerequests", "Currently active requests"},
-      {"stations", "Observation station information"}};
+      {"stations", "Observation station information"},
+      {"cachestats", "Cache statistics"}};
 
   return ret;
 }
@@ -172,6 +175,8 @@ bool Plugin::request(Spine::Reactor &theReactor,
       return requestObsStationInfo(theReactor, theRequest, theResponse);
     if (what == "list")
       return listRequests(theReactor, theRequest, theResponse);
+    if (what == "cachestats")
+      return requestCacheStats(theReactor, theRequest, theResponse);
 
     // Unknown request,build response
     // Make MIME header
@@ -1400,6 +1405,80 @@ bool Plugin::requestObsStationInfo(Spine::Reactor &theReactor,
 
     theResponse.setHeader("Content-Type", mime);
 
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+bool Plugin::requestCacheStats(Spine::Reactor &theReactor,
+							   const Spine::HTTP::Request &theRequest,
+							   Spine::HTTP::Response &theResponse)
+{
+  try
+  {
+    std::string tableFormat = Spine::optional_string(theRequest.getParameter("format"), "html");
+    std::unique_ptr<Spine::TableFormatter> tableFormatter(Spine::TableFormatterFactory::create(tableFormat));
+	boost::shared_ptr<Spine::Table> table(new Spine::Table());
+	Spine::TableFormatter::Names header_names{"#","cache_name","hits","misses","hitrate/min","created"};
+
+	auto now = boost::posix_time::microsec_clock::universal_time();
+	auto cache_stats = theReactor.getCacheStats();
+
+	Spine::Table data_table;
+
+    auto timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
+	std::unique_ptr<Fmi::TimeFormatter> timeFormatter(Fmi::TimeFormatter::create(timeFormat));
+
+	size_t row = 1;
+	for(const auto& item : cache_stats)
+	  {
+		const auto& name = item.first;
+		const auto& stat = item.second;
+		auto duration = (now - stat.startTime());
+		auto hit_rate_per_minute = ((duration.total_seconds() / 60) == 0 ? 0 : (stat.hits() / (duration.total_seconds() / 60)));
+		data_table.set(0, row, Fmi::to_string(row));
+		data_table.set(1, row, name);
+		data_table.set(2, row, Fmi::to_string(stat.hits()));
+		data_table.set(3, row, Fmi::to_string(stat.misses()));
+		data_table.set(4, row, Fmi::to_string(hit_rate_per_minute));
+		data_table.set(5, row, timeFormatter->format(stat.startTime()));
+		row++;
+	  }
+
+    auto cache_stats_output = tableFormatter->format(data_table,
+													header_names,
+													theRequest,
+													Spine::TableFormatterOptions());
+
+    if (tableFormat == "html" || tableFormat == "debug")
+      cache_stats_output.insert(0, "<h1>CacheStatistics</h1>");
+
+    if (tableFormat != "html")
+      theResponse.setContent(cache_stats_output);
+    else
+    {
+      // Only insert tags if using human readable mode
+      std::string ret =
+          "<html><head>"
+          "<title>SmartMet Admin</title>"
+          "<style>";
+      ret +=
+          "table { border: 1px solid black; }"
+          "td { border: 1px solid black; text-align:right;}"
+          "</style>"
+          "</head><body>";
+      ret += cache_stats_output;
+      ret += "</body></html>";
+      theResponse.setContent(ret);
+    }
+
+    // Make MIME header and content
+    std::string mime = tableFormatter->mimetype() + "; charset=UTF-8";
+
+    theResponse.setHeader("Content-Type", mime);
     return true;
   }
   catch (...)
