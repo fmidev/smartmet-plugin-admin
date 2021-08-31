@@ -1424,7 +1424,7 @@ bool Plugin::requestCacheStats(Spine::Reactor &theReactor,
         Spine::TableFormatterFactory::create(tableFormat));
     boost::shared_ptr<Spine::Table> table(new Spine::Table());
     Spine::TableFormatter::Names header_names{
-        "#", "cache_name", "hits", "misses", "hitrate", "hits/min", "created"};
+        "#", "cache_name", "hits", "misses", "hitrate", "hits/min", "created", "age"};
 
     auto now = boost::posix_time::microsec_clock::universal_time();
     auto cache_stats = theReactor.getCacheStats();
@@ -1451,6 +1451,7 @@ bool Plugin::requestCacheStats(Spine::Reactor &theReactor,
       data_table.set(5, row, Fmi::to_string("%.1f", hits_per_min));
 
       data_table.set(6, row, timeFormatter->format(stat.startTime()));
+      data_table.set(7, row, Fmi::to_simple_string(now - stat.startTime()));
       row++;
     }
 
