@@ -16,7 +16,9 @@
 #include <engines/observation/Engine.h>
 #include <engines/querydata/Engine.h>
 #include <macgyver/Base64.h>
+#include <macgyver/CacheStats.h>
 #include <macgyver/StringConversion.h>
+#include <macgyver/TimeFormatter.h>
 #include <macgyver/TimeParser.h>
 #include <macgyver/TimeFormatter.h>
 #include <macgyver/CacheStats.h>
@@ -1414,44 +1416,49 @@ bool Plugin::requestObsStationInfo(Spine::Reactor &theReactor,
 }
 
 bool Plugin::requestCacheStats(Spine::Reactor &theReactor,
-							   const Spine::HTTP::Request &theRequest,
-							   Spine::HTTP::Response &theResponse)
+                               const Spine::HTTP::Request &theRequest,
+                               Spine::HTTP::Response &theResponse)
 {
   try
   {
     std::string tableFormat = Spine::optional_string(theRequest.getParameter("format"), "html");
-    std::unique_ptr<Spine::TableFormatter> tableFormatter(Spine::TableFormatterFactory::create(tableFormat));
-	boost::shared_ptr<Spine::Table> table(new Spine::Table());
-	Spine::TableFormatter::Names header_names{"#","cache_name","hits","misses","hitrate/min","created"};
+    std::unique_ptr<Spine::TableFormatter> tableFormatter(
+        Spine::TableFormatterFactory::create(tableFormat));
+    boost::shared_ptr<Spine::Table> table(new Spine::Table());
+    Spine::TableFormatter::Names header_names{
+        "#", "cache_name", "hits", "misses", "hitrate", "hits/min", "created", "age"};
 
-	auto now = boost::posix_time::microsec_clock::universal_time();
-	auto cache_stats = theReactor.getCacheStats();
+    auto now = boost::posix_time::microsec_clock::universal_time();
+    auto cache_stats = theReactor.getCacheStats();
 
-	Spine::Table data_table;
+    Spine::Table data_table;
 
     auto timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
-	std::unique_ptr<Fmi::TimeFormatter> timeFormatter(Fmi::TimeFormatter::create(timeFormat));
+    std::unique_ptr<Fmi::TimeFormatter> timeFormatter(Fmi::TimeFormatter::create(timeFormat));
 
-	size_t row = 1;
-	for(const auto& item : cache_stats)
-	  {
-		const auto& name = item.first;
-		const auto& stat = item.second;
-		auto duration = (now - stat.startTime());
-		auto hit_rate_per_minute = ((duration.total_seconds() / 60) == 0 ? 0 : (stat.hits() / (duration.total_seconds() / 60)));
-		data_table.set(0, row, Fmi::to_string(row));
-		data_table.set(1, row, name);
-		data_table.set(2, row, Fmi::to_string(stat.hits()));
-		data_table.set(3, row, Fmi::to_string(stat.misses()));
-		data_table.set(4, row, Fmi::to_string(hit_rate_per_minute));
-		data_table.set(5, row, timeFormatter->format(stat.startTime()));
-		row++;
-	  }
+    size_t row = 1;
+    for (const auto &item : cache_stats)
+    {
+      const auto &name = item.first;
+      const auto &stat = item.second;
+      auto duration = (now - stat.startTime()).total_seconds();
+      auto n = stat.hits() + stat.misses();
+      auto hitrate = (n == 0 ? 0.0 : stat.hits() * 100.0 / n);
+      auto hits_per_min = (duration == 0 ? 0.0 : 60.0 * stat.hits() / duration);
+      data_table.set(0, row, Fmi::to_string(row));
+      data_table.set(1, row, name);
+      data_table.set(2, row, Fmi::to_string(stat.hits()));
+      data_table.set(3, row, Fmi::to_string(stat.misses()));
+      data_table.set(4, row, Fmi::to_string("%.1f", hitrate));
+      data_table.set(5, row, Fmi::to_string("%.1f", hits_per_min));
 
-    auto cache_stats_output = tableFormatter->format(data_table,
-													header_names,
-													theRequest,
-													Spine::TableFormatterOptions());
+      data_table.set(6, row, timeFormatter->format(stat.startTime()));
+      data_table.set(7, row, Fmi::to_simple_string(now - stat.startTime()));
+      row++;
+    }
+
+    auto cache_stats_output = tableFormatter->format(
+        data_table, header_names, theRequest, Spine::TableFormatterOptions());
 
     if (tableFormat == "html" || tableFormat == "debug")
       cache_stats_output.insert(0, "<h1>CacheStatistics</h1>");
