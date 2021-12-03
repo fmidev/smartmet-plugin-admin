@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 21.9.28
+Version: 21.12.3
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -13,20 +13,20 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
-BuildRequires: smartmet-library-macgyver-devel >= 21.9.13
-BuildRequires: smartmet-library-spine-devel >= 21.9.13
-BuildRequires: smartmet-engine-contour-devel >= 21.9.13
-BuildRequires: smartmet-engine-geonames-devel >= 21.9.13
+BuildRequires: smartmet-library-macgyver-devel >= 21.12.1
+BuildRequires: smartmet-library-spine-devel >= 21.12.2
+BuildRequires: smartmet-engine-contour-devel >= 21.12.2
+BuildRequires: smartmet-engine-geonames-devel >= 21.12.2
 BuildRequires: smartmet-engine-sputnik-devel >= 21.9.9
-BuildRequires: smartmet-engine-querydata-devel >= 21.9.13
-BuildRequires: smartmet-engine-observation-devel >= 21.9.13
-BuildRequires: smartmet-engine-grid-devel >= 21.9.15
-Requires: smartmet-library-macgyver >= 21.9.13
+BuildRequires: smartmet-engine-querydata-devel >= 21.12.2
+BuildRequires: smartmet-engine-observation-devel >= 21.12.2
+BuildRequires: smartmet-engine-grid-devel >= 21.12.2
+Requires: smartmet-library-macgyver >= 21.12.1
 Requires: smartmet-server >= 21.9.7
-Requires: smartmet-library-spine >= 21.9.13
-Requires: smartmet-engine-geonames >= 21.9.13
-Requires: smartmet-engine-grid >= 21.9.15
-Requires: smartmet-engine-querydata >= 21.9.13
+Requires: smartmet-library-spine >= 21.12.2
+Requires: smartmet-engine-geonames >= 21.12.2
+Requires: smartmet-engine-grid >= 21.12.2
+Requires: smartmet-engine-querydata >= 21.12.2
 Requires: smartmet-engine-sputnik >= 21.9.9
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
