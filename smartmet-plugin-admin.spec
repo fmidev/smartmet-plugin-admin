@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 21.12.3
+Version: 21.12.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Tue Dec  7 2021 Andris Pavēnis <andris.pavenis@fmi.fi> 21.12.7-1.fmi
+- Update to postgresql 13 and gdal 3.3
+
 * Tue Sep 28 2021 Andris Pavēnis <andris.pavenis@fmi.fi> 21.9.28-1.fmi
 - Repackage due to dependency change (libconfig17)
 
