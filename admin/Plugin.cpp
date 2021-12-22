@@ -71,6 +71,8 @@ std::vector<std::pair<std::string, std::string>> getRequests()
       {"obsproducers", "Observation producers"},
       {"obsparameters", "Observation parameters"},
       {"gridproducers", "Grid producers"},
+      {"gridgenerations", "Grid generations"},
+      {"gridnbgenerations", "Grid newbase generations"},
       {"gridparameters", "Grid parameters"},
       {"cachesizes", "Coordinate and contour cache sizes"},
       {"activerequests", "Currently active requests"},
@@ -153,6 +155,10 @@ bool Plugin::request(Spine::Reactor &theReactor,
       return requestObsProducerInfo(theReactor, theRequest, theResponse);
     if (what == "gridproducers")
       return requestGridProducerInfo(theReactor, theRequest, theResponse);
+    if (what == "gridgenerations")
+      return requestGridGenerationInfo(theReactor, theRequest, theResponse);
+    if (what == "gridnbgenerations")
+      return requestGridNbGenerationInfo(theReactor, theRequest, theResponse);
     if (what == "gridparameters")
       return requestGridParameterInfo(theReactor, theRequest, theResponse);
     if (what == "setlogging")
@@ -863,12 +869,156 @@ bool Plugin::requestGridProducerInfo(Spine::Reactor &theReactor,
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
     std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> producerInfo =
-        gridEngine->getProducerInfo(producer);
+        gridEngine->getProducerInfo(producer,timeFormat);
     auto grid_out_producer = tableFormatter->format(
         *producerInfo.first, producerInfo.second, theRequest, Spine::TableFormatterOptions());
 
     if (tableFormat == "html" || tableFormat == "debug")
       grid_out_producer.insert(0, "<h1>Grid producers</h1>");
+
+    if (tableFormat != "html")
+      theResponse.setContent(grid_out_producer);
+    else
+    {
+      // Only insert tags if using human readable mode
+      std::string ret =
+          "<html><head>"
+          "<title>SmartMet Admin</title>"
+          "<style>";
+      ret +=
+          "table { border: 1px solid black; }"
+          "td { border: 1px solid black; text-align:right;}"
+          "</style>"
+          "</head><body>";
+      ret += grid_out_producer;
+      ret += "</body></html>";
+      theResponse.setContent(ret);
+    }
+
+    // Make MIME header and content
+    std::string mime = tableFormatter->mimetype() + "; charset=UTF-8";
+
+    theResponse.setHeader("Content-Type", mime);
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+bool Plugin::requestGridGenerationInfo(Spine::Reactor &theReactor,
+                                     const Spine::HTTP::Request &theRequest,
+                                     Spine::HTTP::Response &theResponse)
+{
+  try
+  {
+    // Get the Obsengine
+    auto *engine = theReactor.getSingleton("grid", nullptr);
+    if (engine == nullptr)
+    {
+      std::string response = "Grid engine not available";
+      theResponse.setContent(response);
+      return false;
+    }
+    auto *gridEngine = reinterpret_cast<Engine::Grid::Engine *>(engine);
+
+    // Parse formatting options
+    std::string tableFormat = Spine::optional_string(theRequest.getParameter("format"), "debug");
+
+    if (tableFormat == "wxml")
+    {
+      std::string response = "Wxml formatting not supported";
+      theResponse.setContent(response);
+      return false;
+    }
+
+    // Optional producer filter
+    auto producer = theRequest.getParameter("producer");
+
+    std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
+    std::unique_ptr<Spine::TableFormatter> tableFormatter(
+        Spine::TableFormatterFactory::create(tableFormat));
+    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> producerInfo =
+        gridEngine->getGenerationInfo(producer,timeFormat);
+    auto grid_out_producer = tableFormatter->format(
+        *producerInfo.first, producerInfo.second, theRequest, Spine::TableFormatterOptions());
+
+    if (tableFormat == "html" || tableFormat == "debug")
+      grid_out_producer.insert(0, "<h1>Grid generations</h1>");
+
+    if (tableFormat != "html")
+      theResponse.setContent(grid_out_producer);
+    else
+    {
+      // Only insert tags if using human readable mode
+      std::string ret =
+          "<html><head>"
+          "<title>SmartMet Admin</title>"
+          "<style>";
+      ret +=
+          "table { border: 1px solid black; }"
+          "td { border: 1px solid black; text-align:right;}"
+          "</style>"
+          "</head><body>";
+      ret += grid_out_producer;
+      ret += "</body></html>";
+      theResponse.setContent(ret);
+    }
+
+    // Make MIME header and content
+    std::string mime = tableFormatter->mimetype() + "; charset=UTF-8";
+
+    theResponse.setHeader("Content-Type", mime);
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+bool Plugin::requestGridNbGenerationInfo(Spine::Reactor &theReactor,
+                                     const Spine::HTTP::Request &theRequest,
+                                     Spine::HTTP::Response &theResponse)
+{
+  try
+  {
+    // Get the Obsengine
+    auto *engine = theReactor.getSingleton("grid", nullptr);
+    if (engine == nullptr)
+    {
+      std::string response = "Grid engine not available";
+      theResponse.setContent(response);
+      return false;
+    }
+    auto *gridEngine = reinterpret_cast<Engine::Grid::Engine *>(engine);
+
+    // Parse formatting options
+    std::string tableFormat = Spine::optional_string(theRequest.getParameter("format"), "debug");
+
+    if (tableFormat == "wxml")
+    {
+      std::string response = "Wxml formatting not supported";
+      theResponse.setContent(response);
+      return false;
+    }
+
+    // Optional producer filter
+    auto producer = theRequest.getParameter("producer");
+
+    std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
+    std::unique_ptr<Spine::TableFormatter> tableFormatter(
+        Spine::TableFormatterFactory::create(tableFormat));
+    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> producerInfo =
+        gridEngine->getExtGenerationInfo(producer,timeFormat);
+    auto grid_out_producer = tableFormatter->format(
+        *producerInfo.first, producerInfo.second, theRequest, Spine::TableFormatterOptions());
+
+    if (tableFormat == "html" || tableFormat == "debug")
+      grid_out_producer.insert(0, "<h1>Grid Newbase generations</h1>");
 
     if (tableFormat != "html")
       theResponse.setContent(grid_out_producer);
