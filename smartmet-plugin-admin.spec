@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 21.9.28
+Version: 21.12.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -13,20 +13,20 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
-BuildRequires: smartmet-library-macgyver-devel >= 21.9.13
-BuildRequires: smartmet-library-spine-devel >= 21.9.13
-BuildRequires: smartmet-engine-contour-devel >= 21.9.13
-BuildRequires: smartmet-engine-geonames-devel >= 21.9.13
+BuildRequires: smartmet-library-macgyver-devel >= 21.12.1
+BuildRequires: smartmet-library-spine-devel >= 21.12.2
+BuildRequires: smartmet-engine-contour-devel >= 21.12.2
+BuildRequires: smartmet-engine-geonames-devel >= 21.12.2
 BuildRequires: smartmet-engine-sputnik-devel >= 21.9.9
-BuildRequires: smartmet-engine-querydata-devel >= 21.9.13
-BuildRequires: smartmet-engine-observation-devel >= 21.9.13
-BuildRequires: smartmet-engine-grid-devel >= 21.9.15
-Requires: smartmet-library-macgyver >= 21.9.13
+BuildRequires: smartmet-engine-querydata-devel >= 21.12.2
+BuildRequires: smartmet-engine-observation-devel >= 21.12.2
+BuildRequires: smartmet-engine-grid-devel >= 21.12.2
+Requires: smartmet-library-macgyver >= 21.12.1
 Requires: smartmet-server >= 21.9.7
-Requires: smartmet-library-spine >= 21.9.13
-Requires: smartmet-engine-geonames >= 21.9.13
-Requires: smartmet-engine-grid >= 21.9.15
-Requires: smartmet-engine-querydata >= 21.9.13
+Requires: smartmet-library-spine >= 21.12.2
+Requires: smartmet-engine-geonames >= 21.12.2
+Requires: smartmet-engine-grid >= 21.12.2
+Requires: smartmet-engine-querydata >= 21.12.2
 Requires: smartmet-engine-sputnik >= 21.9.9
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Tue Dec  7 2021 Andris Pavēnis <andris.pavenis@fmi.fi> 21.12.7-1.fmi
+- Update to postgresql 13 and gdal 3.3
+
 * Tue Sep 28 2021 Andris Pavēnis <andris.pavenis@fmi.fi> 21.9.28-1.fmi
 - Repackage due to dependency change (libconfig17)
 
