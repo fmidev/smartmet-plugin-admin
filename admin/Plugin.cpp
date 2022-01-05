@@ -20,6 +20,8 @@
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeFormatter.h>
 #include <macgyver/TimeParser.h>
+#include <macgyver/TimeFormatter.h>
+#include <macgyver/CacheStats.h>
 #include <spine/Convenience.h>
 #include <spine/FmiApiKey.h>
 #include <spine/SmartMet.h>
@@ -1297,8 +1299,9 @@ bool Plugin::requestLastRequests(Spine::Reactor &theReactor,
       minutes = boost::lexical_cast<unsigned int>(*givenMinutes);
 
     // Obtain logging information
+    std::string pluginName = Spine::optional_string(theRequest.getParameter("plugin"), "all");
     auto currentRequests =
-        theReactor.getLoggedRequests();  // This is type tuple<bool,LogRange,posix_time>
+        theReactor.getLoggedRequests(pluginName);  // This is type tuple<bool,LogRange,posix_time>
 
     auto firstValidTime =
         boost::posix_time::second_clock::local_time() - boost::posix_time::minutes(minutes);
@@ -1745,8 +1748,9 @@ bool Plugin::requestServiceStats(Spine::Reactor &theReactor,
 
     std::unique_ptr<Spine::TableFormatter> formatter(Spine::TableFormatterFactory::create(format));
 
+    std::string pluginName = Spine::optional_string(theRequest.getParameter("plugin"), "all");
     auto currentRequests =
-        theReactor.getLoggedRequests();  // This is type tuple<bool,LogRange,posix_time>
+        theReactor.getLoggedRequests(pluginName);  // This is type tuple<bool,LogRange,posix_time>
 
     auto currentTime = boost::posix_time::microsec_clock::local_time();
 
