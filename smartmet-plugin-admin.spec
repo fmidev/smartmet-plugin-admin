@@ -20,12 +20,12 @@ BuildRequires: smartmet-engine-geonames-devel >= 21.12.7
 BuildRequires: smartmet-engine-sputnik-devel >= 21.9.27
 BuildRequires: smartmet-engine-querydata-devel >= 22.1.3
 BuildRequires: smartmet-engine-observation-devel >= 21.12.20
-BuildRequires: smartmet-engine-grid-devel >= 21.12.7
+BuildRequires: smartmet-engine-grid-devel >= 22.1.5
 Requires: smartmet-library-macgyver >= 22.1.4
 Requires: smartmet-server >= 21.11.25
 Requires: smartmet-library-spine >= 22.1.5
 Requires: smartmet-engine-geonames >= 21.12.7
-Requires: smartmet-engine-grid >= 21.12.7
+Requires: smartmet-engine-grid >= 22.1.5
 Requires: smartmet-engine-querydata >= 22.1.3
 Requires: smartmet-engine-sputnik >= 21.9.27
 Provides: %{SPECNAME}
