@@ -74,7 +74,7 @@ std::vector<std::pair<std::string, std::string>> getRequests()
       {"obsparameters", "Observation parameters"},
       {"gridproducers", "Grid producers"},
       {"gridgenerations", "Grid generations"},
-      {"gridnbgenerations", "Grid newbase generations"},
+      {"gridgenerationsqd", "Grid newbase generations"},
       {"gridparameters", "Grid parameters"},
       {"cachesizes", "Coordinate and contour cache sizes"},
       {"activerequests", "Currently active requests"},
@@ -159,8 +159,8 @@ bool Plugin::request(Spine::Reactor &theReactor,
       return requestGridProducerInfo(theReactor, theRequest, theResponse);
     if (what == "gridgenerations")
       return requestGridGenerationInfo(theReactor, theRequest, theResponse);
-    if (what == "gridnbgenerations")
-      return requestGridNbGenerationInfo(theReactor, theRequest, theResponse);
+    if (what == "gridgenerationsqd")
+      return requestGridQdGenerationInfo(theReactor, theRequest, theResponse);
     if (what == "gridparameters")
       return requestGridParameterInfo(theReactor, theRequest, theResponse);
     if (what == "setlogging")
@@ -982,7 +982,7 @@ bool Plugin::requestGridGenerationInfo(Spine::Reactor &theReactor,
   }
 }
 
-bool Plugin::requestGridNbGenerationInfo(Spine::Reactor &theReactor,
+bool Plugin::requestGridQdGenerationInfo(Spine::Reactor &theReactor,
                                      const Spine::HTTP::Request &theRequest,
                                      Spine::HTTP::Response &theResponse)
 {

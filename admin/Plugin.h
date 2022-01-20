@@ -117,7 +117,7 @@ class Plugin : public SmartMetPlugin,
                                       const Spine::HTTP::Request& theRequest,
                                       Spine::HTTP::Response& theResponse);
 
-  static bool requestGridNbGenerationInfo(Spine::Reactor& theReactor,
+  static bool requestGridQdGenerationInfo(Spine::Reactor& theReactor,
                                       const Spine::HTTP::Request& theRequest,
                                       Spine::HTTP::Response& theResponse);
 
