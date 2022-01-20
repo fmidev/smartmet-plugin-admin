@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 22.1.5
+Version: 22.1.20
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -13,19 +13,19 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
-BuildRequires: smartmet-library-macgyver-devel >= 22.1.4
+BuildRequires: smartmet-library-macgyver-devel >= 22.1.18
 BuildRequires: smartmet-library-spine-devel >= 22.1.5
 BuildRequires: smartmet-engine-contour-devel >= 21.12.7
-BuildRequires: smartmet-engine-geonames-devel >= 21.12.7
+BuildRequires: smartmet-engine-geonames-devel >= 22.1.18
 BuildRequires: smartmet-engine-sputnik-devel >= 21.9.27
 BuildRequires: smartmet-engine-querydata-devel >= 22.1.3
-BuildRequires: smartmet-engine-observation-devel >= 21.12.20
-BuildRequires: smartmet-engine-grid-devel >= 22.1.5
-Requires: smartmet-library-macgyver >= 22.1.4
+BuildRequires: smartmet-engine-observation-devel >= 22.1.14
+BuildRequires: smartmet-engine-grid-devel >= 22.1.13
+Requires: smartmet-library-macgyver >= 22.1.18
 Requires: smartmet-server >= 21.11.25
 Requires: smartmet-library-spine >= 22.1.5
-Requires: smartmet-engine-geonames >= 21.12.7
-Requires: smartmet-engine-grid >= 22.1.5
+Requires: smartmet-engine-geonames >= 22.1.18
+Requires: smartmet-engine-grid >= 22.1.13
 Requires: smartmet-engine-querydata >= 22.1.3
 Requires: smartmet-engine-sputnik >= 21.9.27
 Provides: %{SPECNAME}
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Thu Jan 20 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.1.20-1.fmi
+- Fixed query name from gridnbgenerations to gridgenerationsqd
+
 * Thu Jan 5 2022 Anssi Reponen <anssi.reponen@fmi.fi> - 22.1.5-1.fmi
 - Possible to select plugin in lastrequests and servicestats query. (BRAINSTORM-2034)
 
