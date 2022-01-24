@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 22.1.20
+Version: 22.1.24
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Mon Jan 24 2022 Andris Pavēnis <andris.pavenis@fmi.fi> 22.1.24-1.fmi
+- Repackage due to upgrade from PGDG (gdal 4.3 etc)
+
 * Thu Jan 20 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.1.20-1.fmi
 - Fixed query name from gridnbgenerations to gridgenerationsqd
 
