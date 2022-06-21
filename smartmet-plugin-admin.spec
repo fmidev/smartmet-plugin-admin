@@ -9,26 +9,33 @@ Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-admin
 Source0: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+
+%if 0%{?rhel} && 0%{rhel} < 9
+%define smartmet_boost boost169
+%else
+%define smartmet_boost boost
+%endif
+
 BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
-BuildRequires: boost169-devel
-BuildRequires: smartmet-library-macgyver-devel >= 22.5.24
-BuildRequires: smartmet-library-timeseries-devel >= 22.5.24
-BuildRequires: smartmet-library-spine-devel >= 22.5.24
-BuildRequires: smartmet-engine-contour-devel >= 22.5.24
-BuildRequires: smartmet-engine-geonames-devel >= 22.5.24
-BuildRequires: smartmet-engine-sputnik-devel >= 22.5.24
-BuildRequires: smartmet-engine-querydata-devel >= 22.5.31
-BuildRequires: smartmet-engine-observation-devel >= 22.5.31
-BuildRequires: smartmet-engine-grid-devel >= 22.5.24
-Requires: smartmet-library-macgyver >= 22.5.24
+BuildRequires: %{smartmet_boost}-devel
+BuildRequires: smartmet-library-macgyver-devel >= 22.6.16
+BuildRequires: smartmet-library-timeseries-devel >= 22.6.16
+BuildRequires: smartmet-library-spine-devel >= 22.6.16
+BuildRequires: smartmet-engine-contour-devel >= 22.6.17
+BuildRequires: smartmet-engine-geonames-devel >= 22.6.17
+BuildRequires: smartmet-engine-sputnik-devel >= 22.6.17
+BuildRequires: smartmet-engine-querydata-devel >= 22.6.17
+BuildRequires: smartmet-engine-observation-devel >= 22.6.17
+BuildRequires: smartmet-engine-grid-devel >= 22.6.17
+Requires: smartmet-library-macgyver >= 22.6.16
 Requires: smartmet-server >= 22.5.16
-Requires: smartmet-library-spine >= 22.5.24
-Requires: smartmet-engine-geonames >= 22.5.24
-Requires: smartmet-engine-grid >= 22.5.24
-Requires: smartmet-engine-querydata >= 22.5.31
-Requires: smartmet-engine-sputnik >= 22.5.24
+Requires: smartmet-library-spine >= 22.6.16
+Requires: smartmet-engine-geonames >= 22.6.17
+Requires: smartmet-engine-grid >= 22.6.17
+Requires: smartmet-engine-querydata >= 22.6.17
+Requires: smartmet-engine-sputnik >= 22.6.17
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
