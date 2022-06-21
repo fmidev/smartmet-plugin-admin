@@ -7,7 +7,7 @@
 #include "Plugin.h"
 
 #include <boost/algorithm/string.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/foreach.hpp>
 #include <boost/locale.hpp>
 #include <engines/contour/Engine.h>
@@ -1287,6 +1287,7 @@ bool Plugin::requestLastRequests(Spine::Reactor &theReactor,
                                  const Spine::HTTP::Request &theRequest,
                                  Spine::HTTP::Response &theResponse)
 {
+  using namespace boost::placeholders;
   try
   {
     Spine::Table reqTable;
@@ -2047,6 +2048,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 
 Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig) : itsModuleName("Admin")
 {
+  using namespace boost::placeholders;
   try
   {
     if (theReactor->getRequiredAPIVersion() != SMARTMET_API_VERSION)
