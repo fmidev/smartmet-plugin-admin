@@ -20,8 +20,6 @@
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeFormatter.h>
 #include <macgyver/TimeParser.h>
-#include <macgyver/TimeFormatter.h>
-#include <macgyver/CacheStats.h>
 #include <spine/Convenience.h>
 #include <spine/FmiApiKey.h>
 #include <spine/SmartMet.h>
@@ -76,7 +74,6 @@ std::vector<std::pair<std::string, std::string>> getRequests()
       {"gridgenerations", "Grid generations"},
       {"gridgenerationsqd", "Grid newbase generations"},
       {"gridparameters", "Grid parameters"},
-      {"cachesizes", "Coordinate and contour cache sizes"},
       {"activerequests", "Currently active requests"},
       {"stations", "Observation station information"},
       {"cachestats", "Cache statistics"}};
@@ -169,8 +166,6 @@ bool Plugin::request(Spine::Reactor &theReactor,
       return getLogging(theReactor, theRequest, theResponse);
     if (what == "lastrequests")
       return requestLastRequests(theReactor, theRequest, theResponse);
-    if (what == "cachesizes")
-      return requestCacheSizes(theReactor, theRequest, theResponse);
     if (what == "activerequests")
       return requestActiveRequests(theReactor, theRequest, theResponse);
     if (what == "pause")
@@ -871,7 +866,7 @@ bool Plugin::requestGridProducerInfo(Spine::Reactor &theReactor,
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
     std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> producerInfo =
-        gridEngine->getProducerInfo(producer,timeFormat);
+        gridEngine->getProducerInfo(producer, timeFormat);
     auto grid_out_producer = tableFormatter->format(
         *producerInfo.first, producerInfo.second, theRequest, Spine::TableFormatterOptions());
 
@@ -911,8 +906,8 @@ bool Plugin::requestGridProducerInfo(Spine::Reactor &theReactor,
 }
 
 bool Plugin::requestGridGenerationInfo(Spine::Reactor &theReactor,
-                                     const Spine::HTTP::Request &theRequest,
-                                     Spine::HTTP::Response &theResponse)
+                                       const Spine::HTTP::Request &theRequest,
+                                       Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -943,7 +938,7 @@ bool Plugin::requestGridGenerationInfo(Spine::Reactor &theReactor,
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
     std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> producerInfo =
-        gridEngine->getGenerationInfo(producer,timeFormat);
+        gridEngine->getGenerationInfo(producer, timeFormat);
     auto grid_out_producer = tableFormatter->format(
         *producerInfo.first, producerInfo.second, theRequest, Spine::TableFormatterOptions());
 
@@ -983,8 +978,8 @@ bool Plugin::requestGridGenerationInfo(Spine::Reactor &theReactor,
 }
 
 bool Plugin::requestGridQdGenerationInfo(Spine::Reactor &theReactor,
-                                     const Spine::HTTP::Request &theRequest,
-                                     Spine::HTTP::Response &theResponse)
+                                         const Spine::HTTP::Request &theRequest,
+                                         Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -1015,7 +1010,7 @@ bool Plugin::requestGridQdGenerationInfo(Spine::Reactor &theReactor,
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
     std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> producerInfo =
-        gridEngine->getExtGenerationInfo(producer,timeFormat);
+        gridEngine->getExtGenerationInfo(producer, timeFormat);
     auto grid_out_producer = tableFormatter->format(
         *producerInfo.first, producerInfo.second, theRequest, Spine::TableFormatterOptions());
 
@@ -1415,59 +1410,6 @@ bool Plugin::requestActiveRequests(Spine::Reactor &theReactor,
   }
 }
 
-// ----------------------------------------------------------------------
-/*!
- * \brief Get server (ContentEngine) logged requests (last N minutes)
- */
-// ----------------------------------------------------------------------
-
-bool Plugin::requestCacheSizes(Spine::Reactor &theReactor,
-                               const Spine::HTTP::Request & /* theRequest */,
-                               Spine::HTTP::Response &theResponse)
-{
-  try
-  {
-    auto *engine = theReactor.getSingleton("Contour", nullptr);
-    if (engine == nullptr)
-    {
-      theResponse.setContent("Contour engine is not available");
-      return false;
-    }
-
-    auto *cengine = static_cast<Engine::Contour::Engine *>(engine);
-
-    engine = theReactor.getSingleton("Querydata", nullptr);
-    if (engine == nullptr)
-    {
-      theResponse.setContent("Querydata engine is not available");
-      return false;
-    }
-
-    auto *qengine = static_cast<Engine::Querydata::Engine *>(engine);
-
-    auto q_cache = qengine->getCacheSizes();
-    auto c_cache = cengine->getCacheSizes();
-
-    std::string ret =
-        "{\"contour_cache_max_size\": " + Fmi::to_string(c_cache.contour_cache_max_size) + ",\n" +
-        "\"contour_cache_size\": " + Fmi::to_string(c_cache.contour_cache_size) + ",\n" +
-        "\"coordinate_cache_max_size\": " + Fmi::to_string(q_cache.coordinate_cache_max_size) +
-        ",\n" + "\"coordinate_cache_size\": " + Fmi::to_string(q_cache.coordinate_cache_size) +
-        ",\n" + "\"values_cache_max_size\": " + Fmi::to_string(q_cache.values_cache_max_size) +
-        ",\n" + "\"values_cache_size\": " + Fmi::to_string(q_cache.values_cache_size) + "}";
-
-    theResponse.setContent(ret);
-    theResponse.setHeader("Content-Type", "application/json; charset=UTF-8");
-    theResponse.setHeader("Access-Control-Allow-Origin", "*");
-
-    return true;
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
-  }
-}
-
 bool Plugin::requestObsStationInfo(Spine::Reactor &theReactor,
                                    const Spine::HTTP::Request &theRequest,
                                    Spine::HTTP::Response &theResponse)
@@ -1577,8 +1519,18 @@ bool Plugin::requestCacheStats(Spine::Reactor &theReactor,
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
     boost::shared_ptr<Spine::Table> table(new Spine::Table());
-    Spine::TableFormatter::Names header_names{
-        "#", "cache_name", "hits", "misses", "hitrate", "hits/min", "created", "age"};
+    Spine::TableFormatter::Names header_names{"#",
+                                              "cache_name",
+                                              "maxsize",
+                                              "size",
+                                              "inserts",
+                                              "hits",
+                                              "misses",
+                                              "hitrate",
+                                              "hits/min",
+                                              "inserts/min",
+                                              "created",
+                                              "age"};
 
     auto now = boost::posix_time::microsec_clock::universal_time();
     auto cache_stats = theReactor.getCacheStats();
@@ -1593,19 +1545,24 @@ bool Plugin::requestCacheStats(Spine::Reactor &theReactor,
     {
       const auto &name = item.first;
       const auto &stat = item.second;
-      auto duration = (now - stat.startTime()).total_seconds();
-      auto n = stat.hits() + stat.misses();
-      auto hitrate = (n == 0 ? 0.0 : stat.hits() * 100.0 / n);
-      auto hits_per_min = (duration == 0 ? 0.0 : 60.0 * stat.hits() / duration);
+      auto duration = (now - stat.starttime).total_seconds();
+      auto n = stat.hits + stat.misses;
+      auto hit_rate = (n == 0 ? 0.0 : stat.hits * 100.0 / n);
+      auto hits_per_min = (duration == 0 ? 0.0 : 60.0 * stat.hits / duration);
+      auto inserts_per_min = (duration == 0 ? 0.0 : 60 * stat.inserts / duration);
+
       data_table.set(0, row, Fmi::to_string(row));
       data_table.set(1, row, name);
-      data_table.set(2, row, Fmi::to_string(stat.hits()));
-      data_table.set(3, row, Fmi::to_string(stat.misses()));
-      data_table.set(4, row, Fmi::to_string("%.1f", hitrate));
-      data_table.set(5, row, Fmi::to_string("%.1f", hits_per_min));
-
-      data_table.set(6, row, timeFormatter->format(stat.startTime()));
-      data_table.set(7, row, Fmi::to_simple_string(now - stat.startTime()));
+      data_table.set(2, row, Fmi::to_string(stat.maxsize));
+      data_table.set(3, row, Fmi::to_string(stat.size));
+      data_table.set(4, row, Fmi::to_string(stat.inserts));
+      data_table.set(5, row, Fmi::to_string(stat.hits));
+      data_table.set(6, row, Fmi::to_string(stat.misses));
+      data_table.set(7, row, Fmi::to_string("%.1f", hit_rate));
+      data_table.set(8, row, Fmi::to_string("%.1f", hits_per_min));
+      data_table.set(9, row, Fmi::to_string("%.1f", inserts_per_min));
+      data_table.set(10, row, timeFormatter->format(stat.starttime));
+      data_table.set(11, row, Fmi::to_simple_string(now - stat.starttime));
       row++;
     }
 
