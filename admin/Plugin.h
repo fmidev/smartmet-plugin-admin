@@ -31,7 +31,6 @@ class Plugin : public SmartMetPlugin,
  public:
   Plugin(Spine::Reactor* theReactor, const char* theConfig);
   Plugin() = delete;
-  ~Plugin() override;
 
   const std::string& getPluginName() const override;
   int getRequiredAPIVersion() const override;
@@ -114,12 +113,12 @@ class Plugin : public SmartMetPlugin,
                                       Spine::HTTP::Response& theResponse);
 
   static bool requestGridGenerationInfo(Spine::Reactor& theReactor,
-                                      const Spine::HTTP::Request& theRequest,
-                                      Spine::HTTP::Response& theResponse);
+                                        const Spine::HTTP::Request& theRequest,
+                                        Spine::HTTP::Response& theResponse);
 
   static bool requestGridQdGenerationInfo(Spine::Reactor& theReactor,
-                                      const Spine::HTTP::Request& theRequest,
-                                      Spine::HTTP::Response& theResponse);
+                                          const Spine::HTTP::Request& theRequest,
+                                          Spine::HTTP::Response& theResponse);
 
   static bool requestGridParameterInfo(Spine::Reactor& theReactor,
                                        const Spine::HTTP::Request& theRequest,
@@ -138,8 +137,8 @@ class Plugin : public SmartMetPlugin,
                            Spine::HTTP::Response& theResponse);
 
   static bool requestCacheStats(Spine::Reactor& theReactor,
-                           const Spine::HTTP::Request& theRequest,
-                           Spine::HTTP::Response& theResponse);
+                                const Spine::HTTP::Request& theRequest,
+                                Spine::HTTP::Response& theResponse);
 
   bool setPause(Spine::Reactor& theReactor,
                 const Spine::HTTP::Request& theRequest,
@@ -148,14 +147,6 @@ class Plugin : public SmartMetPlugin,
   bool setContinue(Spine::Reactor& theReactor,
                    const Spine::HTTP::Request& theRequest,
                    Spine::HTTP::Response& theResponse);
-
-  bool setLogging(Spine::Reactor& theReactor,
-                  const Spine::HTTP::Request& theRequest,
-                  Spine::HTTP::Response& theResponse);
-
-  bool getLogging(Spine::Reactor& theReactor,
-                  const Spine::HTTP::Request& theRequest,
-                  Spine::HTTP::Response& theResponse);
 
   const std::string itsModuleName;
 

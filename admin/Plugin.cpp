@@ -35,11 +35,6 @@
 
 namespace
 {
-bool isNotOld(const boost::posix_time::ptime &target, const SmartMet::Spine::LoggedRequest &compare)
-{
-  return compare.getRequestEndTime() > target;
-}
-
 void parseIntOption(std::set<int> &output, const std::string &option)
 {
   if (option.empty())
@@ -79,6 +74,85 @@ std::vector<std::pair<std::string, std::string>> getRequests()
       {"cachestats", "Cache statistics"}};
 
   return ret;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Set server (ContentEngine) logging activity
+ */
+// ----------------------------------------------------------------------
+
+bool setLogging(SmartMet::Spine::Reactor &theReactor,
+                const SmartMet::Spine::HTTP::Request &theRequest,
+                SmartMet::Spine::HTTP::Response & /* theResponse */)
+{
+  try
+  {
+    // First parse if logging status change is requested
+    auto loggingFlag = theRequest.getParameter("status");
+    if (!loggingFlag)
+      throw Fmi::Exception(BCP, "Logging parameter value not set.");
+
+    std::string flag = *loggingFlag;
+    // Logging status change requested
+    if (flag == "enable")
+    {
+      theReactor.setLogging(true);
+      return true;
+    }
+    if (flag == "disable")
+    {
+      theReactor.setLogging(false);
+      return true;
+    }
+    throw Fmi::Exception(BCP, "Invalid logging parameter value: " + flag);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Set server (ContentEngine) logging activity status
+ */
+// ----------------------------------------------------------------------
+
+bool getLogging(SmartMet::Spine::Reactor &theReactor,
+                const SmartMet::Spine::HTTP::Request &theRequest,
+                SmartMet::Spine::HTTP::Response &theResponse)
+{
+  using namespace SmartMet::Spine;
+
+  try
+  {
+    Table reqTable;
+    std::string format = optional_string(theRequest.getParameter("format"), "json");
+    std::unique_ptr<TableFormatter> formatter(TableFormatterFactory::create(format));
+
+    bool isCurrentlyLogging = theReactor.getLogging();
+
+    if (isCurrentlyLogging)
+      reqTable.set(0, 0, "Enabled");
+    else
+      reqTable.set(0, 0, "Disabled");
+
+    std::vector<std::string> headers = {"LoggingStatus"};
+    auto out = formatter->format(reqTable, headers, theRequest, TableFormatterOptions());
+
+    std::string mime = formatter->mimetype() + "; charset=UTF-8";
+    theResponse.setHeader("Content-Type", mime);
+
+    // Set content
+    theResponse.setContent(out);
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 }  // namespace
@@ -1197,83 +1271,6 @@ bool Plugin::requestBackendInfo(Spine::Reactor & /* theReactor */,
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Set server (ContentEngine) logging activity
- */
-// ----------------------------------------------------------------------
-
-bool Plugin::setLogging(Spine::Reactor &theReactor,
-                        const Spine::HTTP::Request &theRequest,
-                        Spine::HTTP::Response & /* theResponse */)
-{
-  try
-  {
-    // First parse if logging status change is requested
-    auto loggingFlag = theRequest.getParameter("status");
-    if (!loggingFlag)
-      throw Fmi::Exception(BCP, "Logging parameter value not set.");
-
-    std::string flag = *loggingFlag;
-    // Logging status change requested
-    if (flag == "enable")
-    {
-      theReactor.setLogging(true);
-      return true;
-    }
-    if (flag == "disable")
-    {
-      theReactor.setLogging(false);
-      return true;
-    }
-    throw Fmi::Exception(BCP, "Invalid logging parameter value: " + flag);
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
-  }
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Set server (ContentEngine) logging activity status
- */
-// ----------------------------------------------------------------------
-
-bool Plugin::getLogging(Spine::Reactor &theReactor,
-                        const Spine::HTTP::Request &theRequest,
-                        Spine::HTTP::Response &theResponse)
-{
-  try
-  {
-    Spine::Table reqTable;
-    std::string format = Spine::optional_string(theRequest.getParameter("format"), "json");
-    std::unique_ptr<Spine::TableFormatter> formatter(Spine::TableFormatterFactory::create(format));
-
-    bool isCurrentlyLogging = theReactor.getLogging();
-
-    if (isCurrentlyLogging)
-      reqTable.set(0, 0, "Enabled");
-    else
-      reqTable.set(0, 0, "Disabled");
-
-    std::vector<std::string> headers = {"LoggingStatus"};
-    auto out = formatter->format(reqTable, headers, theRequest, Spine::TableFormatterOptions());
-
-    std::string mime = formatter->mimetype() + "; charset=UTF-8";
-    theResponse.setHeader("Content-Type", mime);
-
-    // Set content
-    theResponse.setContent(out);
-
-    return true;
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
-  }
-}
-
-// ----------------------------------------------------------------------
-/*!
  * \brief Get server (ContentEngine) logged requests (last N minutes)
  */
 // ----------------------------------------------------------------------
@@ -1305,8 +1302,10 @@ bool Plugin::requestLastRequests(Spine::Reactor &theReactor,
     std::size_t row = 0;
     for (const auto &req : std::get<1>(currentRequests))
     {
-      auto firstConsidered = std::find_if(
-          req.second.begin(), req.second.end(), boost::bind(::isNotOld, firstValidTime, _1));
+      auto firstConsidered = std::find_if(req.second.begin(),
+                                          req.second.end(),
+                                          [&firstValidTime](const Spine::LoggedRequest &compare)
+                                          { return compare.getRequestEndTime() > firstValidTime; });
 
       for (auto reqIt = firstConsidered; reqIt != req.second.end();
            ++reqIt)  // NOLINT(modernize-loop-convert)
@@ -1549,7 +1548,7 @@ bool Plugin::requestCacheStats(Spine::Reactor &theReactor,
       auto n = stat.hits + stat.misses;
       auto hit_rate = (n == 0 ? 0.0 : stat.hits * 100.0 / n);
       auto hits_per_min = (duration == 0 ? 0.0 : 60.0 * stat.hits / duration);
-      auto inserts_per_min = (duration == 0 ? 0.0 : 60 * stat.inserts / duration);
+      auto inserts_per_min = (duration == 0 ? 0.0 : 60.0 * stat.inserts / duration);
 
       data_table.set(0, row, Fmi::to_string(row));
       data_table.set(1, row, name);
@@ -2101,14 +2100,6 @@ void Plugin::shutdown()
 {
   std::cout << "  -- Shutdown requested (admin)\n";
 }
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Destructor
- */
-// ----------------------------------------------------------------------
-
-Plugin::~Plugin() = default;
 
 // ----------------------------------------------------------------------
 /*!

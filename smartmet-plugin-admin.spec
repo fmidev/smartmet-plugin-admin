@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 22.7.28
+Version: 22.8.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Fri Aug  5 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.8.5-1.fmi
+- Fixed rounding issue in reporting inserts per minute due to integer division
+
 * Thu Jul 28 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.7.28-1.fmi
 - Repackaged due to QEngine ABI change
 
