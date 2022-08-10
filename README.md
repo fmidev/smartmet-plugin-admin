@@ -83,7 +83,7 @@ This server is a BACKEND
 * Throttle Limit: 0
 * Broadcast Interface: Broadcast IP address
 
-<b>Services currently provided by this backend server
+Services currently provided by this backend server
     /
     /admin
     /autocomplete
