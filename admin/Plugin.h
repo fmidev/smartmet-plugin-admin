@@ -5,7 +5,6 @@
 // ======================================================================
 
 #pragma once
-#include <boost/utility.hpp>
 #include <engines/sputnik/Engine.h>
 #include <spine/HTTP.h>
 #include <spine/HTTPAuthentication.h>
@@ -24,13 +23,13 @@ namespace Admin
 {
 class PluginImpl;
 
-class Plugin : public SmartMetPlugin,
-               private SmartMet::Spine::HTTP::Authentication,
-               private boost::noncopyable
+class Plugin : public SmartMetPlugin, private SmartMet::Spine::HTTP::Authentication
 {
  public:
   Plugin(Spine::Reactor* theReactor, const char* theConfig);
   Plugin() = delete;
+  Plugin(const Plugin& other) = delete;
+  Plugin& operator=(const Plugin& other) = delete;
 
   const std::string& getPluginName() const override;
   int getRequiredAPIVersion() const override;

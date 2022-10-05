@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 22.8.5
+Version: 22.10.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -20,22 +20,22 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-macgyver-devel >= 22.7.27
-BuildRequires: smartmet-library-timeseries-devel >= 22.7.27
-BuildRequires: smartmet-library-spine-devel >= 22.7.27
-BuildRequires: smartmet-engine-contour-devel >= 22.7.27
-BuildRequires: smartmet-engine-geonames-devel >= 22.7.27
-BuildRequires: smartmet-engine-sputnik-devel >= 22.6.17
-BuildRequires: smartmet-engine-querydata-devel >= 22.7.27
-BuildRequires: smartmet-engine-observation-devel >= 22.7.27
-BuildRequires: smartmet-engine-grid-devel >= 22.7.26
-Requires: smartmet-library-macgyver >= 22.7.27
-Requires: smartmet-server >= 22.7.20
-Requires: smartmet-library-spine >= 22.7.27
-Requires: smartmet-engine-geonames >= 22.7.27
-Requires: smartmet-engine-grid >= 22.7.26
-Requires: smartmet-engine-querydata >= 22.7.27
-Requires: smartmet-engine-sputnik >= 22.6.17
+BuildRequires: smartmet-library-macgyver-devel >= 22.8.23
+BuildRequires: smartmet-library-timeseries-devel >= 22.10.4
+BuildRequires: smartmet-library-spine-devel >= 22.9.5
+BuildRequires: smartmet-engine-contour-devel >= 22.10.5
+BuildRequires: smartmet-engine-geonames-devel >= 22.10.5
+BuildRequires: smartmet-engine-sputnik-devel >= 22.10.5
+BuildRequires: smartmet-engine-querydata-devel >= 22.10.5
+BuildRequires: smartmet-engine-observation-devel >= 22.10.4
+BuildRequires: smartmet-engine-grid-devel >= 22.9.9
+Requires: smartmet-library-macgyver >= 22.8.23
+Requires: smartmet-server >= 22.10.5
+Requires: smartmet-library-spine >= 22.9.5
+Requires: smartmet-engine-geonames >= 22.10.5
+Requires: smartmet-engine-grid >= 22.9.9
+Requires: smartmet-engine-querydata >= 22.10.5
+Requires: smartmet-engine-sputnik >= 22.10.5
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Wed Oct  5 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.10.5-1.fmi
+- Do not use boost::noncopyable
+
 * Fri Aug  5 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.8.5-1.fmi
 - Fixed rounding issue in reporting inserts per minute due to integer division
 
