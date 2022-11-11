@@ -1229,7 +1229,7 @@ bool Plugin::requestBackendInfo(Spine::Reactor & /* theReactor */,
       return false;
     }
 
-    boost::shared_ptr<Spine::Table> table = itsSputnik->backends(service);
+    std::shared_ptr<Spine::Table> table = itsSputnik->backends(service);
 
     boost::shared_ptr<Spine::TableFormatter> formatter(
         Spine::TableFormatterFactory::create(format));
