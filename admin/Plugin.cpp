@@ -1929,6 +1929,10 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
     if (!hasValidAuthentication)
       return;  // Auhentication failure
 
+    if (checkRequest(theRequest, theResponse, false)) {
+        return;
+    }
+
     try
     {
       // We return JSON, hence we should enable CORS
