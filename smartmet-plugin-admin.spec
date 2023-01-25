@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 22.12.12
+Version: 23.1.25
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -20,21 +20,21 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-macgyver-devel >= 22.10.20
+BuildRequires: smartmet-library-macgyver-devel >= 22.12.16
 BuildRequires: smartmet-library-timeseries-devel >= 22.10.25
-BuildRequires: smartmet-library-spine-devel >= 22.12.2
-BuildRequires: smartmet-engine-contour-devel >= 22.10.5
-BuildRequires: smartmet-engine-geonames-devel >= 22.10.5
+BuildRequires: smartmet-library-spine-devel >= 23.1.16
+BuildRequires: smartmet-engine-contour-devel >= 22.12.19
+BuildRequires: smartmet-engine-geonames-devel >= 23.1.18
 BuildRequires: smartmet-engine-sputnik-devel >= 22.11.25
-BuildRequires: smartmet-engine-querydata-devel >= 22.12.2
-BuildRequires: smartmet-engine-observation-devel >= 22.12.8
-BuildRequires: smartmet-engine-grid-devel >= 22.12.12
-Requires: smartmet-library-macgyver >= 22.10.20
-Requires: smartmet-server >= 22.12.5
-Requires: smartmet-library-spine >= 22.12.2
-Requires: smartmet-engine-geonames >= 22.10.5
-Requires: smartmet-engine-grid >= 22.12.12
-Requires: smartmet-engine-querydata >= 22.12.2
+BuildRequires: smartmet-engine-querydata-devel >= 22.12.15
+BuildRequires: smartmet-engine-observation-devel >= 23.1.24
+BuildRequires: smartmet-engine-grid-devel >= 23.1.19
+Requires: smartmet-library-macgyver >= 22.12.16
+Requires: smartmet-server >= 23.1.10
+Requires: smartmet-library-spine >= 23.1.16
+Requires: smartmet-engine-geonames >= 23.1.18
+Requires: smartmet-engine-grid >= 23.1.19
+Requires: smartmet-engine-querydata >= 22.12.15
 Requires: smartmet-engine-sputnik >= 22.11.25
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Wed Jan 25 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.1.25-1.fmi
+- Silenced CodeChecker warnings
+
 * Mon Dec 12 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.12.12-1.fmi
 - Repackaged due to ABI changes
 

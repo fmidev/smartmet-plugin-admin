@@ -5,7 +5,6 @@
 // ======================================================================
 
 #include "Plugin.h"
-
 #include <boost/algorithm/string.hpp>
 #include <boost/bind/bind.hpp>
 #include <boost/foreach.hpp>
@@ -26,7 +25,7 @@
 #include <spine/Table.h>
 #include <spine/TableFormatterFactory.h>
 #include <spine/TableFormatterOptions.h>
-
+#include <functional>
 #include <iomanip>
 #include <iostream>
 #include <locale>
@@ -204,56 +203,42 @@ bool Plugin::request(Spine::Reactor &theReactor,
       theResponse.setContent(ret);
       return false;
     }
-    if (what == "clusterinfo")
-      return requestClusterInfo(theReactor, theRequest, theResponse);
-    if (what == "serviceinfo")
-      return requestServiceInfo(theReactor, theRequest, theResponse);
-    if (what == "reload")
-      return requestReload(theReactor, theRequest, theResponse);
-    if (what == "geonames")
-      return requestGeonames(theReactor, theRequest, theResponse);
-    if (what == "qengine")
-      return requestQEngineStatus(theReactor, theRequest, theResponse);
-    if (what == "backends")
-      return requestBackendInfo(theReactor, theRequest, theResponse);
-    if (what == "servicestats")
-      return requestServiceStats(theReactor, theRequest, theResponse);
-    if (what == "producers")
-      return requestProducerInfo(theReactor, theRequest, theResponse);
-    if (what == "parameters")
-      return requestParameterInfo(theReactor, theRequest, theResponse);
-    if (what == "obsparameters")
-      return requestObsParameterInfo(theReactor, theRequest, theResponse);
-    if (what == "obsproducers")
-      return requestObsProducerInfo(theReactor, theRequest, theResponse);
-    if (what == "gridproducers")
-      return requestGridProducerInfo(theReactor, theRequest, theResponse);
-    if (what == "gridgenerations")
-      return requestGridGenerationInfo(theReactor, theRequest, theResponse);
-    if (what == "gridgenerationsqd")
-      return requestGridQdGenerationInfo(theReactor, theRequest, theResponse);
-    if (what == "gridparameters")
-      return requestGridParameterInfo(theReactor, theRequest, theResponse);
-    if (what == "setlogging")
-      return setLogging(theReactor, theRequest, theResponse);
-    if (what == "getlogging")
-      return getLogging(theReactor, theRequest, theResponse);
-    if (what == "lastrequests")
-      return requestLastRequests(theReactor, theRequest, theResponse);
-    if (what == "activerequests")
-      return requestActiveRequests(theReactor, theRequest, theResponse);
-    if (what == "pause")
-      return setPause(theReactor, theRequest, theResponse);
-    if (what == "continue")
-      return setContinue(theReactor, theRequest, theResponse);
-    if (what == "reloadstations")
-      return requestLoadStations(theReactor, theRequest, theResponse);
-    if (what == "stations")
-      return requestObsStationInfo(theReactor, theRequest, theResponse);
-    if (what == "list")
-      return listRequests(theReactor, theRequest, theResponse);
-    if (what == "cachestats")
-      return requestCacheStats(theReactor, theRequest, theResponse);
+
+    using A = Spine::Reactor &;
+    using B = const Spine::HTTP::Request &;
+    using C = Spine::HTTP::Response &;
+
+    std::map<std::string, std::function<bool(A a, B b, C c)>> handlers{
+        {"clusterinfo", [this](A a, B b, C c) { return requestClusterInfo(a, b, c); }},
+        {"serviceinfo", [this](A a, B b, C c) { return requestServiceInfo(a, b, c); }},
+        {"reload", [this](A a, B b, C c) { return requestReload(a, b, c); }},
+        {"geonames", [this](A a, B b, C c) { return requestGeonames(a, b, c); }},
+        {"qengine", [this](A a, B b, C c) { return requestQEngineStatus(a, b, c); }},
+        {"backends", [this](A a, B b, C c) { return requestBackendInfo(a, b, c); }},
+        {"servicestats", [this](A a, B b, C c) { return requestServiceStats(a, b, c); }},
+        {"producers", [this](A a, B b, C c) { return requestProducerInfo(a, b, c); }},
+        {"parameters", [this](A a, B b, C c) { return requestParameterInfo(a, b, c); }},
+        {"obsparameters", [this](A a, B b, C c) { return requestObsParameterInfo(a, b, c); }},
+        {"obsproducers", [this](A a, B b, C c) { return requestObsProducerInfo(a, b, c); }},
+        {"gridproducers", [this](A a, B b, C c) { return requestGridProducerInfo(a, b, c); }},
+        {"gridgenerations", [this](A a, B b, C c) { return requestGridGenerationInfo(a, b, c); }},
+        {"gridgenerationsqd",
+         [this](A a, B b, C c) { return requestGridQdGenerationInfo(a, b, c); }},
+        {"gridparameters", [this](A a, B b, C c) { return requestGridParameterInfo(a, b, c); }},
+        {"setlogging", [this](A a, B b, C c) { return setLogging(a, b, c); }},
+        {"getlogging", [this](A a, B b, C c) { return getLogging(a, b, c); }},
+        {"lastrequests", [this](A a, B b, C c) { return requestLastRequests(a, b, c); }},
+        {"activerequests", [this](A a, B b, C c) { return requestActiveRequests(a, b, c); }},
+        {"pause", [this](A a, B b, C c) { return setPause(a, b, c); }},
+        {"continue", [this](A a, B b, C c) { return setContinue(a, b, c); }},
+        {"reloadstations", [this](A a, B b, C c) { return requestLoadStations(a, b, c); }},
+        {"stations", [this](A a, B b, C c) { return requestObsStationInfo(a, b, c); }},
+        {"list", [this](A a, B b, C c) { return listRequests(a, b, c); }},
+        {"cachestats", [this](A a, B b, C c) { return requestCacheStats(a, b, c); }}};
+
+    auto handler = handlers.find(what);
+    if (handler != handlers.end())
+      return handler->second(theReactor, theRequest, theResponse);
 
     // Unknown request,build response
     // Make MIME header
@@ -1929,8 +1914,9 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
     if (!hasValidAuthentication)
       return;  // Auhentication failure
 
-    if (checkRequest(theRequest, theResponse, false)) {
-        return;
+    if (checkRequest(theRequest, theResponse, false))
+    {
+      return;
     }
 
     try
@@ -2042,7 +2028,12 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig) : itsModuleNam
 
     // Register the handler
     if (!theReactor->addPrivateContentHandler(
-            this, "/admin", boost::bind(&Plugin::callRequestHandler, this, _1, _2, _3)))
+            this,
+            "/admin",
+            [this](Spine::Reactor &theReactor,
+                   const Spine::HTTP::Request &theRequest,
+                   Spine::HTTP::Response &theResponse)
+            { callRequestHandler(theReactor, theRequest, theResponse); }))
       throw Fmi::Exception(BCP, "Failed to register admin content handler");
   }
   catch (...)
