@@ -27,6 +27,7 @@ class Plugin : public SmartMetPlugin, private SmartMet::Spine::HTTP::Authenticat
 {
  public:
   Plugin(Spine::Reactor* theReactor, const char* theConfig);
+  ~Plugin() = default;
 
   Plugin() = delete;
   Plugin(const Plugin& other) = delete;

@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 23.1.25
+Version: 23.1.26
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -21,13 +21,13 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: smartmet-library-macgyver-devel >= 22.12.16
-BuildRequires: smartmet-library-timeseries-devel >= 22.10.25
+BuildRequires: smartmet-library-timeseries-devel >= 23.1.26
 BuildRequires: smartmet-library-spine-devel >= 23.1.16
-BuildRequires: smartmet-engine-contour-devel >= 22.12.19
+BuildRequires: smartmet-engine-contour-devel >= 23.1.26
 BuildRequires: smartmet-engine-geonames-devel >= 23.1.18
 BuildRequires: smartmet-engine-sputnik-devel >= 22.11.25
 BuildRequires: smartmet-engine-querydata-devel >= 22.12.15
-BuildRequires: smartmet-engine-observation-devel >= 23.1.24
+BuildRequires: smartmet-engine-observation-devel >= 23.1.26
 BuildRequires: smartmet-engine-grid-devel >= 23.1.19
 Requires: smartmet-library-macgyver >= 22.12.16
 Requires: smartmet-server >= 23.1.10
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Thu Jan 26 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.1.26-1.fmi
+- Silenced more CodeChecker warnings
+
 * Wed Jan 25 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.1.25-1.fmi
 - Silenced CodeChecker warnings
 
