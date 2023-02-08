@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "Plugin.h"
+#include <arpa/inet.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/bind/bind.hpp>
 #include <boost/foreach.hpp>
@@ -29,6 +30,7 @@
 #include <iomanip>
 #include <iostream>
 #include <locale>
+#include <netdb.h>
 #include <sstream>
 #include <stdexcept>
 
@@ -73,6 +75,25 @@ std::vector<std::pair<std::string, std::string>> getRequests()
       {"cachestats", "Cache statistics"}};
 
   return ret;
+}
+
+std::string lookup_host(const std::string &ip)
+{
+  struct sockaddr_in sa;
+  char node[NI_MAXHOST];
+
+  memset(&sa, 0, sizeof(sa));
+  sa.sin_family = AF_INET;
+
+  inet_pton(AF_INET, ip.c_str(), &sa.sin_addr);
+
+  int res =
+      getnameinfo((struct sockaddr *)&sa, sizeof(sa), node, sizeof(node), NULL, 0, NI_NAMEREQD);
+
+  if (res)
+    return {};
+
+  return node;
 }
 
 // ----------------------------------------------------------------------
@@ -1361,6 +1382,9 @@ bool Plugin::requestActiveRequests(Spine::Reactor &theReactor,
       const auto &time = id_info.second.time;
       const auto &req = id_info.second.request;
 
+      const auto ip = req.getClientIP();
+      const auto hostname = lookup_host(ip);
+
       auto duration = now - time;
 
       const bool check_access_token = true;
@@ -1370,14 +1394,15 @@ bool Plugin::requestActiveRequests(Spine::Reactor &theReactor,
       reqTable.set(column++, row, Fmi::to_string(id));
       reqTable.set(column++, row, Fmi::to_iso_extended_string(time.time_of_day()));
       reqTable.set(column++, row, Fmi::to_string(duration.total_milliseconds() / 1000.0));
-      reqTable.set(column++, row, req.getClientIP());
+      reqTable.set(column++, row, ip);
+      reqTable.set(column++, row, hostname);
       reqTable.set(column++, row, apikey ? *apikey : "-");
       reqTable.set(column++, row, req.getURI());
       ++row;
     }
 
     std::vector<std::string> headers = {
-        "Id", "Time", "Duration", "ClientIP", "Apikey", "RequestString"};
+        "Id", "Time", "Duration", "ClientIP", "Host", "Apikey", "RequestString"};
     auto out = formatter->format(reqTable, headers, theRequest, Spine::TableFormatterOptions());
 
     // Set MIME
