@@ -3,7 +3,7 @@
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
 Version: 23.2.8
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-admin
@@ -22,7 +22,7 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: smartmet-library-macgyver-devel >= 22.12.16
 BuildRequires: smartmet-library-timeseries-devel >= 23.1.31
-BuildRequires: smartmet-library-spine-devel >= 23.2.1
+BuildRequires: smartmet-library-spine-devel >= 23.2.8
 BuildRequires: smartmet-engine-contour-devel >= 23.1.26
 BuildRequires: smartmet-engine-geonames-devel >= 23.1.18
 BuildRequires: smartmet-engine-sputnik-devel >= 22.11.25
@@ -31,7 +31,7 @@ BuildRequires: smartmet-engine-observation-devel >= 23.2.8
 BuildRequires: smartmet-engine-grid-devel >= 23.1.19
 Requires: smartmet-library-macgyver >= 22.12.16
 Requires: smartmet-server >= 23.2.1
-Requires: smartmet-library-spine >= 23.2.1
+Requires: smartmet-library-spine >= 23.2.8
 Requires: smartmet-engine-geonames >= 23.1.18
 Requires: smartmet-engine-grid >= 23.1.19
 Requires: smartmet-engine-querydata >= 22.12.15
@@ -63,8 +63,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Wed Feb  8 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.2.8-2.fmi
+- Refactored code to use Spine-library for resolving host names
+
 * Wed Feb  8 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.2.8-1.fmi
-- Active requests now report the hostname too
+- Active requests now report the host name too
 
 * Thu Jan 26 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.1.26-1.fmi
 - Silenced more CodeChecker warnings

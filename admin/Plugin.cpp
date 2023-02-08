@@ -5,7 +5,6 @@
 // ======================================================================
 
 #include "Plugin.h"
-#include <arpa/inet.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/bind/bind.hpp>
 #include <boost/foreach.hpp>
@@ -22,6 +21,7 @@
 #include <macgyver/TimeParser.h>
 #include <spine/Convenience.h>
 #include <spine/FmiApiKey.h>
+#include <spine/HostInfo.h>
 #include <spine/SmartMet.h>
 #include <spine/Table.h>
 #include <spine/TableFormatterFactory.h>
@@ -30,7 +30,6 @@
 #include <iomanip>
 #include <iostream>
 #include <locale>
-#include <netdb.h>
 #include <sstream>
 #include <stdexcept>
 
@@ -75,25 +74,6 @@ std::vector<std::pair<std::string, std::string>> getRequests()
       {"cachestats", "Cache statistics"}};
 
   return ret;
-}
-
-std::string lookup_host(const std::string &ip)
-{
-  struct sockaddr_in sa;
-  char node[NI_MAXHOST];
-
-  memset(&sa, 0, sizeof(sa));
-  sa.sin_family = AF_INET;
-
-  inet_pton(AF_INET, ip.c_str(), &sa.sin_addr);
-
-  int res =
-      getnameinfo((struct sockaddr *)&sa, sizeof(sa), node, sizeof(node), NULL, 0, NI_NAMEREQD);
-
-  if (res)
-    return {};
-
-  return node;
 }
 
 // ----------------------------------------------------------------------
@@ -1383,7 +1363,7 @@ bool Plugin::requestActiveRequests(Spine::Reactor &theReactor,
       const auto &req = id_info.second.request;
 
       const auto ip = req.getClientIP();
-      const auto hostname = lookup_host(ip);
+      const auto hostname = Spine::HostInfo::getHostName(ip);
 
       auto duration = now - time;
 
