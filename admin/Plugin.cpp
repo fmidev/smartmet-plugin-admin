@@ -187,78 +187,6 @@ std::string average_and_format(long total_microsecs, unsigned long requests)
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Perform an Admin query
- */
-// ----------------------------------------------------------------------
-bool Plugin::request(Spine::Reactor &theReactor,
-                     const Spine::HTTP::Request &theRequest,
-                     Spine::HTTP::Response &theResponse)
-{
-  try
-  {
-    std::string what = Spine::optional_string(theRequest.getParameter("what"), "");
-
-    if (what.empty())
-    {
-      std::string ret("No request specified");
-      theResponse.setContent(ret);
-      return false;
-    }
-
-    using A = Spine::Reactor &;
-    using B = const Spine::HTTP::Request &;
-    using C = Spine::HTTP::Response &;
-
-    // clang-format off
-    std::map<std::string, std::function<bool(A a, B b, C c)>> handlers{
-        {"clusterinfo", [this](A a, B b, C c) { return this->requestClusterInfo(a, b, c); }},
-        {"serviceinfo", [this](A a, B b, C c) { return this->requestServiceInfo(a, b, c); }},
-        {"reload", [this](A a, B b, C c) { return this->requestReload(a, b, c); }},
-        {"geonames", [this](A a, B b, C c) { return this->requestGeonames(a, b, c); }},
-        {"qengine", [this](A a, B b, C c) { return this->requestQEngineStatus(a, b, c); }},
-        {"backends", [this](A a, B b, C c) { return this->requestBackendInfo(a, b, c); }},
-        {"servicestats", [this](A a, B b, C c) { return this->requestServiceStats(a, b, c); }},
-        {"producers", [this](A a, B b, C c) { return this->requestProducerInfo(a, b, c); }},
-        {"parameters", [this](A a, B b, C c) { return this->requestParameterInfo(a, b, c); }},
-        {"obsparameters", [this](A a, B b, C c) { return this->requestObsParameterInfo(a, b, c); }},
-        {"obsproducers", [this](A a, B b, C c) { return this->requestObsProducerInfo(a, b, c); }},
-        {"gridproducers", [this](A a, B b, C c) { return this->requestGridProducerInfo(a, b, c); }},
-        {"gridgenerations", [this](A a, B b, C c) { return this->requestGridGenerationInfo(a, b, c); }},
-        {"gridgenerationsqd", [this](A a, B b, C c) { return this->requestGridQdGenerationInfo(a, b, c); }},
-        {"gridparameters", [this](A a, B b, C c) { return this->requestGridParameterInfo(a, b, c); }},
-        {"setlogging", [](A a, B b, C c) { return setLogging(a, b, c); }},
-        {"getlogging", [](A a, B b, C c) { return getLogging(a, b, c); }},
-        {"lastrequests", [this](A a, B b, C c) { return this->requestLastRequests(a, b, c); }},
-        {"activerequests", [this](A a, B b, C c) { return this->requestActiveRequests(a, b, c); }},
-        {"pause", [this](A a, B b, C c) { return this->setPause(a, b, c); }},
-        {"continue", [this](A a, B b, C c) { return this->setContinue(a, b, c); }},
-        {"reloadstations", [this](A a, B b, C c) { return this->requestLoadStations(a, b, c); }},
-        {"stations", [this](A a, B b, C c) { return this->requestObsStationInfo(a, b, c); }},
-        {"list", [this](A a, B b, C c) { return this->listRequests(a, b, c); }},
-        {"cachestats", [this](A a, B b, C c) { return this->requestCacheStats(a, b, c); }}};
-    // clang-format on
-
-    auto handler = handlers.find(what);
-    if (handler != handlers.end())
-      return handler->second(theReactor, theRequest, theResponse);
-
-    // Unknown request,build response
-    // Make MIME header
-    std::string mime("text/html; charset=UTF-8");
-    theResponse.setHeader("Content-Type", mime);
-
-    std::string ret("Unknown admin request: '" + what + "'");
-    theResponse.setContent(ret);
-    return false;
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
-  }
-}
-
-// ----------------------------------------------------------------------
-/*!
  * \brief Perform a clusterinfo query
  */
 // ----------------------------------------------------------------------
@@ -302,9 +230,9 @@ bool Plugin::requestClusterInfo(Spine::Reactor & /* theReactor */,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestServiceInfo(Spine::Reactor &theReactor,
-                                const Spine::HTTP::Request & /* theRequest */,
-                                Spine::HTTP::Response &theResponse)
+bool requestServiceInfo(Spine::Reactor &theReactor,
+                        const Spine::HTTP::Request & /* theRequest */,
+                        Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -339,9 +267,9 @@ bool Plugin::requestServiceInfo(Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestReload(Spine::Reactor &theReactor,
-                           const Spine::HTTP::Request & /* theRequest */,
-                           Spine::HTTP::Response &theResponse)
+bool requestReload(Spine::Reactor &theReactor,
+                   const Spine::HTTP::Request & /* theRequest */,
+                   Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -394,9 +322,9 @@ bool Plugin::requestReload(Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestLoadStations(Spine::Reactor &theReactor,
-                                 const Spine::HTTP::Request & /* theRequest */,
-                                 Spine::HTTP::Response &theResponse)
+bool requestLoadStations(Spine::Reactor &theReactor,
+                         const Spine::HTTP::Request & /* theRequest */,
+                         Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -425,9 +353,9 @@ bool Plugin::requestLoadStations(Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestGeonames(Spine::Reactor &theReactor,
-                             const Spine::HTTP::Request &theRequest,
-                             Spine::HTTP::Response &theResponse)
+bool requestGeonames(Spine::Reactor &theReactor,
+                     const Spine::HTTP::Request &theRequest,
+                     Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -487,9 +415,9 @@ bool Plugin::requestGeonames(Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestQEngineStatus(Spine::Reactor &theReactor,
-                                  const Spine::HTTP::Request &theRequest,
-                                  Spine::HTTP::Response &theResponse)
+bool requestQEngineStatus(Spine::Reactor &theReactor,
+                          const Spine::HTTP::Request &theRequest,
+                          Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -568,9 +496,9 @@ bool Plugin::requestQEngineStatus(Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestProducerInfo(Spine::Reactor &theReactor,
-                                 const Spine::HTTP::Request &theRequest,
-                                 Spine::HTTP::Response &theResponse)
+bool requestProducerInfo(Spine::Reactor &theReactor,
+                         const Spine::HTTP::Request &theRequest,
+                         Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -651,9 +579,9 @@ bool Plugin::requestProducerInfo(Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestParameterInfo(Spine::Reactor &theReactor,
-                                  const Spine::HTTP::Request &theRequest,
-                                  Spine::HTTP::Response &theResponse)
+bool requestParameterInfo(Spine::Reactor &theReactor,
+                          const Spine::HTTP::Request &theRequest,
+                          Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -734,9 +662,9 @@ bool Plugin::requestParameterInfo(Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestObsProducerInfo(Spine::Reactor &theReactor,
-                                    const Spine::HTTP::Request &theRequest,
-                                    Spine::HTTP::Response &theResponse)
+bool requestObsProducerInfo(Spine::Reactor &theReactor,
+                            const Spine::HTTP::Request &theRequest,
+                            Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -817,9 +745,9 @@ bool Plugin::requestObsProducerInfo(Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestObsParameterInfo(Spine::Reactor &theReactor,
-                                     const Spine::HTTP::Request &theRequest,
-                                     Spine::HTTP::Response &theResponse)
+bool requestObsParameterInfo(Spine::Reactor &theReactor,
+                             const Spine::HTTP::Request &theRequest,
+                             Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -894,9 +822,9 @@ bool Plugin::requestObsParameterInfo(Spine::Reactor &theReactor,
   }
 }
 
-bool Plugin::requestGridProducerInfo(Spine::Reactor &theReactor,
-                                     const Spine::HTTP::Request &theRequest,
-                                     Spine::HTTP::Response &theResponse)
+bool requestGridProducerInfo(Spine::Reactor &theReactor,
+                             const Spine::HTTP::Request &theRequest,
+                             Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -966,9 +894,9 @@ bool Plugin::requestGridProducerInfo(Spine::Reactor &theReactor,
   }
 }
 
-bool Plugin::requestGridGenerationInfo(Spine::Reactor &theReactor,
-                                       const Spine::HTTP::Request &theRequest,
-                                       Spine::HTTP::Response &theResponse)
+bool requestGridGenerationInfo(Spine::Reactor &theReactor,
+                               const Spine::HTTP::Request &theRequest,
+                               Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -1038,9 +966,9 @@ bool Plugin::requestGridGenerationInfo(Spine::Reactor &theReactor,
   }
 }
 
-bool Plugin::requestGridQdGenerationInfo(Spine::Reactor &theReactor,
-                                         const Spine::HTTP::Request &theRequest,
-                                         Spine::HTTP::Response &theResponse)
+bool requestGridQdGenerationInfo(Spine::Reactor &theReactor,
+                                 const Spine::HTTP::Request &theRequest,
+                                 Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -1110,9 +1038,9 @@ bool Plugin::requestGridQdGenerationInfo(Spine::Reactor &theReactor,
   }
 }
 
-bool Plugin::requestGridParameterInfo(Spine::Reactor &theReactor,
-                                      const Spine::HTTP::Request &theRequest,
-                                      Spine::HTTP::Response &theResponse)
+bool requestGridParameterInfo(Spine::Reactor &theReactor,
+                              const Spine::HTTP::Request &theRequest,
+                              Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -1262,9 +1190,9 @@ bool Plugin::requestBackendInfo(Spine::Reactor & /* theReactor */,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestLastRequests(Spine::Reactor &theReactor,
-                                 const Spine::HTTP::Request &theRequest,
-                                 Spine::HTTP::Response &theResponse)
+bool requestLastRequests(Spine::Reactor &theReactor,
+                         const Spine::HTTP::Request &theRequest,
+                         Spine::HTTP::Response &theResponse)
 {
   using namespace boost::placeholders;
   try
@@ -1340,9 +1268,9 @@ bool Plugin::requestLastRequests(Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestActiveRequests(Spine::Reactor &theReactor,
-                                   const Spine::HTTP::Request &theRequest,
-                                   Spine::HTTP::Response &theResponse)
+bool requestActiveRequests(Spine::Reactor &theReactor,
+                           const Spine::HTTP::Request &theRequest,
+                           Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -1400,9 +1328,9 @@ bool Plugin::requestActiveRequests(Spine::Reactor &theReactor,
   }
 }
 
-bool Plugin::requestObsStationInfo(Spine::Reactor &theReactor,
-                                   const Spine::HTTP::Request &theRequest,
-                                   Spine::HTTP::Response &theResponse)
+bool requestObsStationInfo(Spine::Reactor &theReactor,
+                           const Spine::HTTP::Request &theRequest,
+                           Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -1499,9 +1427,9 @@ bool Plugin::requestObsStationInfo(Spine::Reactor &theReactor,
   }
 }
 
-bool Plugin::requestCacheStats(Spine::Reactor &theReactor,
-                               const Spine::HTTP::Request &theRequest,
-                               Spine::HTTP::Response &theResponse)
+bool requestCacheStats(Spine::Reactor &theReactor,
+                       const Spine::HTTP::Request &theRequest,
+                       Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -1599,9 +1527,9 @@ bool Plugin::requestCacheStats(Spine::Reactor &theReactor,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::listRequests(Spine::Reactor & /* theReactor */,
-                          const Spine::HTTP::Request &theRequest,
-                          Spine::HTTP::Response &theResponse)
+bool listRequests(Spine::Reactor & /* theReactor */,
+                  const Spine::HTTP::Request &theRequest,
+                  Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -1679,9 +1607,9 @@ bool Plugin::listRequests(Spine::Reactor & /* theReactor */,
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::requestServiceStats(Spine::Reactor &theReactor,
-                                 const Spine::HTTP::Request &theRequest,
-                                 Spine::HTTP::Response &theResponse)
+bool requestServiceStats(Spine::Reactor &theReactor,
+                         const Spine::HTTP::Request &theRequest,
+                         Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -2042,6 +1970,81 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig) : itsModuleNam
                    Spine::HTTP::Response &theResponse)
             { callRequestHandler(theReactor, theRequest, theResponse); }))
       throw Fmi::Exception(BCP, "Failed to register admin content handler");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Perform an Admin query
+ */
+// ----------------------------------------------------------------------
+bool Plugin::request(Spine::Reactor &theReactor,
+                     const Spine::HTTP::Request &theRequest,
+                     Spine::HTTP::Response &theResponse)
+{
+  try
+  {
+    std::string what = Spine::optional_string(theRequest.getParameter("what"), "");
+
+    if (what.empty())
+    {
+      std::string ret("No request specified");
+      theResponse.setContent(ret);
+      return false;
+    }
+
+    using A = Spine::Reactor &;
+    using B = const Spine::HTTP::Request &;
+    using C = Spine::HTTP::Response &;
+
+    // clang-format off
+    std::map<std::string, std::function<bool(A a, B b, C c)>> handlers{
+
+        {"backends", [this](A a, B b, C c) { return this->requestBackendInfo(a, b, c); }},
+        {"clusterinfo", [this](A a, B b, C c) { return this->requestClusterInfo(a, b, c); }},
+        {"continue", [this](A a, B b, C c) { return this->setContinue(a, b, c); }},
+        {"pause", [this](A a, B b, C c) { return this->setPause(a, b, c); }},
+
+        {"activerequests", [](A a, B b, C c) { return requestActiveRequests(a, b, c); }},
+        {"cachestats", [](A a, B b, C c) { return requestCacheStats(a, b, c); }},
+        {"geonames", [](A a, B b, C c) { return requestGeonames(a, b, c); }},
+        {"getlogging", [](A a, B b, C c) { return getLogging(a, b, c); }},
+        {"gridgenerations", [](A a, B b, C c) { return requestGridGenerationInfo(a, b, c); }},
+        {"gridgenerationsqd", [](A a, B b, C c) { return requestGridQdGenerationInfo(a, b, c); }},
+        {"gridparameters", [](A a, B b, C c) { return requestGridParameterInfo(a, b, c); }},
+        {"gridproducers", [](A a, B b, C c) { return requestGridProducerInfo(a, b, c); }},
+        {"lastrequests", [](A a, B b, C c) { return requestLastRequests(a, b, c); }},
+        {"list", [](A a, B b, C c) { return listRequests(a, b, c); }},
+        {"obsparameters", [](A a, B b, C c) { return requestObsParameterInfo(a, b, c); }},
+        {"obsproducers", [](A a, B b, C c) { return requestObsProducerInfo(a, b, c); }},
+        {"parameters", [](A a, B b, C c) { return requestParameterInfo(a, b, c); }},
+        {"producers", [](A a, B b, C c) { return requestProducerInfo(a, b, c); }},
+        {"qengine", [](A a, B b, C c) { return requestQEngineStatus(a, b, c); }},
+        {"reload", [](A a, B b, C c) { return requestReload(a, b, c); }},
+        {"reloadstations", [](A a, B b, C c) { return requestLoadStations(a, b, c); }},
+        {"serviceinfo", [](A a, B b, C c) { return requestServiceInfo(a, b, c); }},
+        {"servicestats", [](A a, B b, C c) { return requestServiceStats(a, b, c); }},
+        {"setlogging", [](A a, B b, C c) { return setLogging(a, b, c); }},
+        {"stations", [](A a, B b, C c) { return requestObsStationInfo(a, b, c); }}
+    };
+    // clang-format on
+
+    auto handler = handlers.find(what);
+    if (handler != handlers.end())
+      return handler->second(theReactor, theRequest, theResponse);
+
+    // Unknown request,build response
+    // Make MIME header
+    std::string mime("text/html; charset=UTF-8");
+    theResponse.setHeader("Content-Type", mime);
+
+    std::string ret("Unknown admin request: '" + what + "'");
+    theResponse.setContent(ret);
+    return false;
   }
   catch (...)
   {

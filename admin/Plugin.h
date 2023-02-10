@@ -27,7 +27,7 @@ class Plugin : public SmartMetPlugin, private SmartMet::Spine::HTTP::Authenticat
 {
  public:
   Plugin(Spine::Reactor* theReactor, const char* theConfig);
-  ~Plugin() = default;
+  ~Plugin() override = default;
 
   Plugin() = delete;
   Plugin(const Plugin& other) = delete;
@@ -62,86 +62,6 @@ class Plugin : public SmartMetPlugin, private SmartMet::Spine::HTTP::Authenticat
   bool requestBackendInfo(Spine::Reactor& theReactor,
                           const Spine::HTTP::Request& theRequest,
                           Spine::HTTP::Response& theResponse);
-
-  static bool requestServiceInfo(Spine::Reactor& theReactor,
-                                 const Spine::HTTP::Request& theRequest,
-                                 Spine::HTTP::Response& theResponse);
-
-  static bool requestReload(Spine::Reactor& theReactor,
-                            const Spine::HTTP::Request& theRequest,
-                            Spine::HTTP::Response& theResponse);
-
-  static bool requestGeonames(Spine::Reactor& theReactor,
-                              const Spine::HTTP::Request& theRequest,
-                              Spine::HTTP::Response& theResponse);
-
-  static bool requestQEngineStatus(Spine::Reactor& theReactor,
-                                   const Spine::HTTP::Request& theRequest,
-                                   Spine::HTTP::Response& theResponse);
-
-  static bool requestServiceStats(Spine::Reactor& theReactor,
-                                  const Spine::HTTP::Request& theRequest,
-                                  Spine::HTTP::Response& theResponse);
-
-  static bool requestLastRequests(Spine::Reactor& theReactor,
-                                  const Spine::HTTP::Request& theRequest,
-                                  Spine::HTTP::Response& theResponse);
-
-  static bool requestActiveRequests(Spine::Reactor& theReactor,
-                                    const Spine::HTTP::Request& theRequest,
-                                    Spine::HTTP::Response& theResponse);
-
-  static bool requestCacheSizes(Spine::Reactor& theReactor,
-                                const Spine::HTTP::Request& theRequest,
-                                Spine::HTTP::Response& theResponse);
-
-  static bool requestProducerInfo(Spine::Reactor& theReactor,
-                                  const Spine::HTTP::Request& theRequest,
-                                  Spine::HTTP::Response& theResponse);
-
-  static bool requestParameterInfo(Spine::Reactor& theReactor,
-                                   const Spine::HTTP::Request& theRequest,
-                                   Spine::HTTP::Response& theResponse);
-
-  static bool requestObsParameterInfo(Spine::Reactor& theReactor,
-                                      const Spine::HTTP::Request& theRequest,
-                                      Spine::HTTP::Response& theResponse);
-
-  static bool requestObsProducerInfo(Spine::Reactor& theReactor,
-                                     const Spine::HTTP::Request& theRequest,
-                                     Spine::HTTP::Response& theResponse);
-
-  static bool requestGridProducerInfo(Spine::Reactor& theReactor,
-                                      const Spine::HTTP::Request& theRequest,
-                                      Spine::HTTP::Response& theResponse);
-
-  static bool requestGridGenerationInfo(Spine::Reactor& theReactor,
-                                        const Spine::HTTP::Request& theRequest,
-                                        Spine::HTTP::Response& theResponse);
-
-  static bool requestGridQdGenerationInfo(Spine::Reactor& theReactor,
-                                          const Spine::HTTP::Request& theRequest,
-                                          Spine::HTTP::Response& theResponse);
-
-  static bool requestGridParameterInfo(Spine::Reactor& theReactor,
-                                       const Spine::HTTP::Request& theRequest,
-                                       Spine::HTTP::Response& theResponse);
-
-  static bool requestLoadStations(Spine::Reactor& theReactor,
-                                  const Spine::HTTP::Request& theRequest,
-                                  Spine::HTTP::Response& theResponse);
-
-  static bool requestObsStationInfo(Spine::Reactor& theReactor,
-                                    const Spine::HTTP::Request& theRequest,
-                                    Spine::HTTP::Response& theResponse);
-
-  static bool listRequests(Spine::Reactor& theReactor,
-                           const Spine::HTTP::Request& theRequest,
-                           Spine::HTTP::Response& theResponse);
-
-  static bool requestCacheStats(Spine::Reactor& theReactor,
-                                const Spine::HTTP::Request& theRequest,
-                                Spine::HTTP::Response& theResponse);
 
   bool setPause(Spine::Reactor& theReactor,
                 const Spine::HTTP::Request& theRequest,
