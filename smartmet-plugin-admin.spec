@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 23.2.10
+Version: 23.6.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -20,22 +20,22 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-macgyver-devel >= 22.12.16
-BuildRequires: smartmet-library-timeseries-devel >= 23.1.31
-BuildRequires: smartmet-library-spine-devel >= 23.2.8
-BuildRequires: smartmet-engine-contour-devel >= 23.1.26
-BuildRequires: smartmet-engine-geonames-devel >= 23.1.18
-BuildRequires: smartmet-engine-sputnik-devel >= 22.11.25
-BuildRequires: smartmet-engine-querydata-devel >= 22.12.15
-BuildRequires: smartmet-engine-observation-devel >= 23.2.8
-BuildRequires: smartmet-engine-grid-devel >= 23.1.19
-Requires: smartmet-library-macgyver >= 22.12.16
-Requires: smartmet-server >= 23.2.1
-Requires: smartmet-library-spine >= 23.2.8
-Requires: smartmet-engine-geonames >= 23.1.18
-Requires: smartmet-engine-grid >= 23.1.19
-Requires: smartmet-engine-querydata >= 22.12.15
-Requires: smartmet-engine-sputnik >= 22.11.25
+BuildRequires: smartmet-library-macgyver-devel >= 23.6.6
+BuildRequires: smartmet-library-timeseries-devel >= 23.3.15
+BuildRequires: smartmet-library-spine-devel >= 23.6.6
+BuildRequires: smartmet-engine-contour-devel >= 23.3.9
+BuildRequires: smartmet-engine-geonames-devel >= 23.4.27
+BuildRequires: smartmet-engine-sputnik-devel >= 23.3.6
+BuildRequires: smartmet-engine-querydata-devel >= 23.6.6
+BuildRequires: smartmet-engine-observation-devel >= 23.6.1
+BuildRequires: smartmet-engine-grid-devel >= 23.5.26
+Requires: smartmet-library-macgyver >= 23.6.6
+Requires: smartmet-server >= 23.5.19
+Requires: smartmet-library-spine >= 23.6.6
+Requires: smartmet-engine-geonames >= 23.4.27
+Requires: smartmet-engine-grid >= 23.5.26
+Requires: smartmet-engine-querydata >= 23.6.6
+Requires: smartmet-engine-sputnik >= 23.3.6
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Wed Jun  7 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.7-1.fmi
+- Repackaged due to GRID ABI changes
+
 * Fri Feb 10 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.2.10-1.fmi
 - Silenced CodeChecker warnings
 
