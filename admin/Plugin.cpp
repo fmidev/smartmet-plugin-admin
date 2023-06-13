@@ -19,6 +19,7 @@
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeFormatter.h>
 #include <macgyver/TimeParser.h>
+#include <spine/ConfigTools.h>
 #include <spine/Convenience.h>
 #include <spine/FmiApiKey.h>
 #include <spine/HostInfo.h>
@@ -1941,6 +1942,7 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig) : itsModuleNam
     itsConfig.setIncludeDir(p.c_str());
 
     itsConfig.readFile(theConfig);
+    Spine::expandVariables(itsConfig);
 
     // Password must be specified
     if (!itsConfig.exists("password"))
