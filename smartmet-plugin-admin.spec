@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 23.6.7
+Version: 23.6.13
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -22,19 +22,19 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: smartmet-library-macgyver-devel >= 23.6.6
 BuildRequires: smartmet-library-timeseries-devel >= 23.3.15
-BuildRequires: smartmet-library-spine-devel >= 23.6.6
-BuildRequires: smartmet-engine-contour-devel >= 23.3.9
-BuildRequires: smartmet-engine-geonames-devel >= 23.4.27
+BuildRequires: smartmet-library-spine-devel >= 23.6.13
+BuildRequires: smartmet-engine-contour-devel >= 23.6.13
+BuildRequires: smartmet-engine-geonames-devel >= 23.6.13
 BuildRequires: smartmet-engine-sputnik-devel >= 23.3.6
-BuildRequires: smartmet-engine-querydata-devel >= 23.6.6
-BuildRequires: smartmet-engine-observation-devel >= 23.6.1
-BuildRequires: smartmet-engine-grid-devel >= 23.5.26
+BuildRequires: smartmet-engine-querydata-devel >= 23.6.13
+BuildRequires: smartmet-engine-observation-devel >= 23.6.12
+BuildRequires: smartmet-engine-grid-devel >= 23.6.8
 Requires: smartmet-library-macgyver >= 23.6.6
 Requires: smartmet-server >= 23.5.19
-Requires: smartmet-library-spine >= 23.6.6
-Requires: smartmet-engine-geonames >= 23.4.27
-Requires: smartmet-engine-grid >= 23.5.26
-Requires: smartmet-engine-querydata >= 23.6.6
+Requires: smartmet-library-spine >= 23.6.13
+Requires: smartmet-engine-geonames >= 23.6.13
+Requires: smartmet-engine-grid >= 23.6.8
+Requires: smartmet-engine-querydata >= 23.6.13
 Requires: smartmet-engine-sputnik >= 23.3.6
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Tue Jun 13 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.13-1.fmi
+- Support internal and environment variables in configuration files
+
 * Wed Jun  7 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.7-1.fmi
 - Repackaged due to GRID ABI changes
 
