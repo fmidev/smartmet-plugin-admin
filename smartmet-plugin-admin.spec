@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 23.7.10
+Version: 23.7.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -20,22 +20,22 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-macgyver-devel >= 23.6.15
+BuildRequires: smartmet-library-macgyver-devel >= 23.6.30
 BuildRequires: smartmet-library-timeseries-devel >= 23.6.15
 BuildRequires: smartmet-library-spine-devel >= 23.6.21
-BuildRequires: smartmet-engine-contour-devel >= 23.6.13
-BuildRequires: smartmet-engine-geonames-devel >= 23.6.13
-BuildRequires: smartmet-engine-sputnik-devel >= 23.3.6
-BuildRequires: smartmet-engine-querydata-devel >= 23.6.15
+BuildRequires: smartmet-engine-contour-devel >= 23.7.10
+BuildRequires: smartmet-engine-geonames-devel >= 23.7.10
+BuildRequires: smartmet-engine-sputnik-devel >= 23.7.10
+BuildRequires: smartmet-engine-querydata-devel >= 23.7.11
 BuildRequires: smartmet-engine-observation-devel >= 23.6.21
 BuildRequires: smartmet-engine-grid-devel >= 23.6.8
-Requires: smartmet-library-macgyver >= 23.6.15
+Requires: smartmet-library-macgyver >= 23.6.30
 Requires: smartmet-server >= 23.5.19
 Requires: smartmet-library-spine >= 23.6.21
-Requires: smartmet-engine-geonames >= 23.6.13
+Requires: smartmet-engine-geonames >= 23.7.10
 Requires: smartmet-engine-grid >= 23.6.8
-Requires: smartmet-engine-querydata >= 23.6.15
-Requires: smartmet-engine-sputnik >= 23.3.6
+Requires: smartmet-engine-querydata >= 23.7.11
+Requires: smartmet-engine-sputnik >= 23.7.10
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Tue Jul 11 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.7.11-1.fmi
+- Repackaged since QEngine API changed
+
 * Mon Jul 10 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.7.10-1.fmi
 - Fixed default timeformat to be sql for all requests
 
