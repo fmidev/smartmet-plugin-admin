@@ -21,20 +21,20 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: smartmet-library-macgyver-devel >= 22.12.16
-BuildRequires: smartmet-library-timeseries-devel >= 23.1.31
-BuildRequires: smartmet-library-spine-devel >= 23.2.8
-BuildRequires: smartmet-engine-contour-devel >= 23.1.26
-BuildRequires: smartmet-engine-geonames-devel >= 23.1.18
+BuildRequires: smartmet-library-timeseries-devel >= 23.7.10
+BuildRequires: smartmet-library-spine-devel >= 23.7.10
+BuildRequires: smartmet-engine-contour-devel >= 23.7.11
+BuildRequires: smartmet-engine-geonames-devel >= 23.7.11
 BuildRequires: smartmet-engine-sputnik-devel >= 22.11.25
-BuildRequires: smartmet-engine-querydata-devel >= 22.12.15
-BuildRequires: smartmet-engine-observation-devel >= 23.2.8
-BuildRequires: smartmet-engine-grid-devel >= 23.1.19
+BuildRequires: smartmet-engine-querydata-devel >= 23.7.10
+BuildRequires: smartmet-engine-observation-devel >= 23.7.11
+BuildRequires: smartmet-engine-grid-devel >= 23.7.11
 Requires: smartmet-library-macgyver >= 22.12.16
 Requires: smartmet-server >= 23.2.1
-Requires: smartmet-library-spine >= 23.2.8
-Requires: smartmet-engine-geonames >= 23.1.18
-Requires: smartmet-engine-grid >= 23.1.19
-Requires: smartmet-engine-querydata >= 22.12.15
+Requires: smartmet-library-spine >= 23.7.10
+Requires: smartmet-engine-geonames >= 23.7.10
+Requires: smartmet-engine-grid >= 23.7.11
+Requires: smartmet-engine-querydata >= 23.7.10
 Requires: smartmet-engine-sputnik >= 22.11.25
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
