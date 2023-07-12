@@ -19,6 +19,7 @@
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeFormatter.h>
 #include <macgyver/TimeParser.h>
+#include <spine/ConfigTools.h>
 #include <spine/Convenience.h>
 #include <spine/FmiApiKey.h>
 #include <spine/HostInfo.h>
@@ -608,8 +609,6 @@ bool requestParameterInfo(Spine::Reactor &theReactor,
     // Optional producer filter
     auto producer = theRequest.getParameter("producer");
 
-    std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
-
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
 
@@ -691,8 +690,6 @@ bool requestObsProducerInfo(Spine::Reactor &theReactor,
     // Optional producer filter
     auto producer = theRequest.getParameter("producer");
 
-    std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
-
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
 
@@ -773,8 +770,6 @@ bool requestObsParameterInfo(Spine::Reactor &theReactor,
 
     // Optional producer filter
     auto producer = theRequest.getParameter("producer");
-
-    std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
 
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
@@ -1067,8 +1062,6 @@ bool requestGridParameterInfo(Spine::Reactor &theReactor,
     // Optional producer filter
     auto producer = theRequest.getParameter("producer");
 
-    std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
-
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
 
@@ -1354,8 +1347,6 @@ bool requestObsStationInfo(Spine::Reactor &theReactor,
       return false;
     }
 
-    std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
-
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
 
@@ -1368,7 +1359,7 @@ bool requestObsStationInfo(Spine::Reactor &theReactor,
     options.name = Spine::optional_string(theRequest.getParameter("name"), "");
     options.iso2 = Spine::optional_string(theRequest.getParameter("country"), "");
     options.region = Spine::optional_string(theRequest.getParameter("region"), "");
-    options.timeformat = Spine::optional_string(theRequest.getParameter("timeformat"), "iso");
+    options.timeformat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
     std::string starttime = Spine::optional_string(theRequest.getParameter("starttime"), "");
     std::string endtime = Spine::optional_string(theRequest.getParameter("endtime"), "");
     if (!starttime.empty())
@@ -1615,8 +1606,6 @@ bool requestServiceStats(Spine::Reactor &theReactor,
   {
     std::vector<std::string> headers{
         "Handler", "LastMinute", "LastHour", "Last24Hours", "AverageDuration"};
-
-    std::string formatstream;
 
     Spine::Table statsTable;
 
@@ -1911,7 +1900,8 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 
       std::string firstMessage = exception.what();
       boost::algorithm::replace_all(firstMessage, "\n", " ");
-      firstMessage = firstMessage.substr(0, 300);
+      if (firstMessage.size() > 300)
+        firstMessage.resize(300);
       theResponse.setHeader("X-Admin-Error", firstMessage);
     }
   }
@@ -1941,6 +1931,7 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig) : itsModuleNam
     itsConfig.setIncludeDir(p.c_str());
 
     itsConfig.readFile(theConfig);
+    Spine::expandVariables(itsConfig);
 
     // Password must be specified
     if (!itsConfig.exists("password"))
