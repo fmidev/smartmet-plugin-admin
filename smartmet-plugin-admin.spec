@@ -20,18 +20,18 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-macgyver-devel >= 23.6.30
+BuildRequires: smartmet-library-macgyver-devel >= 23.7.28
 BuildRequires: smartmet-library-timeseries-devel >= 23.7.10
-BuildRequires: smartmet-library-spine-devel >= 23.7.10
+BuildRequires: smartmet-library-spine-devel >= 23.7.28
 BuildRequires: smartmet-engine-contour-devel >= 23.7.11
 BuildRequires: smartmet-engine-geonames-devel >= 23.7.11
 BuildRequires: smartmet-engine-sputnik-devel >= 22.11.25
 BuildRequires: smartmet-engine-querydata-devel >= 23.7.10
 BuildRequires: smartmet-engine-observation-devel >= 23.7.11
 BuildRequires: smartmet-engine-grid-devel >= 23.7.11
-Requires: smartmet-library-macgyver >= 22.12.16
+Requires: smartmet-library-macgyver >= 23.7.28
 Requires: smartmet-server >= 23.2.1
-Requires: smartmet-library-spine >= 23.7.10
+Requires: smartmet-library-spine >= 23.7.28
 Requires: smartmet-engine-geonames >= 23.7.11
 Requires: smartmet-engine-grid >= 23.7.11
 Requires: smartmet-engine-querydata >= 23.7.10
