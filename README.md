@@ -314,7 +314,7 @@ Below is a sample response as visualized by the Metadata Catalog:
 
 In GRID mode the server can also bypass the QueryData engine, as the Grid Engine can also process querydata files. The information on the available querydata generations can be requested with
 
-    http://data.fmi.fi/Server1/admin?what=gridgenerationssqd
+    http://data.fmi.fi/Server1/admin?what=gridgenerationsqd
 
 `sqd` is the common suffix used for binary querydata files at `FMI`.
 
