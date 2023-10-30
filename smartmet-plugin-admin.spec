@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 23.10.12
+Version: 23.10.30
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -20,21 +20,21 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-macgyver-devel >= 23.8.31
-BuildRequires: smartmet-library-timeseries-devel >= 23.9.18
-BuildRequires: smartmet-library-spine-devel >= 23.8.31
-BuildRequires: smartmet-engine-contour-devel >= 23.8.28
+BuildRequires: smartmet-library-macgyver-devel >= 23.10.10
+BuildRequires: smartmet-library-timeseries-devel >= 23.10.30
+BuildRequires: smartmet-library-spine-devel >= 23.10.20
+BuildRequires: smartmet-engine-contour-devel >= 23.10.3
 BuildRequires: smartmet-engine-geonames-devel >= 23.9.6
 BuildRequires: smartmet-engine-sputnik-devel >= 23.7.28
-BuildRequires: smartmet-engine-querydata-devel >= 23.8.31
-BuildRequires: smartmet-engine-observation-devel >= 23.8.9
-BuildRequires: smartmet-engine-grid-devel >= 23.10.12
-Requires: smartmet-library-macgyver >= 23.8.31
+BuildRequires: smartmet-engine-querydata-devel >= 23.10.12
+BuildRequires: smartmet-engine-observation-devel >= 23.10.30
+BuildRequires: smartmet-engine-grid-devel >= 23.10.30
+Requires: smartmet-library-macgyver >= 23.10.10
 Requires: smartmet-server >= 23.8.30
-Requires: smartmet-library-spine >= 23.8.31
+Requires: smartmet-library-spine >= 23.10.20
 Requires: smartmet-engine-geonames >= 23.9.6
-Requires: smartmet-engine-grid >= 23.10.12
-Requires: smartmet-engine-querydata >= 23.8.31
+Requires: smartmet-engine-grid >= 23.10.30
+Requires: smartmet-engine-querydata >= 23.10.12
 Requires: smartmet-engine-sputnik >= 23.7.28
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Mon Oct 30 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.10.30-1.fmi
+- Repackaged due to ABI changes in GRID libraries
+
 * Thu Oct 12 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.10.12-1.fmi
 - Repackage due to smartmet-library-grid-files and smartmet-library-grid-files changes
 
