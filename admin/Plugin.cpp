@@ -1205,7 +1205,7 @@ bool requestLastRequests(Spine::Reactor &theReactor,
         theReactor.getLoggedRequests(pluginName);  // This is type tuple<bool,LogRange,posix_time>
 
     auto firstValidTime =
-        boost::posix_time::second_clock::local_time() - boost::posix_time::minutes(minutes);
+        Fmi::SecondClock::local_time() - Fmi::Minutes(minutes);
 
     std::size_t row = 0;
     for (const auto &req : std::get<1>(currentRequests))
@@ -1274,7 +1274,7 @@ bool requestActiveRequests(Spine::Reactor &theReactor,
     // Obtain logging information
     auto requests = theReactor.getActiveRequests();
 
-    auto now = boost::posix_time::microsec_clock::universal_time();
+    auto now = Fmi::MicrosecClock::universal_time();
 
     std::size_t row = 0;
     for (const auto &id_info : requests)
@@ -1441,7 +1441,7 @@ bool requestCacheStats(Spine::Reactor &theReactor,
                                               "created",
                                               "age"};
 
-    auto now = boost::posix_time::microsec_clock::universal_time();
+    auto now = Fmi::MicrosecClock::universal_time();
     auto cache_stats = theReactor.getCacheStats();
 
     Spine::Table data_table;
@@ -1617,7 +1617,7 @@ bool requestServiceStats(Spine::Reactor &theReactor,
     auto currentRequests =
         theReactor.getLoggedRequests(pluginName);  // This is type tuple<bool,LogRange,posix_time>
 
-    auto currentTime = boost::posix_time::microsec_clock::local_time();
+    auto currentTime = Fmi::MicrosecClock::local_time();
 
     std::size_t row = 0;
     unsigned long total_minute = 0;
@@ -1643,15 +1643,15 @@ bool requestServiceStats(Spine::Reactor &theReactor,
 
         global_microsecs += accessDuration.total_microseconds();
 
-        if (sinceDuration < boost::posix_time::hours(24))
+        if (sinceDuration < Fmi::Hours(24))
         {
           ++inDay;
           ++total_day;
-          if (sinceDuration < boost::posix_time::hours(1))
+          if (sinceDuration < Fmi::Hours(1))
           {
             ++inHour;
             ++total_hour;
-            if (sinceDuration < boost::posix_time::minutes(1))
+            if (sinceDuration < Fmi::Minutes(1))
             {
               ++inMinute;
               ++total_minute;
@@ -1749,7 +1749,7 @@ bool Plugin::setPause(Spine::Reactor & /* theReactor */,
     else if (duration_opt)
     {
       auto duration = Fmi::TimeParser::parse_duration(*duration_opt);
-      auto deadline = boost::posix_time::second_clock::universal_time() + duration;
+      auto deadline = Fmi::SecondClock::universal_time() + duration;
       itsSputnik->setPauseUntil(deadline);
       theResponse.setContent("Paused Sputnik until " + Fmi::to_iso_string(deadline));
     }
@@ -1801,7 +1801,7 @@ bool Plugin::setContinue(Spine::Reactor & /* theReactor */,
     else if (duration_opt)
     {
       auto duration = Fmi::TimeParser::parse_duration(*duration_opt);
-      auto deadline = boost::posix_time::second_clock::universal_time() + duration;
+      auto deadline = Fmi::SecondClock::universal_time() + duration;
       itsSputnik->setPauseUntil(deadline);
       theResponse.setContent("Paused Sputnik until " + Fmi::to_iso_string(deadline));
     }
@@ -1848,7 +1848,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       theResponse.setHeader("Access-Control-Allow-Origin", "*");
 
       const int expires_seconds = 1;
-      boost::posix_time::ptime t_now = boost::posix_time::second_clock::universal_time();
+      Fmi::DateTime t_now = Fmi::SecondClock::universal_time();
 
       bool response = request(theReactor, theRequest, theResponse);
 
@@ -1859,7 +1859,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 
       // Adding response headers
 
-      boost::posix_time::ptime t_expires = t_now + boost::posix_time::seconds(expires_seconds);
+      Fmi::DateTime t_expires = t_now + Fmi::Seconds(expires_seconds);
       boost::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
       std::string cachecontrol = "public, max-age=" + std::to_string(expires_seconds);
       std::string expiration = tformat->format(t_expires);
