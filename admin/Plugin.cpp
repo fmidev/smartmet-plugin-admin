@@ -1204,8 +1204,7 @@ bool requestLastRequests(Spine::Reactor &theReactor,
     auto currentRequests =
         theReactor.getLoggedRequests(pluginName);  // This is type tuple<bool,LogRange,posix_time>
 
-    auto firstValidTime =
-        Fmi::SecondClock::local_time() - Fmi::Minutes(minutes);
+    auto firstValidTime = Fmi::SecondClock::local_time() - Fmi::Minutes(minutes);
 
     std::size_t row = 0;
     for (const auto &req : std::get<1>(currentRequests))
@@ -2117,15 +2116,14 @@ int Plugin::getRequiredAPIVersion() const
 {
   return SMARTMET_API_VERSION;
 }
+
 // ----------------------------------------------------------------------
 /*!
- * \brief Performance query implementation.
- *
- * We want admin calls to always be processed ASAP
+ * \brief Indicate this is an admin plugin
  */
 // ----------------------------------------------------------------------
 
-bool Plugin::queryIsFast(const Spine::HTTP::Request & /* theRequest */) const
+bool Plugin::isAdminQuery(const Spine::HTTP::Request & /* theRequest */) const
 {
   return true;
 }
