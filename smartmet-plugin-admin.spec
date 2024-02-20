@@ -22,18 +22,18 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: smartmet-library-macgyver-devel >= 24.1.17
 BuildRequires: smartmet-library-timeseries-devel >= 24.1.30
-BuildRequires: smartmet-library-spine-devel >= 24.1.30
+BuildRequires: smartmet-library-spine-devel >= 24.2.8
 BuildRequires: smartmet-engine-contour-devel >= 24.1.30
 BuildRequires: smartmet-engine-geonames-devel >= 24.1.30
 BuildRequires: smartmet-engine-sputnik-devel >= 23.7.28
 BuildRequires: smartmet-engine-querydata-devel >= 24.1.19
 BuildRequires: smartmet-engine-observation-devel >= 24.1.17
-BuildRequires: smartmet-engine-grid-devel >= 24.2.5
+BuildRequires: smartmet-engine-grid-devel >= 24.2.20
 Requires: smartmet-library-macgyver >= 24.1.17
 Requires: smartmet-server >= 24.1.29
-Requires: smartmet-library-spine >= 24.1.30
+Requires: smartmet-library-spine >= 24.2.8
 Requires: smartmet-engine-geonames >= 24.1.30
-Requires: smartmet-engine-grid >= 24.2.5
+Requires: smartmet-engine-grid >= 24.2.20
 Requires: smartmet-engine-querydata >= 24.1.19
 Requires: smartmet-engine-sputnik >= 23.7.28
 Provides: %{SPECNAME}
