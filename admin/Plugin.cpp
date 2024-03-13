@@ -1365,11 +1365,11 @@ bool requestObsStationInfo(Spine::Reactor &theReactor,
     if (!starttime.empty())
       options.start_time = Fmi::TimeParser::parse(starttime);
     else
-      options.start_time = boost::posix_time::not_a_date_time;
+      options.start_time = Fmi::DateTime::NOT_A_DATE_TIME;
     if (!endtime.empty())
       options.end_time = Fmi::TimeParser::parse(endtime);
     else
-      options.end_time = boost::posix_time::not_a_date_time;
+      options.end_time = Fmi::DateTime::NOT_A_DATE_TIME;
 
     std::string bbox_string = Spine::optional_string(theRequest.getParameter("bbox"), "");
     if (!bbox_string.empty())
