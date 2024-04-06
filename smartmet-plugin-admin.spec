@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 24.2.23
+Version: 24.4.6
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -35,7 +35,6 @@ Requires: smartmet-library-spine >= 24.2.8
 Requires: smartmet-engine-geonames >= 24.2.23
 Requires: smartmet-engine-grid >= 24.2.23
 Requires: smartmet-engine-querydata >= 24.2.23
-Requires: smartmet-engine-sputnik >= 24.2.23
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
@@ -63,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Sat Apr  6 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.4.6-1.fmi
+- Remove unnecessary Sputnik runtime requirement
+
 * Fri Feb 23 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> 24.2.23-1.fmi
 - Full repackaging
 
