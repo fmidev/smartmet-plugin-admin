@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 23.10.30
+Version: 24.4.6
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -20,22 +20,21 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-macgyver-devel >= 23.11.8
-BuildRequires: smartmet-library-timeseries-devel >= 23.10.30
-BuildRequires: smartmet-library-spine-devel >= 23.10.20
-BuildRequires: smartmet-engine-contour-devel >= 23.10.3
-BuildRequires: smartmet-engine-geonames-devel >= 23.9.6
-BuildRequires: smartmet-engine-sputnik-devel >= 23.7.28
-BuildRequires: smartmet-engine-querydata-devel >= 23.10.12
-BuildRequires: smartmet-engine-observation-devel >= 23.10.30
-BuildRequires: smartmet-engine-grid-devel >= 23.10.30
-Requires: smartmet-library-macgyver >= 23.11.8
-Requires: smartmet-server >= 23.8.30
-Requires: smartmet-library-spine >= 23.10.20
-Requires: smartmet-engine-geonames >= 23.9.6
-Requires: smartmet-engine-grid >= 23.10.30
-Requires: smartmet-engine-querydata >= 23.10.12
-Requires: smartmet-engine-sputnik >= 23.7.28
+BuildRequires: smartmet-library-macgyver-devel >= 24.1.17
+BuildRequires: smartmet-library-timeseries-devel >= 24.2.23
+BuildRequires: smartmet-library-spine-devel >= 24.2.8
+BuildRequires: smartmet-engine-contour-devel >= 24.2.23
+BuildRequires: smartmet-engine-geonames-devel >= 24.2.23
+BuildRequires: smartmet-engine-sputnik-devel >= 24.2.23
+BuildRequires: smartmet-engine-querydata-devel >= 24.2.23
+BuildRequires: smartmet-engine-observation-devel >= 24.2.23
+BuildRequires: smartmet-engine-grid-devel >= 24.2.23
+Requires: smartmet-library-macgyver >= 24.1.17
+Requires: smartmet-server >= 24.2.22
+Requires: smartmet-library-spine >= 24.2.8
+Requires: smartmet-engine-geonames >= 24.2.23
+Requires: smartmet-engine-grid >= 24.2.23
+Requires: smartmet-engine-querydata >= 24.2.23
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
@@ -63,6 +62,36 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Sat Apr  6 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.4.6-1.fmi
+- Remove unnecessary Sputnik runtime requirement
+
+* Fri Feb 23 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> 24.2.23-1.fmi
+- Full repackaging
+
+* Tue Feb 20 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> 24.2.20-1.fmi
+- Repackaged due to grid-files ABI changes
+
+* Mon Feb  5 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> 24.2.5-1.fmi
+- Repackaged due to grid-files ABI changes
+
+* Thu Jan  4 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.1.4-1.fmi
+- Repackaged due to ABI changes
+
+* Fri Dec 22 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.12.22-1.fmi
+- Repackaged due to ThreadLock ABI changes
+
+* Tue Dec  5 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.12.5-1.fmi
+- Indicate being an admin plugin to the server
+
+* Mon Dec  4 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.12.4-1.fmi
+- Repackaged due to QEngine ABI changes
+
+* Fri Nov 17 2023 Pertti Kinnia <pertti.kinnia@fmi.fi> - 23.11.17-1.fmi
+- Repackaged due to API changes in grid-files and grid-content
+
+* Fri Nov 10 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.11.10-1.fmi
+- Repackaged due to API changes in grid-content
+
 * Mon Oct 30 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.10.30-1.fmi
 - Repackaged due to ABI changes in GRID libraries
 
