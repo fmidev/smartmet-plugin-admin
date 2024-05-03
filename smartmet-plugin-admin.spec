@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 24.4.6
+Version: 24.5.3
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -21,19 +21,19 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: smartmet-library-macgyver-devel >= 24.1.17
-BuildRequires: smartmet-library-timeseries-devel >= 24.2.23
-BuildRequires: smartmet-library-spine-devel >= 24.2.8
-BuildRequires: smartmet-engine-contour-devel >= 24.2.23
+BuildRequires: smartmet-library-timeseries-devel >= 24.4.5
+BuildRequires: smartmet-library-spine-devel >= 24.4.23
+BuildRequires: smartmet-engine-contour-devel >= 24.4.17
 BuildRequires: smartmet-engine-geonames-devel >= 24.2.23
 BuildRequires: smartmet-engine-sputnik-devel >= 24.2.23
 BuildRequires: smartmet-engine-querydata-devel >= 24.2.23
-BuildRequires: smartmet-engine-observation-devel >= 24.2.23
-BuildRequires: smartmet-engine-grid-devel >= 24.2.23
+BuildRequires: smartmet-engine-observation-devel >= 24.49
+BuildRequires: smartmet-engine-grid-devel >= 24.5.3
 Requires: smartmet-library-macgyver >= 24.1.17
 Requires: smartmet-server >= 24.2.22
-Requires: smartmet-library-spine >= 24.2.8
+Requires: smartmet-library-spine >= 24.4.23
 Requires: smartmet-engine-geonames >= 24.2.23
-Requires: smartmet-engine-grid >= 24.2.23
+Requires: smartmet-engine-grid >= 24.5.3
 Requires: smartmet-engine-querydata >= 24.2.23
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
@@ -62,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Fri May  3 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.5.3-1.fmi
+- Repackaged due to changes in GRID libraries
+
 * Sat Apr  6 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.4.6-1.fmi
 - Remove unnecessary Sputnik runtime requirement
 
