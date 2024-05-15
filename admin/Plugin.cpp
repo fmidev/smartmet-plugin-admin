@@ -1202,7 +1202,7 @@ bool requestLastRequests(Spine::Reactor &theReactor,
     // Obtain logging information
     std::string pluginName = Spine::optional_string(theRequest.getParameter("plugin"), "all");
     auto currentRequests =
-        theReactor.getLoggedRequests(pluginName);  // This is type tuple<bool,LogRange,posix_time>
+        theReactor.getLoggedRequests(pluginName);  // This is type tuple<bool,LogRange,DateTime>
 
     auto firstValidTime = Fmi::SecondClock::local_time() - Fmi::Minutes(minutes);
 
@@ -1614,7 +1614,7 @@ bool requestServiceStats(Spine::Reactor &theReactor,
 
     std::string pluginName = Spine::optional_string(theRequest.getParameter("plugin"), "all");
     auto currentRequests =
-        theReactor.getLoggedRequests(pluginName);  // This is type tuple<bool,LogRange,posix_time>
+        theReactor.getLoggedRequests(pluginName);  // This is type tuple<bool,LogRange,DateTime>
 
     auto currentTime = Fmi::MicrosecClock::local_time();
 
