@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 24.5.7
+Version: 24.5.27
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -20,21 +20,21 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-macgyver-devel >= 24.5.6
-BuildRequires: smartmet-library-timeseries-devel >= 24.5.6
-BuildRequires: smartmet-library-spine-devel >= 24.5.6
-BuildRequires: smartmet-engine-contour-devel >= 24.5.7
-BuildRequires: smartmet-engine-geonames-devel >= 24.5.6
-BuildRequires: smartmet-engine-sputnik-devel >= 24.5.7
-BuildRequires: smartmet-engine-querydata-devel >= 24.5.6
-BuildRequires: smartmet-engine-observation-devel >= 24.5.6
-BuildRequires: smartmet-engine-grid-devel >= 24.5.7
-Requires: smartmet-library-macgyver >= 24.5.6
-Requires: smartmet-server >= 24.5.6
-Requires: smartmet-library-spine >= 24.5.6
-Requires: smartmet-engine-geonames >= 24.5.6
-Requires: smartmet-engine-grid >= 24.5.7
-Requires: smartmet-engine-querydata >= 24.5.6
+BuildRequires: smartmet-library-macgyver-devel >= 24.5.16
+BuildRequires: smartmet-library-timeseries-devel >= 24.5.21
+BuildRequires: smartmet-library-spine-devel >= 24.5.21
+BuildRequires: smartmet-engine-contour-devel >= 24.5.16
+BuildRequires: smartmet-engine-geonames-devel >= 24.5.16
+BuildRequires: smartmet-engine-sputnik-devel >= 24.5.16
+BuildRequires: smartmet-engine-querydata-devel >= 24.5.16
+BuildRequires: smartmet-engine-observation-devel >= 24.5.21
+BuildRequires: smartmet-engine-grid-devel >= 24.5.16
+Requires: smartmet-library-macgyver >= 24.5.16
+Requires: smartmet-server >= 24.5.16
+Requires: smartmet-library-spine >= 24.5.21
+Requires: smartmet-engine-geonames >= 24.5.16
+Requires: smartmet-engine-grid >= 24.5.16
+Requires: smartmet-engine-querydata >= 24.5.16
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
@@ -62,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Mon May 27 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.5.27-1.fmi
+- Improved exception handling for cache statistics requests
+
 * Tue May  7 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.5.7-1.fmi
 - Use Date library (https://github.com/HowardHinnant/date) instead of boost date_time
 
