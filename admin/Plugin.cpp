@@ -1453,11 +1453,6 @@ bool requestCacheStats(Spine::Reactor &theReactor,
     {
       const auto &name = item.first;
       const auto &stat = item.second;
-      auto duration = (now - stat.starttime).total_seconds();
-      auto n = stat.hits + stat.misses;
-      auto hit_rate = (n == 0 ? 0.0 : stat.hits * 100.0 / n);
-      auto hits_per_min = (duration == 0 ? 0.0 : 60.0 * stat.hits / duration);
-      auto inserts_per_min = (duration == 0 ? 0.0 : 60.0 * stat.inserts / duration);
 
       data_table.set(0, row, Fmi::to_string(row));
       data_table.set(1, row, name);
@@ -1466,11 +1461,29 @@ bool requestCacheStats(Spine::Reactor &theReactor,
       data_table.set(4, row, Fmi::to_string(stat.inserts));
       data_table.set(5, row, Fmi::to_string(stat.hits));
       data_table.set(6, row, Fmi::to_string(stat.misses));
-      data_table.set(7, row, Fmi::to_string("%.1f", hit_rate));
-      data_table.set(8, row, Fmi::to_string("%.1f", hits_per_min));
-      data_table.set(9, row, Fmi::to_string("%.1f", inserts_per_min));
-      data_table.set(10, row, timeFormatter->format(stat.starttime));
-      data_table.set(11, row, Fmi::to_simple_string(now - stat.starttime));
+
+      try
+      {
+        auto duration = (now - stat.starttime).total_seconds();
+        auto n = stat.hits + stat.misses;
+        auto hit_rate = (n == 0 ? 0.0 : stat.hits * 100.0 / n);
+        auto hits_per_min = (duration == 0 ? 0.0 : 60.0 * stat.hits / duration);
+        auto inserts_per_min = (duration == 0 ? 0.0 : 60.0 * stat.inserts / duration);
+
+        data_table.set(7, row, Fmi::to_string("%.1f", hit_rate));
+        data_table.set(8, row, Fmi::to_string("%.1f", hits_per_min));
+        data_table.set(9, row, Fmi::to_string("%.1f", inserts_per_min));
+        data_table.set(10, row, timeFormatter->format(stat.starttime));
+        data_table.set(11, row, Fmi::to_simple_string(now - stat.starttime));
+      }
+      catch (...)
+      {
+        data_table.set(7, row, "?");
+        data_table.set(8, row, "?");
+        data_table.set(9, row, "?");
+        data_table.set(10, row, "?");
+        data_table.set(11, row, "?");
+      }
       row++;
     }
 
