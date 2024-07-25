@@ -12,7 +12,7 @@ FLAGS += -Wno-variadic-macros
 
 DEFINES = -DUNIX -D_REENTRANT
 
-LIBS += -L$(libdir) \
+LIBS += $(PREFIX_LDFLAGS) \
 	$(REQUIRED_LIBS) \
 	-lsmartmet-spine \
 	-lsmartmet-macgyver
