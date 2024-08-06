@@ -7,7 +7,6 @@
 #include "Plugin.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/bind/bind.hpp>
-#include <boost/foreach.hpp>
 #include <boost/locale.hpp>
 #include <engines/contour/Engine.h>
 #include <engines/geonames/Engine.h>
@@ -450,7 +449,7 @@ bool requestQEngineStatus(Spine::Reactor &theReactor,
 
     std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
 
-    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> statusResult =
+    std::pair<std::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> statusResult =
         qengine->getEngineContents(producer, timeFormat, projectionFormat);
 
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
@@ -531,7 +530,7 @@ bool requestProducerInfo(Spine::Reactor &theReactor,
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
 
-    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> qengineProducerInfo =
+    std::pair<std::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> qengineProducerInfo =
         qengine->getProducerInfo(timeFormat, producer);
 
     auto qengine_out_producer = tableFormatter->format(*qengineProducerInfo.first,
@@ -612,7 +611,7 @@ bool requestParameterInfo(Spine::Reactor &theReactor,
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
 
-    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> qengineParameterInfo =
+    std::pair<std::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> qengineParameterInfo =
         qengine->getParameterInfo(producer);
 
     auto qengine_out_parameter = tableFormatter->format(*qengineParameterInfo.first,
@@ -693,7 +692,7 @@ bool requestObsProducerInfo(Spine::Reactor &theReactor,
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
 
-    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> obsengineProducerInfo =
+    std::pair<std::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> obsengineProducerInfo =
         obsengine->getProducerInfo(producer);
 
     auto observation_out_producer = tableFormatter->format(*obsengineProducerInfo.first,
@@ -774,7 +773,7 @@ bool requestObsParameterInfo(Spine::Reactor &theReactor,
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
 
-    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names>
+    std::pair<std::shared_ptr<Spine::Table>, Spine::TableFormatter::Names>
         obsengineParameterInfo = obsengine->getParameterInfo(producer);
 
     auto observation_out_parameter = tableFormatter->format(*obsengineParameterInfo.first,
@@ -849,7 +848,7 @@ bool requestGridProducerInfo(Spine::Reactor &theReactor,
     std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
-    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> producerInfo =
+    std::pair<std::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> producerInfo =
         gridEngine->getProducerInfo(producer, timeFormat);
     auto grid_out_producer = tableFormatter->format(
         *producerInfo.first, producerInfo.second, theRequest, Spine::TableFormatterOptions());
@@ -921,7 +920,7 @@ bool requestGridGenerationInfo(Spine::Reactor &theReactor,
     std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
-    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> producerInfo =
+    std::pair<std::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> producerInfo =
         gridEngine->getGenerationInfo(producer, timeFormat);
     auto grid_out_producer = tableFormatter->format(
         *producerInfo.first, producerInfo.second, theRequest, Spine::TableFormatterOptions());
@@ -993,7 +992,7 @@ bool requestGridQdGenerationInfo(Spine::Reactor &theReactor,
     std::string timeFormat = Spine::optional_string(theRequest.getParameter("timeformat"), "sql");
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
-    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> producerInfo =
+    std::pair<std::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> producerInfo =
         gridEngine->getExtGenerationInfo(producer, timeFormat);
     auto grid_out_producer = tableFormatter->format(
         *producerInfo.first, producerInfo.second, theRequest, Spine::TableFormatterOptions());
@@ -1065,7 +1064,7 @@ bool requestGridParameterInfo(Spine::Reactor &theReactor,
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
 
-    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names>
+    std::pair<std::shared_ptr<Spine::Table>, Spine::TableFormatter::Names>
         gridEngineParameterInfo = gridEngine->getParameterInfo(producer);
 
     auto grid_out_parameter = tableFormatter->format(*gridEngineParameterInfo.first,
@@ -1139,7 +1138,7 @@ bool Plugin::requestBackendInfo(Spine::Reactor & /* theReactor */,
 
     std::shared_ptr<Spine::Table> table = itsSputnik->backends(service);
 
-    boost::shared_ptr<Spine::TableFormatter> formatter(
+    std::shared_ptr<Spine::TableFormatter> formatter(
         Spine::TableFormatterFactory::create(format));
     Spine::TableFormatter::Names names;
     names.push_back("Backend");
@@ -1374,7 +1373,7 @@ bool requestObsStationInfo(Spine::Reactor &theReactor,
     if (!bbox_string.empty())
       options.bbox = Spine::BoundingBox(bbox_string);
 
-    std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> obsengineStationInfo =
+    std::pair<std::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> obsengineStationInfo =
         obsengine->getStationInfo(options);
 
     auto stations_out = tableFormatter->format(*obsengineStationInfo.first,
@@ -1426,7 +1425,7 @@ bool requestCacheStats(Spine::Reactor &theReactor,
     std::string tableFormat = Spine::optional_string(theRequest.getParameter("format"), "html");
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
-    boost::shared_ptr<Spine::Table> table(new Spine::Table());
+    std::shared_ptr<Spine::Table> table(new Spine::Table());
     Spine::TableFormatter::Names header_names{"#",
                                               "cache_name",
                                               "maxsize",
@@ -1549,7 +1548,7 @@ bool listRequests(Spine::Reactor & /* theReactor */,
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
 
-    //   std::pair<boost::shared_ptr<Spine::Table>, Spine::TableFormatter::Names>
+    //   std::pair<std::shared_ptr<Spine::Table>, Spine::TableFormatter::Names>
     //   obsengineStationInfo =  obsengine->getStationInfo(options);
 
     Spine::Table resultTable;
@@ -1872,7 +1871,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       // Adding response headers
 
       Fmi::DateTime t_expires = t_now + Fmi::Seconds(expires_seconds);
-      boost::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
+      std::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
       std::string cachecontrol = "public, max-age=" + std::to_string(expires_seconds);
       std::string expiration = tformat->format(t_expires);
       std::string modification = tformat->format(t_now);
@@ -1938,7 +1937,7 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig) : itsModuleNam
       throw Fmi::Exception(BCP, "Admin plugin and Server API version mismatch");
 
     // Enable sensible relative include paths
-    boost::filesystem::path p = theConfig;
+    std::filesystem::path p = theConfig;
     p.remove_filename();
     itsConfig.setIncludeDir(p.c_str());
 
