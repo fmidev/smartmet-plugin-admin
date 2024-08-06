@@ -7,7 +7,6 @@
 #include "Plugin.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/bind/bind.hpp>
-#include <boost/foreach.hpp>
 #include <boost/locale.hpp>
 #include <engines/contour/Engine.h>
 #include <engines/geonames/Engine.h>
