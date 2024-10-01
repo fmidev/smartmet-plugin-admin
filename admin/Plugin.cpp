@@ -33,6 +33,8 @@
 #include <sstream>
 #include <stdexcept>
 
+using namespace std::string_literals;
+
 namespace
 {
 void parseIntOption(std::set<int> &output, const std::string &option)
@@ -773,8 +775,8 @@ bool requestObsParameterInfo(Spine::Reactor &theReactor,
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
 
-    std::pair<std::shared_ptr<Spine::Table>, Spine::TableFormatter::Names>
-        obsengineParameterInfo = obsengine->getParameterInfo(producer);
+    std::pair<std::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> obsengineParameterInfo =
+        obsengine->getParameterInfo(producer);
 
     auto observation_out_parameter = tableFormatter->format(*obsengineParameterInfo.first,
                                                             obsengineParameterInfo.second,
@@ -1064,8 +1066,8 @@ bool requestGridParameterInfo(Spine::Reactor &theReactor,
     std::unique_ptr<Spine::TableFormatter> tableFormatter(
         Spine::TableFormatterFactory::create(tableFormat));
 
-    std::pair<std::shared_ptr<Spine::Table>, Spine::TableFormatter::Names>
-        gridEngineParameterInfo = gridEngine->getParameterInfo(producer);
+    std::pair<std::shared_ptr<Spine::Table>, Spine::TableFormatter::Names> gridEngineParameterInfo =
+        gridEngine->getParameterInfo(producer);
 
     auto grid_out_parameter = tableFormatter->format(*gridEngineParameterInfo.first,
                                                      gridEngineParameterInfo.second,
@@ -1138,8 +1140,7 @@ bool Plugin::requestBackendInfo(Spine::Reactor & /* theReactor */,
 
     std::shared_ptr<Spine::Table> table = itsSputnik->backends(service);
 
-    std::shared_ptr<Spine::TableFormatter> formatter(
-        Spine::TableFormatterFactory::create(format));
+    std::shared_ptr<Spine::TableFormatter> formatter(Spine::TableFormatterFactory::create(format));
     Spine::TableFormatter::Names names;
     names.push_back("Backend");
     names.push_back("IP");
@@ -1289,19 +1290,39 @@ bool requestActiveRequests(Spine::Reactor &theReactor,
       const bool check_access_token = true;
       auto apikey = Spine::FmiApiKey::getFmiApiKey(req, check_access_token);
 
+      auto originIP = req.getHeader("X-Forwarded-For");
+      auto originhostname = ""s;
+      if (originIP)
+      {
+        auto loc = originIP->find(',');
+        if (loc == std::string::npos)
+          originhostname = Spine::HostInfo::getHostName(*originIP);
+        else
+          originhostname = Spine::HostInfo::getHostName(originIP->substr(0, loc));
+      }
+
       std::size_t column = 0;
       reqTable.set(column++, row, Fmi::to_string(id));
       reqTable.set(column++, row, Fmi::to_iso_extended_string(time.time_of_day()));
       reqTable.set(column++, row, Fmi::to_string(duration.total_milliseconds() / 1000.0));
       reqTable.set(column++, row, ip);
       reqTable.set(column++, row, hostname);
+      reqTable.set(column++, row, (originIP ? *originIP : ""s));
+      reqTable.set(column++, row, originhostname);
       reqTable.set(column++, row, apikey ? *apikey : "-");
       reqTable.set(column++, row, req.getURI());
       ++row;
     }
 
-    std::vector<std::string> headers = {
-        "Id", "Time", "Duration", "ClientIP", "Host", "Apikey", "RequestString"};
+    std::vector<std::string> headers = {"Id",
+                                        "Time",
+                                        "Duration",
+                                        "ClientIP",
+                                        "ClientHost",
+                                        "OriginIP",
+                                        "OriginHost",
+                                        "Apikey",
+                                        "RequestString"};
     auto out = formatter->format(reqTable, headers, theRequest, Spine::TableFormatterOptions());
 
     // Set MIME
