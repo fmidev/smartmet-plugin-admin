@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 24.9.3
+Version: 24.10.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Tue Oct  1 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.10.1-1.fmi
+- Added X-Forwarded-For information to active requests
+
 * Tue Sep  3 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.9.3-1.fmi
 - Repackage due smartmlibrary-grid-data and smartmet-engine-querydata changes
 
