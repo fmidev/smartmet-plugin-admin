@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 24.10.16
+Version: 24.10.23
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -29,12 +29,12 @@ BuildRequires: smartmet-engine-geonames-devel >= 24.9.28
 BuildRequires: smartmet-engine-sputnik-devel >= 24.9.18
 BuildRequires: smartmet-engine-querydata-devel >= 24.10.15
 BuildRequires: smartmet-engine-observation-devel >= 24.10.15
-BuildRequires: smartmet-engine-grid-devel >= 24.10.16
+BuildRequires: smartmet-engine-grid-devel >= 24.10.23
 Requires: smartmet-library-macgyver >= 24.10.15
 Requires: smartmet-server >= 24.8.7
 Requires: smartmet-library-spine >= 24.10.15
 Requires: smartmet-engine-geonames >= 24.9.28
-Requires: smartmet-engine-grid >= 24.10.16
+Requires: smartmet-engine-grid >= 24.10.23
 Requires: smartmet-engine-querydata >= 24.10.15
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Wed Oct 23 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.10.23-1.fmi
+- Repackaged due to new ABI changes
+
 * Wed Oct 16 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.10.16-1.fmi
 - Repackaged due to ABI changes in grid libraries
 
