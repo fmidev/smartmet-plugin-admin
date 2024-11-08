@@ -1,0 +1,1 @@
+GET /admin?what=stations&format=debug&producer=AWS HTTP/1.0

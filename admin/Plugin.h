@@ -5,7 +5,6 @@
 // ======================================================================
 
 #pragma once
-#include <engines/sputnik/Engine.h>
 #include <spine/HTTP.h>
 #include <spine/HTTPAuthentication.h>
 #include <spine/Reactor.h>
@@ -46,36 +45,12 @@ class Plugin : public SmartMetPlugin, private SmartMet::Spine::HTTP::Authenticat
                       const Spine::HTTP::Request& theRequest,
                       Spine::HTTP::Response& theResponse) override;
 
-  bool isAuthenticationRequired(const Spine::HTTP::Request& theRequest) const override;
-
   std::string getRealm() const override;
 
  private:
-  bool request(Spine::Reactor& theReactor,
-               const Spine::HTTP::Request& theRequest,
-               Spine::HTTP::Response& theResponse);
-
-  bool requestClusterInfo(Spine::Reactor& theReactor,
-                          const Spine::HTTP::Request& theRequest,
-                          Spine::HTTP::Response& theResponse);
-
-  bool requestBackendInfo(Spine::Reactor& theReactor,
-                          const Spine::HTTP::Request& theRequest,
-                          Spine::HTTP::Response& theResponse);
-
-  bool setPause(Spine::Reactor& theReactor,
-                const Spine::HTTP::Request& theRequest,
-                Spine::HTTP::Response& theResponse);
-
-  bool setContinue(Spine::Reactor& theReactor,
-                   const Spine::HTTP::Request& theRequest,
-                   Spine::HTTP::Response& theResponse);
-
   const std::string itsModuleName;
 
   libconfig::Config itsConfig;
-
-  Engine::Sputnik::Engine* itsSputnik = nullptr;
 
 };  // class Plugin
 

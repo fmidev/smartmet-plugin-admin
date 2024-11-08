@@ -1,0 +1,1 @@
+GET /admin?what=obsparameters&format=debug&producer=observations_fmi HTTP/1.0
