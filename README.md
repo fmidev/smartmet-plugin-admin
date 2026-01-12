@@ -1,4 +1,4 @@
-Table of Contents
+Table of Contents // ADMIN PLUGIN IS DEPRECATED and removed
 =================
 
   * [SmartMet Server](#SmartMet Server)
