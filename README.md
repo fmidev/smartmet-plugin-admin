@@ -1,41 +1,10 @@
-Table of Contents // ADMIN PLUGIN IS DEPRECATED and removed
-=================
+# smartmet-plugin-admin
 
-  * [SmartMet Server](#SmartMet Server)
-  * [Introduction](#introduction)
-  * [Admin plugin: Services](#admin-plugin-services)
-    * [Cluster information](#cluster-information)
-    * [Service information](#service-information)
-    * [Services](#services)
-    * [Backends](#backends)
-    * [QEngine](#qengine)
-    * [GeoEngine reload](#geoengine-reload)
-    * [Service statistics](#service-statistics)
-    * [Cache statistics](#cachestats)
-    * [Active requests](#active-requests)
-    * [Querydata producers](#querydata-producers)
-    * [GRID producers](#grid-producers)
-    * [GRID generations](#grid-generations)
-    * [GRID querydata generations](#grid-querydata-generations)
-    * [Observation producers](#observation-producers)
-    * [Parameters](#parameters)
-    * [GRID parameters](#grid-parameters)
-    * [Observation parameters](#observation-parameters)
-    * [Stations](#stations)
-    * [Logging](#logging)
-    * [Last requests](#last-requests)
-    * [Pausing](#pausing)
-    * [Reloading station information](#reloading-station-information)
-    * [Listing](#listing)
+> **Note:** This plugin is deprecated and has been removed from active development.
 
-# SmartMet Server
+Part of [SmartMet Server](https://github.com/fmidev/smartmet-server). See the [SmartMet Server documentation](https://github.com/fmidev/smartmet-server) for a full overview of the ecosystem.
 
-[SmartMet Server](https://github.com/fmidev/smartmet-server) is a data and product server for MetOcean data. It
-provides a high capacity and high availability data and product server
-for MetOcean data. The server is written in C++, since 2008 it has
-been in operational use by the Finnish Meteorological Institute FMI.
-
-# Introduction
+## Introduction
 
 SmartMet plugin admin provides status and administration services. It can provide the cluster information regarding the frontend and backend servers. Admin plugin can give the information about the services that can be provided by  a particular backend server and also the names of the backend servers which provide a particular service etc.
 
@@ -54,7 +23,7 @@ Below is a sample screenshot of the WWW-interface:
 
 ![Metadata catalog](docs/images/metadata-api.png)
 
-# Admin plugin: Services
+## Admin plugin: Services
 
 The admin plugin  provides administration  information about the server state such as:
  
@@ -65,7 +34,7 @@ The admin plugin  provides administration  information about the server state su
 * GeoEngine reload
 * Cache statistics of engines and plugins
 
-## Cluster information
+### Cluster information
 
 The cluster status information can be requested both from the frontends and the backends. However, one cannot choose the frontend, since the selection is done by the load balancer.
 
@@ -117,7 +86,7 @@ The result of this request consists of the server information and the services c
 
 Note that the first request for cluster status is not handled by the admin plugin, since the admin plugins are installed only in backend machines. The first request is handled by the frontend plugin.
 
-## Service information
+### Service information
 
 The service status information can be requested the backends.
 
@@ -148,7 +117,7 @@ The result of this request consists of the services currently provided by this s
         /wfs/fin
         /wms
 
-## Services
+### Services
 
 SmartMet server optionally logs statistics for successfully handled requests. Access to this functionality is available through the query in which one has to specify the name of the server:
 
@@ -160,7 +129,7 @@ This functionality is disabled by default, to enable it run the following query:
 
 Similarly, statistics collection can be disabled by replacing "enable" with "disable". Currently, requests older than one week are not considered.
 
-## Backends
+### Backends
 
 In the SmartMet server environment,  the frontends know what services the backends provide. One can request for either the full list of backends or just those that provide a  given service. The output includes the names of the backends plus the IP address including the port. The output format can be selected.
 
@@ -184,7 +153,7 @@ The result of this request can be in the following format:
     |--------|------------|------------|------|
 
 
-## QEngine
+### QEngine
 
 QEngine maintains the QueryData in memory. The admin-queries can be used to obtain the information about the currently loaded QueryData. For backends the current list of loaded files in server Server1 can be obtained as follows:
 
@@ -212,7 +181,7 @@ Below is a screenshot of a response in the Metadata Catalog:
 ![Available querydata](docs/images/available-querydata.png)
 
 
-## GeoEngine reload
+### GeoEngine reload
 
 GeoEngine can reload the geonames database in a separate thread, and quickly swap all the information into use, replacing all the previously downloaded data. The swap will be delayed by active read requests until the write operation gains a lock on the necessary data structures.
 
@@ -228,7 +197,7 @@ Possible responses from the server are:
 
 It is also possible than an error occurs during the reload, for example if the MySQL server has gone down. In that case the old data structures remain active and no data is lost.
 
-## Service statistics
+### Service statistics
 
 The server keeps statistics on server requests which can be queried with
 
@@ -242,7 +211,7 @@ Below is a sample response as visualized by the Metadata Catalog:
 ![Service statistics](docs/images/service-statistics.png)
 
 
-## Cache statistics
+### Cache statistics
 
 Each engine and plugin used by the server may keep internal caches whose sizes may require tuning for best performance. The statistics can be queried with
 
@@ -255,7 +224,7 @@ Below is a sample response as visualized by the Metadata Catalog:
 
 ![Cache statistics](docs/images/cache-statistics.png)
 
-## Active requests
+### Active requests
    
 The server keeps track of active requests which have not been completed yet. This is occasionally useful for tracking down large requests which are hogging server resources. The active requests can be queried with
 
@@ -267,7 +236,7 @@ Below is a sample response as visualized by the Metadata Catalog:
 
 ![Active requests](docs/images/active-requests.png)
 
-## Querydata producers
+### Querydata producers
 
 The querydata producers configured to the server can be listed with
 
@@ -281,7 +250,7 @@ Below is a sample response as visualized by the Metadata Catalog. The screen cap
 
 ![Querydata producers](docs/images/querydata-producers.png)
 
-## GRID producers
+### GRID producers
 
 The available grid data producers can be listed with
 
@@ -296,7 +265,7 @@ Below is a sample response as visualized by the Metadata Catalog:
 ![Grid producers](docs/images/grid-producers.png)
 
 
-## GRID generations
+### GRID generations
 
 Different model runs which may consist of multiple grid data files are called generations. The data for a particular generation can usually be requested by specifying the `origintime` querystring option. The information can be requested with
 
@@ -310,7 +279,7 @@ Below is a sample response as visualized by the Metadata Catalog:
 
 ![Grid generations](docs/images/grid-generations.png)
 
-## GRID querydata generations
+### GRID querydata generations
 
 In GRID mode the server can also bypass the QueryData engine, as the Grid Engine can also process querydata files. The information on the available querydata generations can be requested with
 
@@ -327,7 +296,7 @@ Below is a sample response as visualized by the Metadata Catalog:
 ![Grid querydata generations](docs/images/grid-querydata-generations.png)
 
 
-## Observation producers
+### Observation producers
 
 The available observation producers can be queried with
 
@@ -342,7 +311,7 @@ Below is a sample response as visualized by the Metadata Catalog:
 ![Observation producers](docs/images/observation-producers.png)
 
 
-## Parameters
+### Parameters
 
 The known querydata parameters can be queried with
 
@@ -356,7 +325,7 @@ Below is a sample response as visualized by the Metadata Catalog. The interface 
 
 ![Querydata parameters](docs/images/querydata-parameters.png)
 
-## GRID parameters
+### GRID parameters
 
 The known Grid parameters can be queried with
 
@@ -371,7 +340,7 @@ Below is a sample response as visualized by the Metadata Catalog. The interface 
 ![Grid parameters](docs/images/grid-parameters.png)
 
 
-## Observation parameters
+### Observation parameters
 
 The known observation parameters can be queried with
 
@@ -385,7 +354,7 @@ Below is a sample response as visualized by the Metadata Catalog. The interface 
 
 ![Observation parameters](docs/images/observation-parameters.png)
 
-## Stations
+### Stations
 
 The known stations can be queried with
 
@@ -408,7 +377,7 @@ Below is a sample response as visualized by the Metadata Catalog. The interface 
 
 ![Stations](docs/images/stations.png)
 
-## Logging
+### Logging
 
 Logging requests to memory can be enabled and disabled using queries
 
@@ -423,7 +392,7 @@ The current status can be queried with
 
 The response value is either `Enabled` or `Disabled`.
 
-## Last requests
+### Last requests
 
 The requests logged to memory can be queried with
 
@@ -433,7 +402,7 @@ The requests logged to memory can be queried with
 * The querystring option `minutes` can be used to modify how many minutes of last request are returned, the default value is one.
 * The querystring option `plugin` can be used to limit the request to a specific plugin
 
-## Pausing
+### Pausing
 
 A backend can be requested to pause serving the frontends using
 
@@ -448,7 +417,7 @@ is used.
 * If the querystring option `time` is give, the server will pause until the specified time
 * If the querystring option `duration` is given, the server will pause for the given duration and then continue automatically.
 
-## Reloading station information
+### Reloading station information
 
 The request
 
@@ -456,7 +425,7 @@ The request
 
 can be used to request the Observation Engine to reload all station info cached into memory from the backend observation metadata database.
 
-## Listing
+### Listing
 
 The requests suitable for the Metadata Catalog can be requested with
 
