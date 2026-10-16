@@ -2,8 +2,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 24.11.8
-Release: 2%{?dist}.fmi
+Version: 26.10.16
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-admin
@@ -21,21 +21,21 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: libcurl-devel
 BuildRequires: %{smartmet_boost}-devel
-BuildRequires: smartmet-library-macgyver-devel >= 24.10.28
-BuildRequires: smartmet-library-timeseries-devel >= 24.11.8
-BuildRequires: smartmet-library-spine-devel >= 24.11.8
-BuildRequires: smartmet-engine-contour-devel >= 24.11.8
-BuildRequires: smartmet-engine-geonames-devel >= 24.11.8
-BuildRequires: smartmet-engine-sputnik-devel >= 24.11.8
-BuildRequires: smartmet-engine-querydata-devel >= 24.11.8
-BuildRequires: smartmet-engine-observation-devel >= 24.11.8
-BuildRequires: smartmet-engine-grid-devel >= 24.11.8
-Requires: smartmet-library-macgyver >= 24.10.28
-Requires: smartmet-server >= 24.11.8
-Requires: smartmet-library-spine >= 24.11.8
-Requires: smartmet-engine-geonames >= 24.11.8
-Requires: smartmet-engine-grid >= 24.11.8
-Requires: smartmet-engine-querydata >= 24.11.8
+BuildRequires: smartmet-library-macgyver-devel >= 26.10.16
+BuildRequires: smartmet-library-timeseries-devel >= 26.10.16
+BuildRequires: smartmet-library-spine-devel >= 26.10.16
+BuildRequires: smartmet-engine-contour-devel >= 26.10.16
+BuildRequires: smartmet-engine-geonames-devel >= 26.10.16
+BuildRequires: smartmet-engine-sputnik-devel >= 26.10.16
+BuildRequires: smartmet-engine-querydata-devel >= 26.10.16
+BuildRequires: smartmet-engine-observation-devel >= 26.10.16
+BuildRequires: smartmet-engine-grid-devel >= 26.10.16
+Requires: smartmet-library-macgyver >= 26.10.16
+Requires: smartmet-server >= 26.10.16
+Requires: smartmet-library-spine >= 26.10.16
+Requires: smartmet-engine-geonames >= 26.10.16
+Requires: smartmet-engine-grid >= 26.10.16
+Requires: smartmet-engine-querydata >= 26.10.16
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Fri Oct 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.16-1.fmi
+- Rebuilt due to ABI changes in macgyver, spine, newbase and other libraries
+
 * Fri Nov  8 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.11.8-2.fmi
 - Cleanup after request handlers are moved elsewhere
 
