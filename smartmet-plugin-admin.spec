@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: BrainStorm admin plugin
 Name: %{SPECNAME}
-Version: 26.10.16
+Version: 26.10.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -30,12 +30,12 @@ BuildRequires: smartmet-engine-sputnik-devel >= 26.10.16
 BuildRequires: smartmet-engine-querydata-devel >= 26.10.16
 BuildRequires: smartmet-engine-observation-devel >= 26.10.16
 BuildRequires: smartmet-engine-grid-devel >= 26.10.16
-Requires: smartmet-library-macgyver >= 26.10.16
-Requires: smartmet-server >= 26.10.16
-Requires: smartmet-library-spine >= 26.10.16
-Requires: smartmet-engine-geonames >= 26.10.16
-Requires: smartmet-engine-grid >= 26.10.16
-Requires: smartmet-engine-querydata >= 26.10.16
+Requires: smartmet-library-macgyver >= 26.10.17
+Requires: smartmet-server >= 26.10.17
+Requires: smartmet-library-spine >= 26.10.17
+Requires: smartmet-engine-geonames >= 26.10.17
+Requires: smartmet-engine-grid >= 26.10.17
+Requires: smartmet-engine-querydata >= 26.10.17
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-admin < 16.11.1
 Obsoletes: smartmet-brainstorm-admin-debuginfo < 16.11.1
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0664,root,root,0775)
 
 %changelog
+* Sat Oct 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.17-1.fmi
+- Rebuilt against the new library versions
+
 * Fri Oct 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.16-1.fmi
 - Rebuilt due to ABI changes in macgyver, spine, newbase and other libraries
 
