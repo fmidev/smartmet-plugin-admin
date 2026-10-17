@@ -236,6 +236,20 @@ Below is a sample response as visualized by the Metadata Catalog:
 
 ![Active requests](docs/images/active-requests.png)
 
+### Loaded packages
+
+The versions of the packages the running server has actually loaded, read from the loaded
+binaries rather than from the package database, can be queried with
+
+    http://data.fmi.fi/Server1/admin?what=packages
+
+* The querystring option `all=1` lists all loaded libraries instead of SmartMet packages only.
+* The querystring option `format` can be used to change the output format.
+
+The columns are described in the
+[admin requests documentation](https://github.com/fmidev/smartmet-server/blob/master/docs/Admin-Requests.md#loaded-packages)
+of the server.
+
 ### Querydata producers
 
 The querydata producers configured to the server can be listed with
