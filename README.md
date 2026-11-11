@@ -335,7 +335,7 @@ The known querydata parameters can be queried with
 * The querystring option `producer` can be used to limit the output to a single producer name
 * The querystring option `timeformat` can be used to change the time formatting from the default `sql`
 
-Below is a sample response as visualized by the Metadata Catalog. The interface has been used to search for producers which provice the `IceConcentration` parameter.
+Below is a sample response as visualized by the Metadata Catalog. The interface has been used to search for producers which provide the `IceConcentration` parameter.
 
 ![Querydata parameters](docs/images/querydata-parameters.png)
 
@@ -349,7 +349,7 @@ The known Grid parameters can be queried with
 * The querystring option `producer` can be used to limit the output to a single producer name
 * The querystring option `timeformat` can be used to change the time formatting from the default `sql`
 
-Below is a sample response as visualized by the Metadata Catalog. The interface has been used to search for producers which provice the `Temperature` parameter.
+Below is a sample response as visualized by the Metadata Catalog. The interface has been used to search for producers which provide the `Temperature` parameter.
 
 ![Grid parameters](docs/images/grid-parameters.png)
 
@@ -364,7 +364,7 @@ The known observation parameters can be queried with
 * The querystring option `producer` can be used to limit the output to a single producer name
 * The querystring option `timeformat` can be used to change the time formatting from the default `sql`
 
-Below is a sample response as visualized by the Metadata Catalog. The interface has been used to search for producers which provice the `Temperature` parameter.
+Below is a sample response as visualized by the Metadata Catalog. The interface has been used to search for producers which provide the `Temperature` parameter.
 
 ![Observation parameters](docs/images/observation-parameters.png)
 
