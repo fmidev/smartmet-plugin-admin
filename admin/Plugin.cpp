@@ -5,19 +5,19 @@
 // ======================================================================
 
 #include "Plugin.h"
+#include <macgyver/Exception.h>
 #include <spine/ConfigTools.h>
-#include <spine/HTTP.h>
+#include <spine/Reactor.h>
 #include <spine/SmartMet.h>
-#include <spine/Table.h>
-#include <spine/TableFormatterFactory.h>
-#include <spine/TableFormatterOptions.h>
 #include <filesystem>
 #include <functional>
-#include <iomanip>
 #include <iostream>
-#include <locale>
-#include <sstream>
-#include <stdexcept>
+
+namespace SmartMet::Spine::HTTP
+{
+class Request;
+class Response;
+}  // namespace SmartMet::Spine::HTTP
 
 namespace SmartMet
 {

@@ -5,14 +5,15 @@
 // ======================================================================
 
 #pragma once
-#include <spine/HTTP.h>
 #include <spine/HTTPAuthentication.h>
-#include <spine/Reactor.h>
 #include <spine/SmartMetPlugin.h>
 #include <libconfig.h++>
-#include <map>
 #include <string>
-#include <utility>
+
+namespace SmartMet::Spine
+{
+class Reactor;
+}  // namespace SmartMet::Spine
 
 namespace SmartMet
 {
@@ -20,7 +21,6 @@ namespace Plugin
 {
 namespace Admin
 {
-class PluginImpl;
 
 class Plugin : public SmartMetPlugin, private SmartMet::Spine::HTTP::Authentication
 {
